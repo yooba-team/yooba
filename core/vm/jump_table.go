@@ -51,8 +51,6 @@ type operation struct {
 }
 
 var (
-	//frontierInstructionSet  = NewFrontierInstructionSet()
-	//homesteadInstructionSet = NewHomesteadInstructionSet()
 	byzantiumInstructionSet = NewByzantiumInstructionSet()
 )
 
