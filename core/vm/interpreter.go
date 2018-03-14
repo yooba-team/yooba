@@ -67,14 +67,7 @@ func NewInterpreter(evm *EVM, cfg Config) *Interpreter {
 	// the jump table was initialised. If it was not
 	// we'll set the default jump table.
 	if !cfg.JumpTable[STOP].valid {
-		switch {
-		case evm.ChainConfig().IsByzantium(evm.BlockNumber):
 			cfg.JumpTable = byzantiumInstructionSet
-		case evm.ChainConfig().IsHomestead(evm.BlockNumber):
-			cfg.JumpTable = homesteadInstructionSet
-		default:
-			cfg.JumpTable = frontierInstructionSet
-		}
 	}
 
 	return &Interpreter{
@@ -86,7 +79,6 @@ func NewInterpreter(evm *EVM, cfg Config) *Interpreter {
 }
 
 func (in *Interpreter) enforceRestrictions(op OpCode, operation operation, stack *Stack) error {
-	if in.evm.chainRules.IsByzantium {
 		if in.readOnly {
 			// If the interpreter is operating in readonly mode, make sure no
 			// state-modifying operation is performed. The 3rd stack item
@@ -97,7 +89,6 @@ func (in *Interpreter) enforceRestrictions(op OpCode, operation operation, stack
 				return errWriteProtection
 			}
 		}
-	}
 	return nil
 }
 
