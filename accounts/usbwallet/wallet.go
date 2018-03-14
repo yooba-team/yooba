@@ -25,11 +25,11 @@ import (
 	"sync"
 	"time"
 
-	ethereum "github.com/ethereum/go-ethereum"
-	"github.com/ethereum/go-ethereum/accounts"
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/core/types"
-	"github.com/ethereum/go-ethereum/log"
+	ethereum "github.com/yooba-team/yooba"
+	"github.com/yooba-team/yooba/accounts"
+	"github.com/yooba-team/yooba/common"
+	"github.com/yooba-team/yooba/core/types"
+	"github.com/yooba-team/yooba/log"
 	"github.com/karalabe/hid"
 )
 

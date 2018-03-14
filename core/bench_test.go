@@ -23,14 +23,14 @@ import (
 	"os"
 	"testing"
 
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/common/math"
-	"github.com/ethereum/go-ethereum/consensus/ethash"
-	"github.com/ethereum/go-ethereum/core/types"
-	"github.com/ethereum/go-ethereum/core/vm"
-	"github.com/ethereum/go-ethereum/crypto"
-	"github.com/ethereum/go-ethereum/ethdb"
-	"github.com/ethereum/go-ethereum/params"
+	"github.com/yooba-team/yooba/common"
+	"github.com/yooba-team/yooba/common/math"
+	"github.com/yooba-team/yooba/consensus/ethash"
+	"github.com/yooba-team/yooba/core/types"
+	"github.com/yooba-team/yooba/core/vm"
+	"github.com/yooba-team/yooba/crypto"
+	"github.com/yooba-team/yooba/ethdb"
+	"github.com/yooba-team/yooba/params"
 )
 
 func BenchmarkInsertChain_empty_memdb(b *testing.B) {

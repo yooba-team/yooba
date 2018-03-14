@@ -26,11 +26,11 @@ import (
 	"io"
 	"math/big"
 
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/core"
-	"github.com/ethereum/go-ethereum/crypto"
-	"github.com/ethereum/go-ethereum/crypto/secp256k1"
-	"github.com/ethereum/go-ethereum/rlp"
+	"github.com/yooba-team/yooba/common"
+	"github.com/yooba-team/yooba/core"
+	"github.com/yooba-team/yooba/crypto"
+	"github.com/yooba-team/yooba/crypto/secp256k1"
+	"github.com/yooba-team/yooba/rlp"
 )
 
 // Constants to match up protocol versions and messages

@@ -21,12 +21,12 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/core/state"
-	"github.com/ethereum/go-ethereum/core/types"
-	"github.com/ethereum/go-ethereum/crypto"
-	"github.com/ethereum/go-ethereum/ethdb"
-	"github.com/ethereum/go-ethereum/trie"
+	"github.com/yooba-team/yooba/common"
+	"github.com/yooba-team/yooba/core/state"
+	"github.com/yooba-team/yooba/core/types"
+	"github.com/yooba-team/yooba/crypto"
+	"github.com/yooba-team/yooba/ethdb"
+	"github.com/yooba-team/yooba/trie"
 )
 
 func NewState(ctx context.Context, head *types.Header, odr OdrBackend) *state.StateDB {

@@ -19,8 +19,8 @@ package vm
 import (
 	"math/big"
 
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/core/types"
+	"github.com/yooba-team/yooba/common"
+	"github.com/yooba-team/yooba/core/types"
 )
 
 // StateDB is an EVM database for full state querying.

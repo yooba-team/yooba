@@ -33,9 +33,9 @@ import (
 	"unsafe"
 
 	mmap "github.com/edsrzf/mmap-go"
-	"github.com/ethereum/go-ethereum/consensus"
-	"github.com/ethereum/go-ethereum/log"
-	"github.com/ethereum/go-ethereum/rpc"
+	"github.com/yooba-team/yooba/consensus"
+	"github.com/yooba-team/yooba/log"
+	"github.com/yooba-team/yooba/rpc"
 	"github.com/hashicorp/golang-lru/simplelru"
 	metrics "github.com/rcrowley/go-metrics"
 )

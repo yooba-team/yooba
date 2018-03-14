@@ -35,10 +35,10 @@ import (
 	"time"
 
 	"github.com/elastic/gosigar"
-	"github.com/ethereum/go-ethereum/log"
-	"github.com/ethereum/go-ethereum/p2p"
-	"github.com/ethereum/go-ethereum/params"
-	"github.com/ethereum/go-ethereum/rpc"
+	"github.com/yooba-team/yooba/log"
+	"github.com/yooba-team/yooba/p2p"
+	"github.com/yooba-team/yooba/params"
+	"github.com/yooba-team/yooba/rpc"
 	"github.com/rcrowley/go-metrics"
 	"golang.org/x/net/websocket"
 )

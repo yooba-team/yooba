@@ -20,16 +20,16 @@ package accounts
 import (
 	"math/big"
 
-	ethereum "github.com/ethereum/go-ethereum"
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/core/types"
-	"github.com/ethereum/go-ethereum/event"
+	yooba "github.com/yooba-team/yooba"
+	"github.com/yooba-team/yooba/common"
+	"github.com/yooba-team/yooba/core/types"
+	"github.com/yooba-team/yooba/event"
 )
 
-// Account represents an Ethereum account located at a specific location defined
+// Account represents an yooba account located at a specific location defined
 // by the optional URL field.
 type Account struct {
-	Address common.Address `json:"address"` // Ethereum account address derived from the key
+	Address common.Address `json:"address"` // yooba account address derived from the key
 	URL     URL            `json:"url"`     // Optional resource locator within a backend
 }
 
@@ -85,7 +85,7 @@ type Wallet interface {
 	//
 	// You can disable automatic account discovery by calling SelfDerive with a nil
 	// chain state reader.
-	SelfDerive(base DerivationPath, chain ethereum.ChainStateReader)
+	SelfDerive(base DerivationPath, chain yooba.ChainStateReader)
 
 	// SignHash requests the wallet to sign the given hash.
 	//

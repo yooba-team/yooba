@@ -27,10 +27,10 @@ import (
 	"time"
 	"unsafe"
 
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/common/hexutil"
-	"github.com/ethereum/go-ethereum/crypto/sha3"
-	"github.com/ethereum/go-ethereum/rlp"
+	"github.com/yooba-team/yooba/common"
+	"github.com/yooba-team/yooba/common/hexutil"
+	"github.com/yooba-team/yooba/crypto/sha3"
+	"github.com/yooba-team/yooba/rlp"
 )
 
 var (

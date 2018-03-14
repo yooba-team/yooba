@@ -23,9 +23,9 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/ethereum/go-ethereum/common/math"
-	"github.com/ethereum/go-ethereum/core/types"
-	"github.com/ethereum/go-ethereum/params"
+	"github.com/yooba-team/yooba/common/math"
+	"github.com/yooba-team/yooba/core/types"
+	"github.com/yooba-team/yooba/params"
 )
 
 type diffTest struct {

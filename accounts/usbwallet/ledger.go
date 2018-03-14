@@ -28,12 +28,12 @@ import (
 	"io"
 	"math/big"
 
-	"github.com/ethereum/go-ethereum/accounts"
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/common/hexutil"
-	"github.com/ethereum/go-ethereum/core/types"
-	"github.com/ethereum/go-ethereum/log"
-	"github.com/ethereum/go-ethereum/rlp"
+	"github.com/yooba-team/yooba/accounts"
+	"github.com/yooba-team/yooba/common"
+	"github.com/yooba-team/yooba/common/hexutil"
+	"github.com/yooba-team/yooba/core/types"
+	"github.com/yooba-team/yooba/log"
+	"github.com/yooba-team/yooba/rlp"
 )
 
 // ledgerOpcode is an enumeration encoding the supported Ledger opcodes.

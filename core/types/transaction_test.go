@@ -23,9 +23,9 @@ import (
 	"math/big"
 	"testing"
 
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/crypto"
-	"github.com/ethereum/go-ethereum/rlp"
+	"github.com/yooba-team/yooba/common"
+	"github.com/yooba-team/yooba/crypto"
+	"github.com/yooba-team/yooba/rlp"
 )
 
 // The values in those tests are from the Transaction Tests

@@ -27,13 +27,13 @@ import (
 	"sync"
 	"time"
 
-	"github.com/ethereum/go-ethereum/common/mclock"
-	"github.com/ethereum/go-ethereum/ethdb"
-	"github.com/ethereum/go-ethereum/log"
-	"github.com/ethereum/go-ethereum/p2p"
-	"github.com/ethereum/go-ethereum/p2p/discover"
-	"github.com/ethereum/go-ethereum/p2p/discv5"
-	"github.com/ethereum/go-ethereum/rlp"
+	"github.com/yooba-team/yooba/common/mclock"
+	"github.com/yooba-team/yooba/ethdb"
+	"github.com/yooba-team/yooba/log"
+	"github.com/yooba-team/yooba/p2p"
+	"github.com/yooba-team/yooba/p2p/discover"
+	"github.com/yooba-team/yooba/p2p/discv5"
+	"github.com/yooba-team/yooba/rlp"
 )
 
 const (

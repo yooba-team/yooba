@@ -19,10 +19,10 @@ package les
 import (
 	"context"
 
-	"github.com/ethereum/go-ethereum/core"
-	"github.com/ethereum/go-ethereum/ethdb"
-	"github.com/ethereum/go-ethereum/light"
-	"github.com/ethereum/go-ethereum/log"
+	"github.com/yooba-team/yooba/core"
+	"github.com/yooba-team/yooba/ethdb"
+	"github.com/yooba-team/yooba/light"
+	"github.com/yooba-team/yooba/log"
 )
 
 // LesOdr implements light.OdrBackend

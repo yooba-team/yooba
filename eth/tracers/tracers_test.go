@@ -25,15 +25,15 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/common/hexutil"
-	"github.com/ethereum/go-ethereum/common/math"
-	"github.com/ethereum/go-ethereum/core"
-	"github.com/ethereum/go-ethereum/core/types"
-	"github.com/ethereum/go-ethereum/core/vm"
-	"github.com/ethereum/go-ethereum/ethdb"
-	"github.com/ethereum/go-ethereum/rlp"
-	"github.com/ethereum/go-ethereum/tests"
+	"github.com/yooba-team/yooba/common"
+	"github.com/yooba-team/yooba/common/hexutil"
+	"github.com/yooba-team/yooba/common/math"
+	"github.com/yooba-team/yooba/core"
+	"github.com/yooba-team/yooba/core/types"
+	"github.com/yooba-team/yooba/core/vm"
+	"github.com/yooba-team/yooba/ethdb"
+	"github.com/yooba-team/yooba/rlp"
+	"github.com/yooba-team/yooba/tests"
 )
 
 // To generate a new callTracer test, copy paste the makeTest method below into

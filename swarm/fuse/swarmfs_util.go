@@ -24,7 +24,7 @@ import (
 	"os/exec"
 	"runtime"
 
-	"github.com/ethereum/go-ethereum/log"
+	"github.com/yooba-team/yooba/log"
 )
 
 func externalUnmount(mountPoint string) error {

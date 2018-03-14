@@ -22,10 +22,10 @@ import (
 	"context"
 	"math/big"
 
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/core"
-	"github.com/ethereum/go-ethereum/core/types"
-	"github.com/ethereum/go-ethereum/ethdb"
+	"github.com/yooba-team/yooba/common"
+	"github.com/yooba-team/yooba/core"
+	"github.com/yooba-team/yooba/core/types"
+	"github.com/yooba-team/yooba/ethdb"
 )
 
 // NoOdr is the default context passed to an ODR capable function when the ODR

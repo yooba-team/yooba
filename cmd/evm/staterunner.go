@@ -23,10 +23,10 @@ import (
 	"io/ioutil"
 	"os"
 
-	"github.com/ethereum/go-ethereum/core/state"
-	"github.com/ethereum/go-ethereum/core/vm"
-	"github.com/ethereum/go-ethereum/log"
-	"github.com/ethereum/go-ethereum/tests"
+	"github.com/yooba-team/yooba/core/state"
+	"github.com/yooba-team/yooba/core/vm"
+	"github.com/yooba-team/yooba/log"
+	"github.com/yooba-team/yooba/tests"
 
 	cli "gopkg.in/urfave/cli.v1"
 )

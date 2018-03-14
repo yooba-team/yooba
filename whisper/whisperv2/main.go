@@ -27,12 +27,12 @@ import (
 	"os"
 	"time"
 
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/crypto"
-	"github.com/ethereum/go-ethereum/logger"
-	"github.com/ethereum/go-ethereum/p2p"
-	"github.com/ethereum/go-ethereum/p2p/nat"
-	"github.com/ethereum/go-ethereum/whisper"
+	"github.com/yooba-team/yooba/common"
+	"github.com/yooba-team/yooba/crypto"
+	"github.com/yooba-team/yooba/logger"
+	"github.com/yooba-team/yooba/p2p"
+	"github.com/yooba-team/yooba/p2p/nat"
+	"github.com/yooba-team/yooba/whisper"
 )
 
 func main() {

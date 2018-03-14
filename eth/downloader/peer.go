@@ -29,9 +29,9 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/event"
-	"github.com/ethereum/go-ethereum/log"
+	"github.com/yooba-team/yooba/common"
+	"github.com/yooba-team/yooba/event"
+	"github.com/yooba-team/yooba/log"
 )
 
 const (

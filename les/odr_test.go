@@ -23,17 +23,17 @@ import (
 	"testing"
 	"time"
 
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/common/math"
-	"github.com/ethereum/go-ethereum/core"
-	"github.com/ethereum/go-ethereum/core/state"
-	"github.com/ethereum/go-ethereum/core/types"
-	"github.com/ethereum/go-ethereum/core/vm"
-	"github.com/ethereum/go-ethereum/eth"
-	"github.com/ethereum/go-ethereum/ethdb"
-	"github.com/ethereum/go-ethereum/light"
-	"github.com/ethereum/go-ethereum/params"
-	"github.com/ethereum/go-ethereum/rlp"
+	"github.com/yooba-team/yooba/common"
+	"github.com/yooba-team/yooba/common/math"
+	"github.com/yooba-team/yooba/core"
+	"github.com/yooba-team/yooba/core/state"
+	"github.com/yooba-team/yooba/core/types"
+	"github.com/yooba-team/yooba/core/vm"
+	"github.com/yooba-team/yooba/eth"
+	"github.com/yooba-team/yooba/ethdb"
+	"github.com/yooba-team/yooba/light"
+	"github.com/yooba-team/yooba/params"
+	"github.com/yooba-team/yooba/rlp"
 )
 
 type odrTestFn func(ctx context.Context, db ethdb.Database, config *params.ChainConfig, bc *core.BlockChain, lc *light.LightChain, bhash common.Hash) []byte

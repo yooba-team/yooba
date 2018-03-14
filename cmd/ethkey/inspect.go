@@ -21,9 +21,9 @@ import (
 	"fmt"
 	"io/ioutil"
 
-	"github.com/ethereum/go-ethereum/accounts/keystore"
-	"github.com/ethereum/go-ethereum/cmd/utils"
-	"github.com/ethereum/go-ethereum/crypto"
+	"github.com/yooba-team/yooba/accounts/keystore"
+	"github.com/yooba-team/yooba/cmd/utils"
+	"github.com/yooba-team/yooba/crypto"
 	"gopkg.in/urfave/cli.v1"
 )
 

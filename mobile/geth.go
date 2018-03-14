@@ -24,17 +24,17 @@ import (
 	"fmt"
 	"path/filepath"
 
-	"github.com/ethereum/go-ethereum/core"
-	"github.com/ethereum/go-ethereum/eth"
-	"github.com/ethereum/go-ethereum/eth/downloader"
-	"github.com/ethereum/go-ethereum/ethclient"
-	"github.com/ethereum/go-ethereum/ethstats"
-	"github.com/ethereum/go-ethereum/les"
-	"github.com/ethereum/go-ethereum/node"
-	"github.com/ethereum/go-ethereum/p2p"
-	"github.com/ethereum/go-ethereum/p2p/nat"
-	"github.com/ethereum/go-ethereum/params"
-	whisper "github.com/ethereum/go-ethereum/whisper/whisperv5"
+	"github.com/yooba-team/yooba/core"
+	"github.com/yooba-team/yooba/eth"
+	"github.com/yooba-team/yooba/eth/downloader"
+	"github.com/yooba-team/yooba/ethclient"
+	"github.com/yooba-team/yooba/ethstats"
+	"github.com/yooba-team/yooba/les"
+	"github.com/yooba-team/yooba/node"
+	"github.com/yooba-team/yooba/p2p"
+	"github.com/yooba-team/yooba/p2p/nat"
+	"github.com/yooba-team/yooba/params"
+	whisper "github.com/yooba-team/yooba/whisper/whisperv5"
 )
 
 // NodeConfig represents the collection of configuration values to fine tune the Geth

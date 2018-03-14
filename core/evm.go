@@ -19,10 +19,10 @@ package core
 import (
 	"math/big"
 
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/consensus"
-	"github.com/ethereum/go-ethereum/core/types"
-	"github.com/ethereum/go-ethereum/core/vm"
+	"github.com/yooba-team/yooba/common"
+	"github.com/yooba-team/yooba/consensus"
+	"github.com/yooba-team/yooba/core/types"
+	"github.com/yooba-team/yooba/core/vm"
 )
 
 // ChainContext supports retrieving headers and consensus parameters from the

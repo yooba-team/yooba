@@ -20,10 +20,10 @@ import (
 	"math/big"
 	"testing"
 
-	"github.com/ethereum/go-ethereum/consensus/ethash"
-	"github.com/ethereum/go-ethereum/core/vm"
-	"github.com/ethereum/go-ethereum/ethdb"
-	"github.com/ethereum/go-ethereum/params"
+	"github.com/yooba-team/yooba/consensus/ethash"
+	"github.com/yooba-team/yooba/core/vm"
+	"github.com/yooba-team/yooba/ethdb"
+	"github.com/yooba-team/yooba/params"
 )
 
 // Tests that DAO-fork enabled clients can properly filter out fork-commencing

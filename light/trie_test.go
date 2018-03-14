@@ -23,13 +23,13 @@ import (
 	"testing"
 
 	"github.com/davecgh/go-spew/spew"
-	"github.com/ethereum/go-ethereum/consensus/ethash"
-	"github.com/ethereum/go-ethereum/core"
-	"github.com/ethereum/go-ethereum/core/state"
-	"github.com/ethereum/go-ethereum/core/vm"
-	"github.com/ethereum/go-ethereum/ethdb"
-	"github.com/ethereum/go-ethereum/params"
-	"github.com/ethereum/go-ethereum/trie"
+	"github.com/yooba-team/yooba/consensus/ethash"
+	"github.com/yooba-team/yooba/core"
+	"github.com/yooba-team/yooba/core/state"
+	"github.com/yooba-team/yooba/core/vm"
+	"github.com/yooba-team/yooba/ethdb"
+	"github.com/yooba-team/yooba/params"
+	"github.com/yooba-team/yooba/trie"
 )
 
 func TestNodeIterator(t *testing.T) {

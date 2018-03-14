@@ -22,14 +22,14 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/contracts/ens"
-	"github.com/ethereum/go-ethereum/crypto"
-	"github.com/ethereum/go-ethereum/log"
-	"github.com/ethereum/go-ethereum/node"
-	"github.com/ethereum/go-ethereum/swarm/network"
-	"github.com/ethereum/go-ethereum/swarm/services/swap"
-	"github.com/ethereum/go-ethereum/swarm/storage"
+	"github.com/yooba-team/yooba/common"
+	"github.com/yooba-team/yooba/contracts/ens"
+	"github.com/yooba-team/yooba/crypto"
+	"github.com/yooba-team/yooba/log"
+	"github.com/yooba-team/yooba/node"
+	"github.com/yooba-team/yooba/swarm/network"
+	"github.com/yooba-team/yooba/swarm/services/swap"
+	"github.com/yooba-team/yooba/swarm/storage"
 )
 
 const (

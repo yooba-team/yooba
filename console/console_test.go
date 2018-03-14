@@ -26,12 +26,12 @@ import (
 	"testing"
 	"time"
 
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/consensus/ethash"
-	"github.com/ethereum/go-ethereum/core"
-	"github.com/ethereum/go-ethereum/eth"
-	"github.com/ethereum/go-ethereum/internal/jsre"
-	"github.com/ethereum/go-ethereum/node"
+	"github.com/yooba-team/yooba/common"
+	"github.com/yooba-team/yooba/consensus/ethash"
+	"github.com/yooba-team/yooba/core"
+	"github.com/yooba-team/yooba/eth"
+	"github.com/yooba-team/yooba/internal/jsre"
+	"github.com/yooba-team/yooba/node"
 )
 
 const (

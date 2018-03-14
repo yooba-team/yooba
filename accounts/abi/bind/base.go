@@ -22,12 +22,12 @@ import (
 	"fmt"
 	"math/big"
 
-	"github.com/ethereum/go-ethereum"
-	"github.com/ethereum/go-ethereum/accounts/abi"
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/core/types"
-	"github.com/ethereum/go-ethereum/crypto"
-	"github.com/ethereum/go-ethereum/event"
+	"github.com/yooba-team/yooba"
+	"github.com/yooba-team/yooba/accounts/abi"
+	"github.com/yooba-team/yooba/common"
+	"github.com/yooba-team/yooba/core/types"
+	"github.com/yooba-team/yooba/crypto"
+	"github.com/yooba-team/yooba/event"
 )
 
 // SignerFn is a signer function callback when a contract requires a method to

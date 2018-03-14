@@ -23,8 +23,8 @@ import (
 	"os"
 	"strings"
 
-	"github.com/ethereum/go-ethereum/common/math"
-	"github.com/ethereum/go-ethereum/core/vm"
+	"github.com/yooba-team/yooba/common/math"
+	"github.com/yooba-team/yooba/core/vm"
 )
 
 // Compiler contains information about the parsed source

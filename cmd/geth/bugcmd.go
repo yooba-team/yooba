@@ -26,10 +26,10 @@ import (
 	"runtime"
 	"strings"
 
-	"github.com/ethereum/go-ethereum/cmd/internal/browser"
-	"github.com/ethereum/go-ethereum/params"
+	"github.com/yooba-team/yooba/cmd/internal/browser"
+	"github.com/yooba-team/yooba/params"
 
-	"github.com/ethereum/go-ethereum/cmd/utils"
+	"github.com/yooba-team/yooba/cmd/utils"
 	cli "gopkg.in/urfave/cli.v1"
 )
 

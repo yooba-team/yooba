@@ -25,10 +25,10 @@ import (
 	"math/rand"
 	"time"
 
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/core"
-	"github.com/ethereum/go-ethereum/log"
-	"github.com/ethereum/go-ethereum/params"
+	"github.com/yooba-team/yooba/common"
+	"github.com/yooba-team/yooba/core"
+	"github.com/yooba-team/yooba/log"
+	"github.com/yooba-team/yooba/params"
 )
 
 // makeGenesis creates a new genesis struct based on some user input.

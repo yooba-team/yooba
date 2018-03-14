@@ -21,8 +21,8 @@ import (
 
 	"sync/atomic"
 
-	"github.com/ethereum/go-ethereum/consensus"
-	"github.com/ethereum/go-ethereum/log"
+	"github.com/yooba-team/yooba/consensus"
+	"github.com/yooba-team/yooba/log"
 )
 
 type CpuAgent struct {

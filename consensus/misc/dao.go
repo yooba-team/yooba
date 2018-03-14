@@ -21,9 +21,9 @@ import (
 	"errors"
 	"math/big"
 
-	"github.com/ethereum/go-ethereum/core/state"
-	"github.com/ethereum/go-ethereum/core/types"
-	"github.com/ethereum/go-ethereum/params"
+	"github.com/yooba-team/yooba/core/state"
+	"github.com/yooba-team/yooba/core/types"
+	"github.com/yooba-team/yooba/params"
 )
 
 var (

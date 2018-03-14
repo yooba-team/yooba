@@ -24,9 +24,9 @@ import (
 	"net"
 	"time"
 
-	"github.com/ethereum/go-ethereum/log"
-	"github.com/ethereum/go-ethereum/p2p/discover"
-	"github.com/ethereum/go-ethereum/p2p/netutil"
+	"github.com/yooba-team/yooba/log"
+	"github.com/yooba-team/yooba/p2p/discover"
+	"github.com/yooba-team/yooba/p2p/netutil"
 )
 
 const (

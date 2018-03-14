@@ -25,17 +25,17 @@ import (
 	"os"
 	"strings"
 
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/common/hexutil"
-	"github.com/ethereum/go-ethereum/core"
-	"github.com/ethereum/go-ethereum/core/state"
-	"github.com/ethereum/go-ethereum/core/types"
-	"github.com/ethereum/go-ethereum/log"
-	"github.com/ethereum/go-ethereum/miner"
-	"github.com/ethereum/go-ethereum/params"
-	"github.com/ethereum/go-ethereum/rlp"
-	"github.com/ethereum/go-ethereum/rpc"
-	"github.com/ethereum/go-ethereum/trie"
+	"github.com/yooba-team/yooba/common"
+	"github.com/yooba-team/yooba/common/hexutil"
+	"github.com/yooba-team/yooba/core"
+	"github.com/yooba-team/yooba/core/state"
+	"github.com/yooba-team/yooba/core/types"
+	"github.com/yooba-team/yooba/log"
+	"github.com/yooba-team/yooba/miner"
+	"github.com/yooba-team/yooba/params"
+	"github.com/yooba-team/yooba/rlp"
+	"github.com/yooba-team/yooba/rpc"
+	"github.com/yooba-team/yooba/trie"
 )
 
 // PublicEthereumAPI provides an API to access Ethereum full node-related

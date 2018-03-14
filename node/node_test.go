@@ -24,9 +24,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/ethereum/go-ethereum/crypto"
-	"github.com/ethereum/go-ethereum/p2p"
-	"github.com/ethereum/go-ethereum/rpc"
+	"github.com/yooba-team/yooba/crypto"
+	"github.com/yooba-team/yooba/p2p"
+	"github.com/yooba-team/yooba/rpc"
 )
 
 var (

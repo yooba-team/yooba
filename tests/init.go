@@ -20,7 +20,7 @@ import (
 	"fmt"
 	"math/big"
 
-	"github.com/ethereum/go-ethereum/params"
+	"github.com/yooba-team/yooba/params"
 )
 
 // This table defines supported forks and their chain config.

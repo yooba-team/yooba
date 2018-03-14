@@ -26,13 +26,13 @@ import (
 	"sync"
 	"time"
 
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/core/types"
-	"github.com/ethereum/go-ethereum/eth"
-	"github.com/ethereum/go-ethereum/les/flowcontrol"
-	"github.com/ethereum/go-ethereum/light"
-	"github.com/ethereum/go-ethereum/p2p"
-	"github.com/ethereum/go-ethereum/rlp"
+	"github.com/yooba-team/yooba/common"
+	"github.com/yooba-team/yooba/core/types"
+	"github.com/yooba-team/yooba/eth"
+	"github.com/yooba-team/yooba/les/flowcontrol"
+	"github.com/yooba-team/yooba/light"
+	"github.com/yooba-team/yooba/p2p"
+	"github.com/yooba-team/yooba/rlp"
 )
 
 var (

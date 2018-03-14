@@ -17,8 +17,8 @@
 package les
 
 import (
-	"github.com/ethereum/go-ethereum/metrics"
-	"github.com/ethereum/go-ethereum/p2p"
+	"github.com/yooba-team/yooba/metrics"
+	"github.com/yooba-team/yooba/p2p"
 )
 
 var (

@@ -22,11 +22,11 @@ import (
 	"testing"
 
 	"github.com/davecgh/go-spew/spew"
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/consensus/ethash"
-	"github.com/ethereum/go-ethereum/core/vm"
-	"github.com/ethereum/go-ethereum/ethdb"
-	"github.com/ethereum/go-ethereum/params"
+	"github.com/yooba-team/yooba/common"
+	"github.com/yooba-team/yooba/consensus/ethash"
+	"github.com/yooba-team/yooba/core/vm"
+	"github.com/yooba-team/yooba/ethdb"
+	"github.com/yooba-team/yooba/params"
 )
 
 func TestDefaultGenesisBlock(t *testing.T) {

@@ -22,12 +22,12 @@ import (
 	"sync"
 	"time"
 
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/core/state"
-	"github.com/ethereum/go-ethereum/crypto/sha3"
-	"github.com/ethereum/go-ethereum/ethdb"
-	"github.com/ethereum/go-ethereum/log"
-	"github.com/ethereum/go-ethereum/trie"
+	"github.com/yooba-team/yooba/common"
+	"github.com/yooba-team/yooba/core/state"
+	"github.com/yooba-team/yooba/crypto/sha3"
+	"github.com/yooba-team/yooba/ethdb"
+	"github.com/yooba-team/yooba/log"
+	"github.com/yooba-team/yooba/trie"
 )
 
 // stateReq represents a batch of state fetch requests groupped together into

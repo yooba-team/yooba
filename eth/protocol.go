@@ -21,11 +21,11 @@ import (
 	"io"
 	"math/big"
 
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/core"
-	"github.com/ethereum/go-ethereum/core/types"
-	"github.com/ethereum/go-ethereum/event"
-	"github.com/ethereum/go-ethereum/rlp"
+	"github.com/yooba-team/yooba/common"
+	"github.com/yooba-team/yooba/core"
+	"github.com/yooba-team/yooba/core/types"
+	"github.com/yooba-team/yooba/event"
+	"github.com/yooba-team/yooba/rlp"
 )
 
 // Constants to match up protocol versions and messages

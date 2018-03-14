@@ -17,10 +17,10 @@
 package clique
 
 import (
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/consensus"
-	"github.com/ethereum/go-ethereum/core/types"
-	"github.com/ethereum/go-ethereum/rpc"
+	"github.com/yooba-team/yooba/common"
+	"github.com/yooba-team/yooba/consensus"
+	"github.com/yooba-team/yooba/core/types"
+	"github.com/yooba-team/yooba/rpc"
 )
 
 // API is a user facing RPC API to allow controlling the signer and voting

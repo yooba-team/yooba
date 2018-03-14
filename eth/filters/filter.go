@@ -20,13 +20,13 @@ import (
 	"context"
 	"math/big"
 
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/core"
-	"github.com/ethereum/go-ethereum/core/bloombits"
-	"github.com/ethereum/go-ethereum/core/types"
-	"github.com/ethereum/go-ethereum/ethdb"
-	"github.com/ethereum/go-ethereum/event"
-	"github.com/ethereum/go-ethereum/rpc"
+	"github.com/yooba-team/yooba/common"
+	"github.com/yooba-team/yooba/core"
+	"github.com/yooba-team/yooba/core/bloombits"
+	"github.com/yooba-team/yooba/core/types"
+	"github.com/yooba-team/yooba/ethdb"
+	"github.com/yooba-team/yooba/event"
+	"github.com/yooba-team/yooba/rpc"
 )
 
 type Backend interface {

@@ -24,13 +24,13 @@ import (
 	"fmt"
 	"math/big"
 
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/core/types"
-	"github.com/ethereum/go-ethereum/ethdb"
-	"github.com/ethereum/go-ethereum/log"
-	"github.com/ethereum/go-ethereum/metrics"
-	"github.com/ethereum/go-ethereum/params"
-	"github.com/ethereum/go-ethereum/rlp"
+	"github.com/yooba-team/yooba/common"
+	"github.com/yooba-team/yooba/core/types"
+	"github.com/yooba-team/yooba/ethdb"
+	"github.com/yooba-team/yooba/log"
+	"github.com/yooba-team/yooba/metrics"
+	"github.com/yooba-team/yooba/params"
+	"github.com/yooba-team/yooba/rlp"
 )
 
 // DatabaseReader wraps the Get method of a backing data store.

@@ -23,12 +23,12 @@ import (
 	"net"
 	"sync"
 
-	"github.com/ethereum/go-ethereum/event"
-	"github.com/ethereum/go-ethereum/log"
-	"github.com/ethereum/go-ethereum/node"
-	"github.com/ethereum/go-ethereum/p2p"
-	"github.com/ethereum/go-ethereum/p2p/discover"
-	"github.com/ethereum/go-ethereum/rpc"
+	"github.com/yooba-team/yooba/event"
+	"github.com/yooba-team/yooba/log"
+	"github.com/yooba-team/yooba/node"
+	"github.com/yooba-team/yooba/p2p"
+	"github.com/yooba-team/yooba/p2p/discover"
+	"github.com/yooba-team/yooba/rpc"
 )
 
 // SimAdapter is a NodeAdapter which creates in-memory simulation nodes and

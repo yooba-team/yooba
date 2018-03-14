@@ -19,8 +19,8 @@ package runtime_test
 import (
 	"fmt"
 
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/core/vm/runtime"
+	"github.com/yooba-team/yooba/common"
+	"github.com/yooba-team/yooba/core/vm/runtime"
 )
 
 func ExampleExecute() {

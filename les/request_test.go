@@ -21,12 +21,12 @@ import (
 	"testing"
 	"time"
 
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/core"
-	"github.com/ethereum/go-ethereum/crypto"
-	"github.com/ethereum/go-ethereum/eth"
-	"github.com/ethereum/go-ethereum/ethdb"
-	"github.com/ethereum/go-ethereum/light"
+	"github.com/yooba-team/yooba/common"
+	"github.com/yooba-team/yooba/core"
+	"github.com/yooba-team/yooba/crypto"
+	"github.com/yooba-team/yooba/eth"
+	"github.com/yooba-team/yooba/ethdb"
+	"github.com/yooba-team/yooba/light"
 )
 
 var testBankSecureTrieKey = secAddr(testBankAddress)

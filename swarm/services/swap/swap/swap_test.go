@@ -21,7 +21,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/ethereum/go-ethereum/common"
+	"github.com/yooba-team/yooba/common"
 )
 
 type testInPayment struct {

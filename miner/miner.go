@@ -21,17 +21,17 @@ import (
 	"fmt"
 	"sync/atomic"
 
-	"github.com/ethereum/go-ethereum/accounts"
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/consensus"
-	"github.com/ethereum/go-ethereum/core"
-	"github.com/ethereum/go-ethereum/core/state"
-	"github.com/ethereum/go-ethereum/core/types"
-	"github.com/ethereum/go-ethereum/eth/downloader"
-	"github.com/ethereum/go-ethereum/ethdb"
-	"github.com/ethereum/go-ethereum/event"
-	"github.com/ethereum/go-ethereum/log"
-	"github.com/ethereum/go-ethereum/params"
+	"github.com/yooba-team/yooba/accounts"
+	"github.com/yooba-team/yooba/common"
+	"github.com/yooba-team/yooba/consensus"
+	"github.com/yooba-team/yooba/core"
+	"github.com/yooba-team/yooba/core/state"
+	"github.com/yooba-team/yooba/core/types"
+	"github.com/yooba-team/yooba/eth/downloader"
+	"github.com/yooba-team/yooba/ethdb"
+	"github.com/yooba-team/yooba/event"
+	"github.com/yooba-team/yooba/log"
+	"github.com/yooba-team/yooba/params"
 )
 
 // Backend wraps all methods required for mining.

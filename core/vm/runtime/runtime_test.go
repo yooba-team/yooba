@@ -21,11 +21,11 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/ethereum/go-ethereum/accounts/abi"
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/core/state"
-	"github.com/ethereum/go-ethereum/core/vm"
-	"github.com/ethereum/go-ethereum/ethdb"
+	"github.com/yooba-team/yooba/accounts/abi"
+	"github.com/yooba-team/yooba/common"
+	"github.com/yooba-team/yooba/core/state"
+	"github.com/yooba-team/yooba/core/vm"
+	"github.com/yooba-team/yooba/ethdb"
 )
 
 func TestDefaults(t *testing.T) {

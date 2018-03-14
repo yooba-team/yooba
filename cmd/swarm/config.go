@@ -27,13 +27,13 @@ import (
 
 	cli "gopkg.in/urfave/cli.v1"
 
-	"github.com/ethereum/go-ethereum/cmd/utils"
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/log"
-	"github.com/ethereum/go-ethereum/node"
+	"github.com/yooba-team/yooba/cmd/utils"
+	"github.com/yooba-team/yooba/common"
+	"github.com/yooba-team/yooba/log"
+	"github.com/yooba-team/yooba/node"
 	"github.com/naoina/toml"
 
-	bzzapi "github.com/ethereum/go-ethereum/swarm/api"
+	bzzapi "github.com/yooba-team/yooba/swarm/api"
 )
 
 var (

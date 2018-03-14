@@ -22,9 +22,9 @@ import (
 	"io/ioutil"
 	"strings"
 
-	"github.com/ethereum/go-ethereum/cmd/utils"
-	"github.com/ethereum/go-ethereum/console"
-	"github.com/ethereum/go-ethereum/crypto"
+	"github.com/yooba-team/yooba/cmd/utils"
+	"github.com/yooba-team/yooba/console"
+	"github.com/yooba-team/yooba/crypto"
 	"gopkg.in/urfave/cli.v1"
 )
 

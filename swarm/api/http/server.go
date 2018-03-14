@@ -35,10 +35,10 @@ import (
 	"strings"
 	"time"
 
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/log"
-	"github.com/ethereum/go-ethereum/swarm/api"
-	"github.com/ethereum/go-ethereum/swarm/storage"
+	"github.com/yooba-team/yooba/common"
+	"github.com/yooba-team/yooba/log"
+	"github.com/yooba-team/yooba/swarm/api"
+	"github.com/yooba-team/yooba/swarm/storage"
 	"github.com/rs/cors"
 )
 

@@ -27,16 +27,16 @@ import (
 
 	goruntime "runtime"
 
-	"github.com/ethereum/go-ethereum/cmd/evm/internal/compiler"
-	"github.com/ethereum/go-ethereum/cmd/utils"
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/core"
-	"github.com/ethereum/go-ethereum/core/state"
-	"github.com/ethereum/go-ethereum/core/vm"
-	"github.com/ethereum/go-ethereum/core/vm/runtime"
-	"github.com/ethereum/go-ethereum/ethdb"
-	"github.com/ethereum/go-ethereum/log"
-	"github.com/ethereum/go-ethereum/params"
+	"github.com/yooba-team/yooba/cmd/evm/internal/compiler"
+	"github.com/yooba-team/yooba/cmd/utils"
+	"github.com/yooba-team/yooba/common"
+	"github.com/yooba-team/yooba/core"
+	"github.com/yooba-team/yooba/core/state"
+	"github.com/yooba-team/yooba/core/vm"
+	"github.com/yooba-team/yooba/core/vm/runtime"
+	"github.com/yooba-team/yooba/ethdb"
+	"github.com/yooba-team/yooba/log"
+	"github.com/yooba-team/yooba/params"
 	cli "gopkg.in/urfave/cli.v1"
 )
 

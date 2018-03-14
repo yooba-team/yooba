@@ -21,10 +21,10 @@ import (
 	"math"
 	"time"
 
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/log"
-	"github.com/ethereum/go-ethereum/p2p"
-	"github.com/ethereum/go-ethereum/rlp"
+	"github.com/yooba-team/yooba/common"
+	"github.com/yooba-team/yooba/log"
+	"github.com/yooba-team/yooba/p2p"
+	"github.com/yooba-team/yooba/rlp"
 	set "gopkg.in/fatih/set.v0"
 )
 

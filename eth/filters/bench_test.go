@@ -23,14 +23,14 @@ import (
 	"testing"
 	"time"
 
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/common/bitutil"
-	"github.com/ethereum/go-ethereum/core"
-	"github.com/ethereum/go-ethereum/core/bloombits"
-	"github.com/ethereum/go-ethereum/core/types"
-	"github.com/ethereum/go-ethereum/ethdb"
-	"github.com/ethereum/go-ethereum/event"
-	"github.com/ethereum/go-ethereum/node"
+	"github.com/yooba-team/yooba/common"
+	"github.com/yooba-team/yooba/common/bitutil"
+	"github.com/yooba-team/yooba/core"
+	"github.com/yooba-team/yooba/core/bloombits"
+	"github.com/yooba-team/yooba/core/types"
+	"github.com/yooba-team/yooba/ethdb"
+	"github.com/yooba-team/yooba/event"
+	"github.com/yooba-team/yooba/node"
 )
 
 func BenchmarkBloomBits512(b *testing.B) {

@@ -28,10 +28,10 @@ import (
 	mrand "math/rand"
 	"strconv"
 
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/crypto"
-	"github.com/ethereum/go-ethereum/crypto/ecies"
-	"github.com/ethereum/go-ethereum/log"
+	"github.com/yooba-team/yooba/common"
+	"github.com/yooba-team/yooba/crypto"
+	"github.com/yooba-team/yooba/crypto/ecies"
+	"github.com/yooba-team/yooba/log"
 )
 
 // MessageParams specifies the exact way a message should be wrapped

@@ -21,9 +21,9 @@ import (
 	"math/big"
 	"testing"
 
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/crypto"
-	"github.com/ethereum/go-ethereum/ethdb"
+	"github.com/yooba-team/yooba/common"
+	"github.com/yooba-team/yooba/crypto"
+	"github.com/yooba-team/yooba/ethdb"
 	checker "gopkg.in/check.v1"
 )
 

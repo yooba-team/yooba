@@ -30,8 +30,8 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/crypto"
+	"github.com/yooba-team/yooba/common"
+	"github.com/yooba-team/yooba/crypto"
 )
 
 // Node represents a host on the network.

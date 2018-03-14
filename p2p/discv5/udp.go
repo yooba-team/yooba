@@ -24,12 +24,12 @@ import (
 	"net"
 	"time"
 
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/crypto"
-	"github.com/ethereum/go-ethereum/log"
-	"github.com/ethereum/go-ethereum/p2p/nat"
-	"github.com/ethereum/go-ethereum/p2p/netutil"
-	"github.com/ethereum/go-ethereum/rlp"
+	"github.com/yooba-team/yooba/common"
+	"github.com/yooba-team/yooba/crypto"
+	"github.com/yooba-team/yooba/log"
+	"github.com/yooba-team/yooba/p2p/nat"
+	"github.com/yooba-team/yooba/p2p/netutil"
+	"github.com/yooba-team/yooba/rlp"
 )
 
 const Version = 4

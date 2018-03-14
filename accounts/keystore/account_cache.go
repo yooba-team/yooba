@@ -27,9 +27,9 @@ import (
 	"sync"
 	"time"
 
-	"github.com/ethereum/go-ethereum/accounts"
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/log"
+	"github.com/yooba-team/yooba/accounts"
+	"github.com/yooba-team/yooba/common"
+	"github.com/yooba-team/yooba/log"
 	"gopkg.in/fatih/set.v0"
 )
 

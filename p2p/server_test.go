@@ -25,10 +25,10 @@ import (
 	"testing"
 	"time"
 
-	"github.com/ethereum/go-ethereum/crypto"
-	"github.com/ethereum/go-ethereum/crypto/sha3"
-	"github.com/ethereum/go-ethereum/log"
-	"github.com/ethereum/go-ethereum/p2p/discover"
+	"github.com/yooba-team/yooba/crypto"
+	"github.com/yooba-team/yooba/crypto/sha3"
+	"github.com/yooba-team/yooba/log"
+	"github.com/yooba-team/yooba/p2p/discover"
 )
 
 func init() {

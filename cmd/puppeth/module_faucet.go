@@ -26,8 +26,8 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/log"
+	"github.com/yooba-team/yooba/common"
+	"github.com/yooba-team/yooba/log"
 )
 
 // faucetDockerfile is the Dockerfile required to build an faucet container to

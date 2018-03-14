@@ -24,9 +24,9 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/ethereum/go-ethereum/cmd/utils"
-	"github.com/ethereum/go-ethereum/swarm/api"
-	swarm "github.com/ethereum/go-ethereum/swarm/api/client"
+	"github.com/yooba-team/yooba/cmd/utils"
+	"github.com/yooba-team/yooba/swarm/api"
+	swarm "github.com/yooba-team/yooba/swarm/api/client"
 	"gopkg.in/urfave/cli.v1"
 )
 

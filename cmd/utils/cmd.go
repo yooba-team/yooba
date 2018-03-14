@@ -26,12 +26,12 @@ import (
 	"runtime"
 	"strings"
 
-	"github.com/ethereum/go-ethereum/core"
-	"github.com/ethereum/go-ethereum/core/types"
-	"github.com/ethereum/go-ethereum/internal/debug"
-	"github.com/ethereum/go-ethereum/log"
-	"github.com/ethereum/go-ethereum/node"
-	"github.com/ethereum/go-ethereum/rlp"
+	"github.com/yooba-team/yooba/core"
+	"github.com/yooba-team/yooba/core/types"
+	"github.com/yooba-team/yooba/internal/debug"
+	"github.com/yooba-team/yooba/log"
+	"github.com/yooba-team/yooba/node"
+	"github.com/yooba-team/yooba/rlp"
 )
 
 const (

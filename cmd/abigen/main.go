@@ -24,8 +24,8 @@ import (
 	"os"
 	"strings"
 
-	"github.com/ethereum/go-ethereum/accounts/abi/bind"
-	"github.com/ethereum/go-ethereum/common/compiler"
+	"github.com/yooba-team/yooba/accounts/abi/bind"
+	"github.com/yooba-team/yooba/common/compiler"
 )
 
 var (

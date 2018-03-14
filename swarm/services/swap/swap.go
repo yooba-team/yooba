@@ -26,14 +26,14 @@ import (
 	"sync"
 	"time"
 
-	"github.com/ethereum/go-ethereum/accounts/abi/bind"
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/contracts/chequebook"
-	"github.com/ethereum/go-ethereum/contracts/chequebook/contract"
-	"github.com/ethereum/go-ethereum/core/types"
-	"github.com/ethereum/go-ethereum/crypto"
-	"github.com/ethereum/go-ethereum/log"
-	"github.com/ethereum/go-ethereum/swarm/services/swap/swap"
+	"github.com/yooba-team/yooba/accounts/abi/bind"
+	"github.com/yooba-team/yooba/common"
+	"github.com/yooba-team/yooba/contracts/chequebook"
+	"github.com/yooba-team/yooba/contracts/chequebook/contract"
+	"github.com/yooba-team/yooba/core/types"
+	"github.com/yooba-team/yooba/crypto"
+	"github.com/yooba-team/yooba/log"
+	"github.com/yooba-team/yooba/swarm/services/swap/swap"
 )
 
 // SwAP       Swarm Accounting Protocol with

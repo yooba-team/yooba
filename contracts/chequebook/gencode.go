@@ -25,11 +25,11 @@ import (
 	"io/ioutil"
 	"math/big"
 
-	"github.com/ethereum/go-ethereum/accounts/abi/bind"
-	"github.com/ethereum/go-ethereum/accounts/abi/bind/backends"
-	"github.com/ethereum/go-ethereum/contracts/chequebook/contract"
-	"github.com/ethereum/go-ethereum/core"
-	"github.com/ethereum/go-ethereum/crypto"
+	"github.com/yooba-team/yooba/accounts/abi/bind"
+	"github.com/yooba-team/yooba/accounts/abi/bind/backends"
+	"github.com/yooba-team/yooba/contracts/chequebook/contract"
+	"github.com/yooba-team/yooba/core"
+	"github.com/yooba-team/yooba/crypto"
 )
 
 var (

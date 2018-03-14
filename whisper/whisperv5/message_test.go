@@ -21,8 +21,8 @@ import (
 	mrand "math/rand"
 	"testing"
 
-	"github.com/ethereum/go-ethereum/crypto"
-	"github.com/ethereum/go-ethereum/rlp"
+	"github.com/yooba-team/yooba/crypto"
+	"github.com/yooba-team/yooba/rlp"
 )
 
 func generateMessageParams() (*MessageParams, error) {

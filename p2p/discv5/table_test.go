@@ -27,8 +27,8 @@ import (
 	"testing/quick"
 	"time"
 
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/crypto"
+	"github.com/yooba-team/yooba/common"
+	"github.com/yooba-team/yooba/crypto"
 )
 
 type nullTransport struct{}

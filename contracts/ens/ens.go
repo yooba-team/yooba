@@ -23,11 +23,11 @@ package ens
 import (
 	"strings"
 
-	"github.com/ethereum/go-ethereum/accounts/abi/bind"
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/contracts/ens/contract"
-	"github.com/ethereum/go-ethereum/core/types"
-	"github.com/ethereum/go-ethereum/crypto"
+	"github.com/yooba-team/yooba/accounts/abi/bind"
+	"github.com/yooba-team/yooba/common"
+	"github.com/yooba-team/yooba/contracts/ens/contract"
+	"github.com/yooba-team/yooba/core/types"
+	"github.com/yooba-team/yooba/crypto"
 )
 
 var (

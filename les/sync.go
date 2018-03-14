@@ -20,9 +20,9 @@ import (
 	"context"
 	"time"
 
-	"github.com/ethereum/go-ethereum/core"
-	"github.com/ethereum/go-ethereum/eth/downloader"
-	"github.com/ethereum/go-ethereum/light"
+	"github.com/yooba-team/yooba/core"
+	"github.com/yooba-team/yooba/eth/downloader"
+	"github.com/yooba-team/yooba/light"
 )
 
 const (

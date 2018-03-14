@@ -22,13 +22,13 @@ import (
 	"sync"
 	"time"
 
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/crypto"
-	"github.com/ethereum/go-ethereum/crypto/ecies"
-	"github.com/ethereum/go-ethereum/event/filter"
-	"github.com/ethereum/go-ethereum/log"
-	"github.com/ethereum/go-ethereum/p2p"
-	"github.com/ethereum/go-ethereum/rpc"
+	"github.com/yooba-team/yooba/common"
+	"github.com/yooba-team/yooba/crypto"
+	"github.com/yooba-team/yooba/crypto/ecies"
+	"github.com/yooba-team/yooba/event/filter"
+	"github.com/yooba-team/yooba/log"
+	"github.com/yooba-team/yooba/p2p"
+	"github.com/yooba-team/yooba/rpc"
 
 	"gopkg.in/fatih/set.v0"
 )

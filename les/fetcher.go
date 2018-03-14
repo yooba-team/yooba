@@ -22,13 +22,13 @@ import (
 	"sync"
 	"time"
 
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/common/mclock"
-	"github.com/ethereum/go-ethereum/consensus"
-	"github.com/ethereum/go-ethereum/core"
-	"github.com/ethereum/go-ethereum/core/types"
-	"github.com/ethereum/go-ethereum/light"
-	"github.com/ethereum/go-ethereum/log"
+	"github.com/yooba-team/yooba/common"
+	"github.com/yooba-team/yooba/common/mclock"
+	"github.com/yooba-team/yooba/consensus"
+	"github.com/yooba-team/yooba/core"
+	"github.com/yooba-team/yooba/core/types"
+	"github.com/yooba-team/yooba/light"
+	"github.com/yooba-team/yooba/log"
 )
 
 const (
