@@ -30,50 +30,29 @@ var Forks = map[string]*params.ChainConfig{
 	},
 	"Homestead": {
 		ChainId:        big.NewInt(1),
-		HomesteadBlock: big.NewInt(0),
 	},
 	"EIP150": {
 		ChainId:        big.NewInt(1),
-		HomesteadBlock: big.NewInt(0),
-		EIP150Block:    big.NewInt(0),
 	},
 	"EIP158": {
 		ChainId:        big.NewInt(1),
-		HomesteadBlock: big.NewInt(0),
-		EIP150Block:    big.NewInt(0),
-		EIP155Block:    big.NewInt(0),
-		EIP158Block:    big.NewInt(0),
 	},
 	"Byzantium": {
 		ChainId:        big.NewInt(1),
-		HomesteadBlock: big.NewInt(0),
-		EIP150Block:    big.NewInt(0),
-		EIP155Block:    big.NewInt(0),
-		EIP158Block:    big.NewInt(0),
-		DAOForkBlock:   big.NewInt(0),
 		ByzantiumBlock: big.NewInt(0),
 	},
 	"FrontierToHomesteadAt5": {
 		ChainId:        big.NewInt(1),
-		HomesteadBlock: big.NewInt(5),
 	},
 	"HomesteadToEIP150At5": {
 		ChainId:        big.NewInt(1),
-		HomesteadBlock: big.NewInt(0),
-		EIP150Block:    big.NewInt(5),
+
 	},
 	"HomesteadToDaoAt5": {
 		ChainId:        big.NewInt(1),
-		HomesteadBlock: big.NewInt(0),
-		DAOForkBlock:   big.NewInt(5),
-		DAOForkSupport: true,
 	},
 	"EIP158ToByzantiumAt5": {
 		ChainId:        big.NewInt(1),
-		HomesteadBlock: big.NewInt(0),
-		EIP150Block:    big.NewInt(0),
-		EIP155Block:    big.NewInt(0),
-		EIP158Block:    big.NewInt(0),
 		ByzantiumBlock: big.NewInt(5),
 	},
 }

@@ -19,7 +19,6 @@ package core
 import (
 	"github.com/yooba-team/yooba/common"
 	"github.com/yooba-team/yooba/consensus"
-	"github.com/yooba-team/yooba/consensus/misc"
 	"github.com/yooba-team/yooba/core/state"
 	"github.com/yooba-team/yooba/core/types"
 	"github.com/yooba-team/yooba/core/vm"
@@ -105,7 +104,7 @@ func ApplyTransaction(config *params.ChainConfig, bc *BlockChain, author *common
 	if config.IsByzantium(header.Number) {
 		statedb.Finalise(true)
 	} else {
-		root = statedb.IntermediateRoot(config.IsEIP158(header.Number)).Bytes()
+		root = statedb.IntermediateRoot(true).Bytes()
 	}
 	*usedGas += gas
 

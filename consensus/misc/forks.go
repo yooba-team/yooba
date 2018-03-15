@@ -17,9 +17,7 @@
 package misc
 
 import (
-	"fmt"
 
-	"github.com/yooba-team/yooba/common"
 	"github.com/yooba-team/yooba/core/types"
 	"github.com/yooba-team/yooba/params"
 )
@@ -31,12 +29,6 @@ func VerifyForkHashes(config *params.ChainConfig, header *types.Header, uncle bo
 	// We don't care about uncles
 	if uncle {
 		return nil
-	}
-	// If the homestead reprice hash is set, validate it
-	if config.EIP150Block != nil && config.EIP150Block.Cmp(header.Number) == 0 {
-		if config.EIP150Hash != (common.Hash{}) && config.EIP150Hash != header.Hash() {
-			return fmt.Errorf("homestead gas reprice fork: have 0x%x, want 0x%x", header.Hash(), config.EIP150Hash)
-		}
 	}
 	// All ok, return
 	return nil
