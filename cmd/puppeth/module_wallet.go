@@ -36,8 +36,8 @@ ADD genesis.json /genesis.json
 
 RUN \
   echo 'node server.js &'                     > wallet.sh && \
-	echo 'geth --cache 512 init /genesis.json' >> wallet.sh && \
-	echo $'geth --networkid {{.NetworkID}} --port {{.NodePort}} --bootnodes {{.Bootnodes}} --ethstats \'{{.Ethstats}}\' --cache=512 --rpc --rpcaddr=0.0.0.0 --rpccorsdomain "*"' >> wallet.sh
+	echo 'yooba --cache 512 init /genesis.json' >> wallet.sh && \
+	echo $'yooba --networkid {{.NetworkID}} --port {{.NodePort}} --bootnodes {{.Bootnodes}} --ethstats \'{{.Ethstats}}\' --cache=512 --rpc --rpcaddr=0.0.0.0 --rpccorsdomain "*"' >> wallet.sh
 
 RUN \
 	sed -i 's/PuppethNetworkID/{{.NetworkID}}/g' dist/js/etherwallet-master.js && \

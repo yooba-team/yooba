@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
 
-package geth
+package yooba
 
 import (
 	"io/ioutil"
@@ -40,14 +40,14 @@ import android.test.MoreAsserts;
 import java.math.BigInteger;
 import java.util.Arrays;
 
-import org.ethereum.geth.*;
+import org.ethereum.yooba. *;
 
 public class AndroidTest extends InstrumentationTestCase {
 	public AndroidTest() {}
 
 	public void testAccountManagement() {
 		// Create an encrypted keystore with light crypto parameters.
-		KeyStore ks = new KeyStore(getInstrumentation().getContext().getFilesDir() + "/keystore", Geth.LightScryptN, Geth.LightScryptP);
+		KeyStore ks = new KeyStore(getInstrumentation().getContext().getFilesDir() + "/keystore", yooba.LightScryptN, yooba.LightScryptP);
 
 		try {
 			// Create a new account with the specified encryption passphrase.
@@ -184,7 +184,7 @@ func TestAndroid(t *testing.T) {
 		t.Logf("initialization took %v", time.Since(start))
 	}
 	// Create and switch to a temporary workspace
-	workspace, err := ioutil.TempDir("", "geth-android-")
+	workspace, err := ioutil.TempDir("", "yooba-android-")
 	if err != nil {
 		t.Fatalf("failed to create temporary workspace: %v", err)
 	}
@@ -206,13 +206,13 @@ func TestAndroid(t *testing.T) {
 			t.Fatal(err)
 		}
 	}
-	// Generate the mobile bindings for Geth and add the tester class
+	// Generate the mobile bindings for yooba and add the tester class
 	gobind := exec.Command("gomobile", "bind", "-javapkg", "org.ethereum", "github.com/yooba-team/yooba/mobile")
 	if output, err := gobind.CombinedOutput(); err != nil {
 		t.Logf("%s", output)
 		t.Fatalf("failed to run gomobile bind: %v", err)
 	}
-	build.CopyFile(filepath.Join("libs", "geth.aar"), "geth.aar", os.ModePerm)
+	build.CopyFile(filepath.Join("libs", "yooba.aar"), "yooba.aar", os.ModePerm)
 
 	if err = ioutil.WriteFile(filepath.Join("src", "androidTest", "java", "org", "ethereum", "gethtest", "AndroidTest.java"), []byte(androidTestClass), os.ModePerm); err != nil {
 		t.Fatalf("failed to write Android test class: %v", err)
@@ -261,6 +261,6 @@ repositories {
 }
 dependencies {
     compile 'com.android.support:appcompat-v7:19.0.0'
-    compile(name: "geth", ext: "aar")
+    compile(name: "yooba", ext: "aar")
 }
 `
