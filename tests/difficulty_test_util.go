@@ -19,8 +19,6 @@ package tests
 import (
 	"fmt"
 	"math/big"
-
-	"github.com/yooba-team/yooba/common"
 	"github.com/yooba-team/yooba/common/math"
 	"github.com/yooba-team/yooba/consensus/ethash"
 	"github.com/yooba-team/yooba/core/types"

@@ -5,8 +5,6 @@ package tests
 import (
 	"encoding/json"
 	"math/big"
-
-	"github.com/yooba-team/yooba/common"
 	"github.com/yooba-team/yooba/common/math"
 )
 
