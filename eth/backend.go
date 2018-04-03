@@ -57,13 +57,13 @@ type LesServer interface {
 	SetBloomBitsIndexer(bbIndexer *core.ChainIndexer)
 }
 
-// Ethereum implements the Ethereum full node service.
-type Ethereum struct {
+// FullYooba implements the FullYooba full node service.
+type FullYooba struct {
 	config      *Config
 	chainConfig *params.ChainConfig
 
 	// Channel for shutting down the service
-	shutdownChan  chan bool    // Channel for shutting down the ethereum
+	shutdownChan  chan bool    // Channel for shutting down the FullYooba
 	stopDbUpgrade func() error // stop chain db sequential key upgrade
 
 	// Handlers
@@ -94,14 +94,14 @@ type Ethereum struct {
 	lock sync.RWMutex // Protects the variadic fields (e.g. gas price and etherbase)
 }
 
-func (s *Ethereum) AddLesServer(ls LesServer) {
+func (s *FullYooba) AddLesServer(ls LesServer) {
 	s.lesServer = ls
 	ls.SetBloomBitsIndexer(s.bloomIndexer)
 }
 
-// New creates a new Ethereum object (including the
-// initialisation of the common Ethereum object)
-func New(ctx *node.ServiceContext, config *Config) (*Ethereum, error) {
+// New creates a new FullYooba object (including the
+// initialisation of the common FullYooba object)
+func New(ctx *node.ServiceContext, config *Config) (*FullYooba, error) {
 	if config.SyncMode == downloader.LightSync {
 		return nil, errors.New("can't run eth.Ethereum in light sync mode, use les.LightEthereum")
 	}
@@ -119,7 +119,7 @@ func New(ctx *node.ServiceContext, config *Config) (*Ethereum, error) {
 	}
 	log.Info("Initialised chain configuration", "config", chainConfig)
 
-	eth := &Ethereum{
+	eth := &FullYooba{
 		config:         config,
 		chainDb:        chainDb,
 		chainConfig:    chainConfig,
@@ -243,7 +243,7 @@ func CreateConsensusEngine(ctx *node.ServiceContext, config *ethash.Config, chai
 
 // APIs returns the collection of RPC services the ethereum package offers.
 // NOTE, some of these services probably need to be moved to somewhere else.
-func (s *Ethereum) APIs() []rpc.API {
+func (s *FullYooba) APIs() []rpc.API {
 	apis := ethapi.GetAPIs(s.ApiBackend)
 
 	// Append any APIs exposed explicitly by the consensus engine
@@ -298,11 +298,11 @@ func (s *Ethereum) APIs() []rpc.API {
 	}...)
 }
 
-func (s *Ethereum) ResetWithGenesisBlock(gb *types.Block) {
+func (s *FullYooba) ResetWithGenesisBlock(gb *types.Block) {
 	s.blockchain.ResetWithGenesisBlock(gb)
 }
 
-func (s *Ethereum) Etherbase() (eb common.Address, err error) {
+func (s *FullYooba) Etherbase() (eb common.Address, err error) {
 	s.lock.RLock()
 	etherbase := s.etherbase
 	s.lock.RUnlock()
@@ -326,7 +326,7 @@ func (s *Ethereum) Etherbase() (eb common.Address, err error) {
 }
 
 // set in js console via admin interface or wrapper from cli flags
-func (self *Ethereum) SetEtherbase(etherbase common.Address) {
+func (self *FullYooba) SetEtherbase(etherbase common.Address) {
 	self.lock.Lock()
 	self.etherbase = etherbase
 	self.lock.Unlock()
@@ -334,7 +334,7 @@ func (self *Ethereum) SetEtherbase(etherbase common.Address) {
 	self.miner.SetEtherbase(etherbase)
 }
 
-func (s *Ethereum) StartMining(local bool) error {
+func (s *FullYooba) StartMining(local bool) error {
 	eb, err := s.Etherbase()
 	if err != nil {
 		log.Error("Cannot start mining without etherbase", "err", err)
@@ -359,24 +359,24 @@ func (s *Ethereum) StartMining(local bool) error {
 	return nil
 }
 
-func (s *Ethereum) StopMining()         { s.miner.Stop() }
-func (s *Ethereum) IsMining() bool      { return s.miner.Mining() }
-func (s *Ethereum) Miner() *miner.Miner { return s.miner }
+func (s *FullYooba) StopMining()         { s.miner.Stop() }
+func (s *FullYooba) IsMining() bool      { return s.miner.Mining() }
+func (s *FullYooba) Miner() *miner.Miner { return s.miner }
 
-func (s *Ethereum) AccountManager() *accounts.Manager  { return s.accountManager }
-func (s *Ethereum) BlockChain() *core.BlockChain       { return s.blockchain }
-func (s *Ethereum) TxPool() *core.TxPool               { return s.txPool }
-func (s *Ethereum) EventMux() *event.TypeMux           { return s.eventMux }
-func (s *Ethereum) Engine() consensus.Engine           { return s.engine }
-func (s *Ethereum) ChainDb() ethdb.Database            { return s.chainDb }
-func (s *Ethereum) IsListening() bool                  { return true } // Always listening
-func (s *Ethereum) EthVersion() int                    { return int(s.protocolManager.SubProtocols[0].Version) }
-func (s *Ethereum) NetVersion() uint64                 { return s.networkId }
-func (s *Ethereum) Downloader() *downloader.Downloader { return s.protocolManager.downloader }
+func (s *FullYooba) AccountManager() *accounts.Manager  { return s.accountManager }
+func (s *FullYooba) BlockChain() *core.BlockChain       { return s.blockchain }
+func (s *FullYooba) TxPool() *core.TxPool               { return s.txPool }
+func (s *FullYooba) EventMux() *event.TypeMux           { return s.eventMux }
+func (s *FullYooba) Engine() consensus.Engine           { return s.engine }
+func (s *FullYooba) ChainDb() ethdb.Database            { return s.chainDb }
+func (s *FullYooba) IsListening() bool                  { return true } // Always listening
+func (s *FullYooba) EthVersion() int                    { return int(s.protocolManager.SubProtocols[0].Version) }
+func (s *FullYooba) NetVersion() uint64                 { return s.networkId }
+func (s *FullYooba) Downloader() *downloader.Downloader { return s.protocolManager.downloader }
 
 // Protocols implements node.Service, returning all the currently configured
 // network protocols to start.
-func (s *Ethereum) Protocols() []p2p.Protocol {
+func (s *FullYooba) Protocols() []p2p.Protocol {
 	if s.lesServer == nil {
 		return s.protocolManager.SubProtocols
 	}
@@ -385,7 +385,7 @@ func (s *Ethereum) Protocols() []p2p.Protocol {
 
 // Start implements node.Service, starting all internal goroutines needed by the
 // Ethereum protocol implementation.
-func (s *Ethereum) Start(srvr *p2p.Server) error {
+func (s *FullYooba) Start(srvr *p2p.Server) error {
 	// Start the bloom bits servicing goroutines
 	s.startBloomHandlers()
 
@@ -410,7 +410,7 @@ func (s *Ethereum) Start(srvr *p2p.Server) error {
 
 // Stop implements node.Service, terminating all internal goroutines used by the
 // Ethereum protocol.
-func (s *Ethereum) Stop() error {
+func (s *FullYooba) Stop() error {
 	if s.stopDbUpgrade != nil {
 		s.stopDbUpgrade()
 	}

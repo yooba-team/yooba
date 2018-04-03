@@ -243,7 +243,7 @@ func newFaucet(genesis *core.Genesis, port int, enodes []*discv5.Node, network u
 	// Assemble the ethstats monitoring and reporting service'
 	if stats != "" {
 		if err := stack.Register(func(ctx *node.ServiceContext) (node.Service, error) {
-			var serv *les.LightEthereum
+			var serv *les.LightYooba
 			ctx.Service(&serv)
 			return ethstats.New(stats, nil, serv)
 		}); err != nil {

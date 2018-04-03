@@ -285,7 +285,7 @@ func startNode(ctx *cli.Context, stack *node.Node) {
 		if ctx.GlobalBool(utils.LightModeFlag.Name) || ctx.GlobalString(utils.SyncModeFlag.Name) == "light" {
 			utils.Fatalf("Light clients do not support mining")
 		}
-		var ethereum *eth.Ethereum
+		var ethereum *eth.FullYooba
 		if err := stack.Service(&ethereum); err != nil {
 			utils.Fatalf("Ethereum service not running: %v", err)
 		}
