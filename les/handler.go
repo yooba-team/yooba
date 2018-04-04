@@ -21,7 +21,6 @@ import (
 	"encoding/binary"
 	"errors"
 	"fmt"
-	"math/big"
 	"net"
 	"sync"
 	"time"
@@ -76,7 +75,6 @@ type BlockChain interface {
 	GetHeader(hash common.Hash, number uint64) *types.Header
 	GetHeaderByHash(hash common.Hash) *types.Header
 	CurrentHeader() *types.Header
-	GetTd(hash common.Hash, number uint64) *big.Int
 	State() (*state.StateDB, error)
 	InsertHeaderChain(chain []*types.Header, checkFreq int) (int, error)
 	Rollback(chain []common.Hash)
@@ -272,9 +270,8 @@ func (pm *ProtocolManager) handle(p *peer) error {
 		head    = pm.blockchain.CurrentHeader()
 		hash    = head.Hash()
 		number  = head.Number.Uint64()
-		td      = pm.blockchain.GetTd(hash, number)
 	)
-	if err := p.Handshake(td, hash, number, genesis.Hash(), pm.server); err != nil {
+	if err := p.Handshake( hash, number, genesis.Hash(), pm.server); err != nil {
 		p.Log().Debug("Light Ethereum handshake failed", "err", err)
 		return err
 	}
@@ -393,7 +390,7 @@ func (pm *ProtocolManager) handleMsg(p *peer) error {
 			p.Log().Trace("Valid announcement signature")
 		}
 
-		p.Log().Trace("Announce message content", "number", req.Number, "hash", req.Hash, "td", req.Td, "reorg", req.ReorgDepth)
+		p.Log().Trace("Announce message content", "number", req.Number, "hash", req.Hash, "td", "reorg", req.ReorgDepth)
 		if pm.fetcher != nil {
 			pm.fetcher.announce(p, &req)
 		}
@@ -1154,7 +1151,6 @@ func (pm *ProtocolManager) txStatus(hashes []common.Hash) []txStatus {
 // known about the host peer.
 type NodeInfo struct {
 	Network    uint64              `json:"network"`    // Ethereum network ID (1=Frontier, 2=Morden, Ropsten=3, Rinkeby=4)
-	Difficulty *big.Int            `json:"difficulty"` // Total difficulty of the host's blockchain
 	Genesis    common.Hash         `json:"genesis"`    // SHA3 hash of the host's genesis block
 	Config     *params.ChainConfig `json:"config"`     // Chain configuration for the fork rules
 	Head       common.Hash         `json:"head"`       // SHA3 hash of the host's best owned block
@@ -1167,7 +1163,6 @@ func (self *ProtocolManager) NodeInfo() *NodeInfo {
 
 	return &NodeInfo{
 		Network:    self.networkId,
-		Difficulty: self.blockchain.GetTd(hash, head.Number.Uint64()),
 		Genesis:    self.blockchain.Genesis().Hash(),
 		Config:     self.blockchain.Config(),
 		Head:       hash,
@@ -1182,7 +1177,7 @@ type peerConnection struct {
 	peer    *peer
 }
 
-func (pc *peerConnection) Head() (common.Hash, *big.Int) {
+func (pc *peerConnection) Head() (common.Hash) {
 	return pc.peer.HeadAndTd()
 }
 

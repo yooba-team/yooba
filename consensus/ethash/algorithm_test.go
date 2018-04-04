@@ -686,7 +686,6 @@ func TestConcurrentDiskCacheGeneration(t *testing.T) {
 		Root:        common.HexToHash("0x77d14e10470b5850332524f8cd6f69ad21f070ce92dca33ab2858300242ef2f1"),
 		TxHash:      common.HexToHash("0x56e81f171bcc55a6ff8345e692c0f86e5b48e01b996cadc001622fb5e363b421"),
 		ReceiptHash: common.HexToHash("0x56e81f171bcc55a6ff8345e692c0f86e5b48e01b996cadc001622fb5e363b421"),
-		Difficulty:  big.NewInt(167925187834220),
 		GasLimit:    4015682,
 		GasUsed:     0,
 		Time:        big.NewInt(1488928920),

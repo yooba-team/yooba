@@ -29,7 +29,7 @@ import (
 
 // Tests that ethash works correctly in test mode.
 func TestTestMode(t *testing.T) {
-	head := &types.Header{Number: big.NewInt(1), Difficulty: big.NewInt(100)}
+	head := &types.Header{Number: big.NewInt(1)}
 
 	ethash := NewTester()
 	block, err := ethash.Seal(nil, types.NewBlockWithHeader(head), nil)
@@ -73,7 +73,7 @@ func verifyTest(wg *sync.WaitGroup, e *Ethash, workerIndex, epochs int) {
 		if block < 0 {
 			block = 0
 		}
-		head := &types.Header{Number: big.NewInt(block), Difficulty: big.NewInt(100)}
+		head := &types.Header{Number: big.NewInt(block)}
 		e.VerifySeal(nil, head)
 	}
 }

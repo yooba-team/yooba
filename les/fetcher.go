@@ -253,9 +253,9 @@ func (f *lightFetcher) announce(p *peer, head *announceData) {
 		return
 	}
 
-	if fp.lastAnnounced != nil && head.Td.Cmp(fp.lastAnnounced.td) <= 0 {
+	if fp.lastAnnounced != nil {
 		// announced tds should be strictly monotonic
-		p.Log().Debug("Received non-monotonic td", "current", head.Td, "previous", fp.lastAnnounced.td)
+		p.Log().Debug("Received non-monotonic td", "current",  "previous", fp.lastAnnounced.td)
 		go f.pm.removePeer(p.id)
 		return
 	}
@@ -309,7 +309,6 @@ func (f *lightFetcher) announce(p *peer, head *announceData) {
 				fp.nodeCnt++
 			}
 			n.hash = head.Hash
-			n.td = head.Td
 			fp.nodeByHash[n.hash] = n
 		}
 	}
@@ -318,7 +317,7 @@ func (f *lightFetcher) announce(p *peer, head *announceData) {
 		if fp.root != nil {
 			fp.deleteNode(fp.root)
 		}
-		n = &fetcherTreeNode{hash: head.Hash, number: head.Number, td: head.Td}
+		n = &fetcherTreeNode{hash: head.Hash, number: head.Number}
 		fp.root = n
 		fp.nodeCnt++
 		fp.nodeByHash[n.hash] = n
@@ -511,25 +510,17 @@ func (f *lightFetcher) processResponse(req fetchRequest, resp fetchResponse) boo
 		log.Debug("Failed to insert header chain", "err", err)
 		return false
 	}
-	tds := make([]*big.Int, len(headers))
-	for i, header := range headers {
-		td := f.chain.GetTd(header.Hash(), header.Number.Uint64())
-		if td == nil {
-			log.Debug("Total difficulty not found for header", "index", i+1, "number", header.Number, "hash", header.Hash())
-			return false
-		}
-		tds[i] = td
-	}
-	f.newHeaders(headers, tds)
+
+	f.newHeaders(headers)
 	return true
 }
 
 // newHeaders updates the block trees of all active peers according to a newly
 // downloaded and validated batch or headers
-func (f *lightFetcher) newHeaders(headers []*types.Header, tds []*big.Int) {
+func (f *lightFetcher) newHeaders(headers []*types.Header) {
 	var maxTd *big.Int
 	for p, fp := range f.peers {
-		if !f.checkAnnouncedHeaders(fp, headers, tds) {
+		if !f.checkAnnouncedHeaders(fp, headers) {
 			p.Log().Debug("Inconsistent announcement")
 			go f.pm.removePeer(p.id)
 		}
@@ -548,7 +539,7 @@ func (f *lightFetcher) newHeaders(headers []*types.Header, tds []*big.Int) {
 // sets it and its parents to known (even those which are older than the currently
 // validated ones). Return value shows if all hashes, numbers and Tds matched
 // correctly to the announced values (otherwise the peer should be dropped).
-func (f *lightFetcher) checkAnnouncedHeaders(fp *fetcherPeerInfo, headers []*types.Header, tds []*big.Int) bool {
+func (f *lightFetcher) checkAnnouncedHeaders(fp *fetcherPeerInfo, headers []*types.Header) bool {
 	var (
 		n      *fetcherTreeNode
 		header *types.Header
@@ -563,7 +554,6 @@ func (f *lightFetcher) checkAnnouncedHeaders(fp *fetcherPeerInfo, headers []*typ
 			}
 			// we ran out of recently delivered headers but have not reached a node known by this peer yet, continue matching
 			hash, number := header.ParentHash, header.Number.Uint64()-1
-			td = f.chain.GetTd(hash, number)
 			header = f.chain.GetHeader(hash, number)
 			if header == nil || td == nil {
 				log.Error("Missing parent of validated header", "hash", hash, "number", number)
@@ -571,7 +561,6 @@ func (f *lightFetcher) checkAnnouncedHeaders(fp *fetcherPeerInfo, headers []*typ
 			}
 		} else {
 			header = headers[i]
-			td = tds[i]
 		}
 		hash := header.Hash()
 		number := header.Number.Uint64()
@@ -625,11 +614,8 @@ func (f *lightFetcher) checkSyncedHeaders(p *peer) {
 		return
 	}
 	n := fp.lastAnnounced
-	var td *big.Int
 	for n != nil {
-		if td = f.chain.GetTd(n.hash, n.number); td != nil {
-			break
-		}
+
 		n = n.parent
 	}
 	// now n is the latest downloaded header after syncing
@@ -638,7 +624,7 @@ func (f *lightFetcher) checkSyncedHeaders(p *peer) {
 		go f.pm.removePeer(p.id)
 	} else {
 		header := f.chain.GetHeader(n.hash, n.number)
-		f.newHeaders([]*types.Header{header}, []*big.Int{td})
+		f.newHeaders([]*types.Header{header})
 	}
 }
 
@@ -648,10 +634,7 @@ func (f *lightFetcher) checkKnownNode(p *peer, n *fetcherTreeNode) bool {
 	if n.known {
 		return true
 	}
-	td := f.chain.GetTd(n.hash, n.number)
-	if td == nil {
-		return false
-	}
+
 	header := f.chain.GetHeader(n.hash, n.number)
 	// check the availability of both header and td because reads are not protected by chain db mutex
 	// Note: returning false is always safe here
@@ -664,7 +647,7 @@ func (f *lightFetcher) checkKnownNode(p *peer, n *fetcherTreeNode) bool {
 		p.Log().Debug("Unknown peer to check known nodes")
 		return false
 	}
-	if !f.checkAnnouncedHeaders(fp, []*types.Header{header}, []*big.Int{td}) {
+	if !f.checkAnnouncedHeaders(fp, []*types.Header{header}) {
 		p.Log().Debug("Inconsistent announcement")
 		go f.pm.removePeer(p.id)
 	}

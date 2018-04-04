@@ -87,9 +87,6 @@ func (b *LesApiBackend) GetReceipts(ctx context.Context, blockHash common.Hash) 
 	return light.GetBlockReceipts(ctx, b.eth.odr, blockHash, core.GetBlockNumber(b.eth.chainDb, blockHash))
 }
 
-func (b *LesApiBackend) GetTd(blockHash common.Hash) *big.Int {
-	return b.eth.blockchain.GetTdByHash(blockHash)
-}
 
 func (b *LesApiBackend) GetEVM(ctx context.Context, msg core.Message, state *state.StateDB, header *types.Header, vmCfg vm.Config) (*vm.EVM, func() error, error) {
 	state.SetBalance(msg.From(), math.MaxBig256)

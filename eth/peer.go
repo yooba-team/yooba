@@ -19,7 +19,6 @@ package eth
 import (
 	"errors"
 	"fmt"
-	"math/big"
 	"sync"
 	"time"
 
@@ -46,7 +45,6 @@ const (
 // about a connected peer.
 type PeerInfo struct {
 	Version    int      `json:"version"`    // Ethereum protocol version negotiated
-	Difficulty *big.Int `json:"difficulty"` // Total difficulty of the peer's blockchain
 	Head       string   `json:"head"`       // SHA3 hash of the peer's best owned block
 }
 
@@ -60,7 +58,6 @@ type peer struct {
 	forkDrop *time.Timer // Timed connection dropper if forks aren't validated in time
 
 	head common.Hash
-	td   *big.Int
 	lock sync.RWMutex
 
 	knownTxs    *set.Set // Set of transaction hashes known to be known by this peer
@@ -82,32 +79,29 @@ func newPeer(version int, p *p2p.Peer, rw p2p.MsgReadWriter) *peer {
 
 // Info gathers and returns a collection of metadata known about a peer.
 func (p *peer) Info() *PeerInfo {
-	hash, td := p.Head()
+	hash := p.Head()
 
 	return &PeerInfo{
 		Version:    p.version,
-		Difficulty: td,
 		Head:       hash.Hex(),
 	}
 }
 
-// Head retrieves a copy of the current head hash and total difficulty of the
-// peer.
-func (p *peer) Head() (hash common.Hash, td *big.Int) {
+// Head retrieves a copy of the current head hash
+func (p *peer) Head() (hash common.Hash) {
 	p.lock.RLock()
 	defer p.lock.RUnlock()
 
 	copy(hash[:], p.head[:])
-	return hash, new(big.Int).Set(p.td)
+	return hash
 }
 
-// SetHead updates the head hash and total difficulty of the peer.
-func (p *peer) SetHead(hash common.Hash, td *big.Int) {
+// SetHead updates the head hash
+func (p *peer) SetHead(hash common.Hash) {
 	p.lock.Lock()
 	defer p.lock.Unlock()
 
 	copy(p.head[:], hash[:])
-	p.td.Set(td)
 }
 
 // MarkBlock marks a block as known for the peer, ensuring that the block will
@@ -154,9 +148,9 @@ func (p *peer) SendNewBlockHashes(hashes []common.Hash, numbers []uint64) error 
 }
 
 // SendNewBlock propagates an entire block to a remote peer.
-func (p *peer) SendNewBlock(block *types.Block, td *big.Int) error {
+func (p *peer) SendNewBlock(block *types.Block) error {
 	p.knownBlocks.Add(block.Hash())
-	return p2p.Send(p.rw, NewBlockMsg, []interface{}{block, td})
+	return p2p.Send(p.rw, NewBlockMsg, []interface{}{block})
 }
 
 // SendBlockHeaders sends a batch of block headers to the remote peer.
@@ -230,7 +224,7 @@ func (p *peer) RequestReceipts(hashes []common.Hash) error {
 
 // Handshake executes the eth protocol handshake, negotiating version number,
 // network IDs, difficulties, head and genesis blocks.
-func (p *peer) Handshake(network uint64, td *big.Int, head common.Hash, genesis common.Hash) error {
+func (p *peer) Handshake(network uint64, head common.Hash, genesis common.Hash) error {
 	// Send out own handshake in a new thread
 	errc := make(chan error, 2)
 	var status statusData // safe to read after two values have been received from errc
@@ -239,7 +233,6 @@ func (p *peer) Handshake(network uint64, td *big.Int, head common.Hash, genesis 
 		errc <- p2p.Send(p.rw, StatusMsg, &statusData{
 			ProtocolVersion: uint32(p.version),
 			NetworkId:       network,
-			TD:              td,
 			CurrentBlock:    head,
 			GenesisBlock:    genesis,
 		})
@@ -259,7 +252,7 @@ func (p *peer) Handshake(network uint64, td *big.Int, head common.Hash, genesis 
 			return p2p.DiscReadTimeout
 		}
 	}
-	p.td, p.head = status.TD, status.CurrentBlock
+	 p.head = status.CurrentBlock
 	return nil
 }
 
@@ -387,19 +380,16 @@ func (ps *peerSet) PeersWithoutTx(hash common.Hash) []*peer {
 	return list
 }
 
-// BestPeer retrieves the known peer with the currently highest total difficulty.
 func (ps *peerSet) BestPeer() *peer {
 	ps.lock.RLock()
 	defer ps.lock.RUnlock()
 
 	var (
 		bestPeer *peer
-		bestTd   *big.Int
 	)
 	for _, p := range ps.peers {
-		if _, td := p.Head(); bestPeer == nil || td.Cmp(bestTd) > 0 {
-			bestPeer, bestTd = p, td
-		}
+		//TODO choose a best peer.
+		bestPeer = p
 	}
 	return bestPeer
 }

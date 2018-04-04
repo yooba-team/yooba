@@ -19,7 +19,6 @@ package light
 import (
 	"encoding/binary"
 	"errors"
-	"math/big"
 	"time"
 
 	"github.com/yooba-team/yooba/common"
@@ -90,7 +89,6 @@ var (
 // ChtNode structures are stored in the Canonical Hash Trie in an RLP encoded format
 type ChtNode struct {
 	Hash common.Hash
-	Td   *big.Int
 }
 
 // GetChtRoot reads the CHT root assoctiated to the given section from the database
@@ -161,13 +159,10 @@ func (c *ChtIndexerBackend) Process(header *types.Header) {
 	hash, num := header.Hash(), header.Number.Uint64()
 	c.lastHash = hash
 
-	td := core.GetTd(c.diskdb, hash, num)
-	if td == nil {
-		panic(nil)
-	}
+
 	var encNumber [8]byte
 	binary.BigEndian.PutUint64(encNumber[:], num)
-	data, _ := rlp.EncodeToBytes(ChtNode{hash, td})
+	data, _ := rlp.EncodeToBytes(ChtNode{hash})
 	c.trie.Update(encNumber[:], data)
 }
 

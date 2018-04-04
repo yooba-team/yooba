@@ -30,8 +30,7 @@ import (
 	"github.com/yooba-team/yooba/log"
 )
 
-// Seal implements consensus.Engine, attempting to find a nonce that satisfies
-// the block's difficulty requirements.
+
 func (ethash *Ethash) Seal(chain consensus.ChainReader, block *types.Block, stop <-chan struct{}) (*types.Block, error) {
 	// If we're running a fake PoW, simply return a 0 nonce immediately
 	if ethash.config.PowMode == ModeFake || ethash.config.PowMode == ModeFullFake {
@@ -92,14 +91,12 @@ func (ethash *Ethash) Seal(chain consensus.ChainReader, block *types.Block, stop
 	return result, nil
 }
 
-// mine is the actual proof-of-work miner that searches for a nonce starting from
-// seed that results in correct final block difficulty.
+
 func (ethash *Ethash) mine(block *types.Block, id int, seed uint64, abort chan struct{}, found chan *types.Block) {
 	// Extract some data from the header
 	var (
 		header  = block.Header()
 		hash    = header.HashNoNonce().Bytes()
-		target  = new(big.Int).Div(maxUint256, header.Difficulty)
 		number  = header.Number.Uint64()
 		dataset = ethash.dataset(number)
 	)
@@ -127,8 +124,8 @@ search:
 				attempts = 0
 			}
 			// Compute the PoW value of this nonce
-			digest, result := hashimotoFull(dataset.dataset, hash, nonce)
-			if new(big.Int).SetBytes(result).Cmp(target) <= 0 {
+			digest, _ := hashimotoFull(dataset.dataset, hash, nonce)
+
 				// Correct nonce found, create a new header with it
 				header = types.CopyHeader(header)
 				header.Nonce = types.EncodeNonce(nonce)
@@ -142,8 +139,6 @@ search:
 					logger.Trace("Ethash nonce found but discarded", "attempts", nonce-seed, "nonce", nonce)
 				}
 				break search
-			}
-			nonce++
 		}
 	}
 	// Datasets are unmapped in a finalizer. Ensure that the dataset stays live

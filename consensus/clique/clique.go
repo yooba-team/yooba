@@ -61,8 +61,6 @@ var (
 	nonceDropVote = hexutil.MustDecode("0x0000000000000000") // Magic nonce number to vote on removing a signer.
 
 
-	diffInTurn = big.NewInt(2) // Block difficulty for in-turn signatures
-	diffNoTurn = big.NewInt(1) // Block difficulty for out-of-turn signatures
 )
 
 // Various error messages to mark blocks invalid. These should be private to
@@ -105,11 +103,6 @@ var (
 
 	// errInvalidMixDigest is returned if a block's mix digest is non-zero.
 	errInvalidMixDigest = errors.New("non-zero mix digest")
-	
-
-	// errInvalidDifficulty is returned if the difficulty of a block is not either
-	// of 1 or 2, or if the value does not match the turn of the signer.
-	errInvalidDifficulty = errors.New("invalid difficulty")
 
 	// ErrInvalidTimestamp is returned if the timestamp of a block is lower than
 	// the previous block's timestamp + the minimum block period.
@@ -149,7 +142,6 @@ func sigHash(header *types.Header) (hash common.Hash) {
 		header.TxHash,
 		header.ReceiptHash,
 		header.Bloom,
-		header.Difficulty,
 		header.Number,
 		header.GasLimit,
 		header.GasUsed,
@@ -302,12 +294,7 @@ func (c *Clique) verifyHeader(chain consensus.ChainReader, header *types.Header,
 		return errInvalidMixDigest
 	}
 
-	// Ensure that the block's difficulty is meaningful (may not be correct at this point)
-	if number > 0 {
-		if header.Difficulty == nil || (header.Difficulty.Cmp(diffInTurn) != 0 && header.Difficulty.Cmp(diffNoTurn) != 0) {
-			return errInvalidDifficulty
-		}
-	}
+
 	// All basic checks passed, verify cascading fields
 	return c.verifyCascadingFields(chain, header, parents)
 }
@@ -472,14 +459,8 @@ func (c *Clique) verifySeal(chain consensus.ChainReader, header *types.Header, p
 			}
 		}
 	}
-	// Ensure that the difficulty corresponds to the turn-ness of the signer
-	inturn := snap.inturn(header.Number.Uint64(), signer)
-	if inturn && header.Difficulty.Cmp(diffInTurn) != 0 {
-		return errInvalidDifficulty
-	}
-	if !inturn && header.Difficulty.Cmp(diffNoTurn) != 0 {
-		return errInvalidDifficulty
-	}
+
+
 	return nil
 }
 
@@ -517,9 +498,6 @@ func (c *Clique) Prepare(chain consensus.ChainReader, header *types.Header) erro
 		}
 		c.lock.RUnlock()
 	}
-	// Set the correct difficulty
-	header.Difficulty = big.NewInt(1)
-
 	// Ensure the extra data has all it's components
 	if len(header.Extra) < extraVanity {
 		header.Extra = append(header.Extra, bytes.Repeat([]byte{0x00}, extraVanity-len(header.Extra))...)
@@ -608,13 +586,7 @@ func (c *Clique) Seal(chain consensus.ChainReader, block *types.Block, stop <-ch
 	}
 	// Sweet, the protocol permits us to sign the block, wait for our time
 	delay := time.Unix(header.Time.Int64(), 0).Sub(time.Now()) // nolint: gosimple
-	if header.Difficulty.Cmp(diffNoTurn) == 0 {
-		// It's not our turn explicitly to sign, delay it a bit
-		wiggle := time.Duration(len(snap.Signers)/2+1) * wiggleTime
-		delay += time.Duration(rand.Int63n(int64(wiggle)))
 
-		log.Trace("Out-of-turn signing requested", "wiggle", common.PrettyDuration(wiggle))
-	}
 	log.Trace("Waiting for slot to sign and propagate", "delay", common.PrettyDuration(delay))
 
 	select {

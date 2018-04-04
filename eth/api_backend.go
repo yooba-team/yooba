@@ -104,9 +104,6 @@ func (b *EthApiBackend) GetReceipts(ctx context.Context, blockHash common.Hash) 
 	return core.GetBlockReceipts(b.eth.chainDb, blockHash, core.GetBlockNumber(b.eth.chainDb, blockHash)), nil
 }
 
-func (b *EthApiBackend) GetTd(blockHash common.Hash) *big.Int {
-	return b.eth.blockchain.GetTdByHash(blockHash)
-}
 
 func (b *EthApiBackend) GetEVM(ctx context.Context, msg core.Message, state *state.StateDB, header *types.Header, vmCfg vm.Config) (*vm.EVM, func() error, error) {
 	state.SetBalance(msg.From(), math.MaxBig256)

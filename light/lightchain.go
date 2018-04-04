@@ -19,7 +19,6 @@ package light
 import (
 	"context"
 	"errors"
-	"math/big"
 	"sync"
 	"sync/atomic"
 	"time"
@@ -153,8 +152,7 @@ func (self *LightChain) loadLastState() error {
 
 	// Issue a status log and return
 	header := self.hc.CurrentHeader()
-	headerTd := self.GetTd(header.Hash(), header.Number.Uint64())
-	log.Info("Loaded most recent local header", "number", header.Number, "hash", header.Hash(), "td", headerTd)
+	log.Info("Loaded most recent local header", "number", header.Number, "hash", header.Hash(), "td")
 
 	return nil
 }
@@ -191,10 +189,7 @@ func (bc *LightChain) ResetWithGenesisBlock(genesis *types.Block) {
 	bc.mu.Lock()
 	defer bc.mu.Unlock()
 
-	// Prepare the genesis block and reinitialise the chain
-	if err := core.WriteTd(bc.chainDb, genesis.Hash(), genesis.NumberU64(), genesis.Difficulty()); err != nil {
-		log.Crit("Failed to write genesis block TD", "err", err)
-	}
+
 	if err := core.WriteBlock(bc.chainDb, genesis); err != nil {
 		log.Crit("Failed to write genesis block", "err", err)
 	}
@@ -393,17 +388,9 @@ func (self *LightChain) CurrentHeader() *types.Header {
 	return self.hc.CurrentHeader()
 }
 
-// GetTd retrieves a block's total difficulty in the canonical chain from the
-// database by hash and number, caching it if found.
-func (self *LightChain) GetTd(hash common.Hash, number uint64) *big.Int {
-	return self.hc.GetTd(hash, number)
-}
 
-// GetTdByHash retrieves a block's total difficulty in the canonical chain from the
-// database by hash, caching it if found.
-func (self *LightChain) GetTdByHash(hash common.Hash) *big.Int {
-	return self.hc.GetTdByHash(hash)
-}
+
+
 
 // GetHeader retrieves a block header from the database by hash and number,
 // caching it if found.

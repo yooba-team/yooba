@@ -105,7 +105,6 @@ func (p *peer) queueSend(f func()) {
 func (p *peer) Info() *eth.PeerInfo {
 	return &eth.PeerInfo{
 		Version:    p.version,
-		Difficulty: p.Td(),
 		Head:       fmt.Sprintf("%x", p.Head()),
 	}
 }
@@ -119,28 +118,22 @@ func (p *peer) Head() (hash common.Hash) {
 	return hash
 }
 
-func (p *peer) HeadAndTd() (hash common.Hash, td *big.Int) {
+func (p *peer) HeadAndTd() (hash common.Hash) {
 	p.lock.RLock()
 	defer p.lock.RUnlock()
 
 	copy(hash[:], p.headInfo.Hash[:])
-	return hash, p.headInfo.Td
+	return hash
 }
 
 func (p *peer) headBlockInfo() blockInfo {
 	p.lock.RLock()
 	defer p.lock.RUnlock()
 
-	return blockInfo{Hash: p.headInfo.Hash, Number: p.headInfo.Number, Td: p.headInfo.Td}
+	return blockInfo{Hash: p.headInfo.Hash, Number: p.headInfo.Number}
 }
 
-// Td retrieves the current total difficulty of a peer.
-func (p *peer) Td() *big.Int {
-	p.lock.RLock()
-	defer p.lock.RUnlock()
 
-	return new(big.Int).Set(p.headInfo.Td)
-}
 
 // waitBefore implements distPeer interface
 func (p *peer) waitBefore(maxCost uint64) (time.Duration, float64) {
@@ -393,14 +386,13 @@ func (p *peer) sendReceiveHandshake(sendList keyValueList) (keyValueList, error)
 
 // Handshake executes the les protocol handshake, negotiating version number,
 // network IDs, difficulties, head and genesis blocks.
-func (p *peer) Handshake(td *big.Int, head common.Hash, headNum uint64, genesis common.Hash, server *LesServer) error {
+func (p *peer) Handshake( head common.Hash, headNum uint64, genesis common.Hash, server *LesServer) error {
 	p.lock.Lock()
 	defer p.lock.Unlock()
 
 	var send keyValueList
 	send = send.add("protocolVersion", uint64(p.version))
 	send = send.add("networkId", p.network)
-	send = send.add("headTd", td)
 	send = send.add("headHash", head)
 	send = send.add("headNum", headNum)
 	send = send.add("genesisHash", genesis)
@@ -491,7 +483,7 @@ func (p *peer) Handshake(td *big.Int, head common.Hash, headNum uint64, genesis 
 		p.fcCosts = MRC.decode()
 	}
 
-	p.headInfo = &announceData{Td: rTd, Hash: rHash, Number: rNum}
+	p.headInfo = &announceData{ Hash: rHash, Number: rNum}
 	return nil
 }
 
@@ -614,19 +606,17 @@ func (ps *peerSet) Len() int {
 	return len(ps.peers)
 }
 
-// BestPeer retrieves the known peer with the currently highest total difficulty.
+
 func (ps *peerSet) BestPeer() *peer {
 	ps.lock.RLock()
 	defer ps.lock.RUnlock()
 
 	var (
 		bestPeer *peer
-		bestTd   *big.Int
 	)
 	for _, p := range ps.peers {
-		if td := p.Td(); bestPeer == nil || td.Cmp(bestTd) > 0 {
-			bestPeer, bestTd = p, td
-		}
+		//TODO choose a best peer
+	bestPeer = p
 	}
 	return bestPeer
 }

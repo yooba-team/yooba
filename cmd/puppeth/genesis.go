@@ -45,15 +45,12 @@ type cppEthereumGenesisSpec struct {
 		MinGasLimit             hexutil.Uint64 `json:"minGasLimit"`
 		MaxGasLimit             hexutil.Uint64 `json:"maxGasLimit"`
 		GasLimitBoundDivisor    hexutil.Uint64 `json:"gasLimitBoundDivisor"`
-		MinimumDifficulty       *hexutil.Big   `json:"minimumDifficulty"`
-		DifficultyBoundDivisor  *hexutil.Big   `json:"difficultyBoundDivisor"`
 		DurationLimit           *hexutil.Big   `json:"durationLimit"`
 		BlockReward             *hexutil.Big   `json:"blockReward"`
 	} `json:"params"`
 
 	Genesis struct {
 		Nonce      hexutil.Bytes  `json:"nonce"`
-		Difficulty *hexutil.Big   `json:"difficulty"`
 		MixHash    common.Hash    `json:"mixHash"`
 		Author     common.Address `json:"author"`
 		Timestamp  hexutil.Uint64 `json:"timestamp"`
@@ -106,8 +103,6 @@ func newCppEthereumGenesisSpec(network string, genesis *core.Genesis) (*cppEther
 	spec.Params.MaximumExtraDataSize = (hexutil.Uint64)(params.MaximumExtraDataSize)
 	spec.Params.MinGasLimit = (hexutil.Uint64)(params.MinGasLimit)
 	spec.Params.MaxGasLimit = (hexutil.Uint64)(math.MaxUint64)
-	spec.Params.MinimumDifficulty = (*hexutil.Big)(params.MinimumDifficulty)
-	spec.Params.DifficultyBoundDivisor = (*hexutil.Big)(params.DifficultyBoundDivisor)
 	spec.Params.GasLimitBoundDivisor = (hexutil.Uint64)(params.GasLimitBoundDivisor)
 	spec.Params.DurationLimit = (*hexutil.Big)(params.DurationLimit)
 	spec.Params.BlockReward = (*hexutil.Big)(ethash.FrontierBlockReward)
@@ -116,7 +111,6 @@ func newCppEthereumGenesisSpec(network string, genesis *core.Genesis) (*cppEther
 	binary.LittleEndian.PutUint64(spec.Genesis.Nonce[:], genesis.Nonce)
 
 	spec.Genesis.MixHash = genesis.Mixhash
-	spec.Genesis.Difficulty = (*hexutil.Big)(genesis.Difficulty)
 	spec.Genesis.Author = genesis.Coinbase
 	spec.Genesis.Timestamp = (hexutil.Uint64)(genesis.Timestamp)
 	spec.Genesis.ParentHash = genesis.ParentHash
@@ -165,8 +159,6 @@ type parityChainSpec struct {
 	Engine struct {
 		Ethash struct {
 			Params struct {
-				MinimumDifficulty      *hexutil.Big   `json:"minimumDifficulty"`
-				DifficultyBoundDivisor *hexutil.Big   `json:"difficultyBoundDivisor"`
 				GasLimitBoundDivisor   hexutil.Uint64 `json:"gasLimitBoundDivisor"`
 				DurationLimit          *hexutil.Big   `json:"durationLimit"`
 				BlockReward            *hexutil.Big   `json:"blockReward"`
@@ -204,7 +196,6 @@ type parityChainSpec struct {
 			} `json:"ethereum"`
 		} `json:"seal"`
 
-		Difficulty *hexutil.Big   `json:"difficulty"`
 		Author     common.Address `json:"author"`
 		Timestamp  hexutil.Uint64 `json:"timestamp"`
 		ParentHash common.Hash    `json:"parentHash"`
@@ -265,8 +256,6 @@ func newParityChainSpec(network string, genesis *core.Genesis, bootnodes []strin
 		Name:  network,
 		Nodes: bootnodes,
 	}
-	spec.Engine.Ethash.Params.MinimumDifficulty = (*hexutil.Big)(params.MinimumDifficulty)
-	spec.Engine.Ethash.Params.DifficultyBoundDivisor = (*hexutil.Big)(params.DifficultyBoundDivisor)
 	spec.Engine.Ethash.Params.GasLimitBoundDivisor = (hexutil.Uint64)(params.GasLimitBoundDivisor)
 	spec.Engine.Ethash.Params.DurationLimit = (*hexutil.Big)(params.DurationLimit)
 	spec.Engine.Ethash.Params.BlockReward = (*hexutil.Big)(ethash.FrontierBlockReward)
@@ -289,7 +278,6 @@ func newParityChainSpec(network string, genesis *core.Genesis, bootnodes []strin
 	binary.LittleEndian.PutUint64(spec.Genesis.Seal.Ethereum.Nonce[:], genesis.Nonce)
 
 	spec.Genesis.Seal.Ethereum.MixHash = (hexutil.Bytes)(genesis.Mixhash[:])
-	spec.Genesis.Difficulty = (*hexutil.Big)(genesis.Difficulty)
 	spec.Genesis.Author = genesis.Coinbase
 	spec.Genesis.Timestamp = (hexutil.Uint64)(genesis.Timestamp)
 	spec.Genesis.ParentHash = genesis.ParentHash
@@ -339,7 +327,6 @@ type pyEthereumGenesisSpec struct {
 	Timestamp  hexutil.Uint64    `json:"timestamp"`
 	ExtraData  hexutil.Bytes     `json:"extraData"`
 	GasLimit   hexutil.Uint64    `json:"gasLimit"`
-	Difficulty *hexutil.Big      `json:"difficulty"`
 	Mixhash    common.Hash       `json:"mixhash"`
 	Coinbase   common.Address    `json:"coinbase"`
 	Alloc      core.GenesisAlloc `json:"alloc"`
@@ -357,7 +344,6 @@ func newPyEthereumGenesisSpec(network string, genesis *core.Genesis) (*pyEthereu
 		Timestamp:  (hexutil.Uint64)(genesis.Timestamp),
 		ExtraData:  genesis.ExtraData,
 		GasLimit:   (hexutil.Uint64)(genesis.GasLimit),
-		Difficulty: (*hexutil.Big)(genesis.Difficulty),
 		Mixhash:    genesis.Mixhash,
 		Coinbase:   genesis.Coinbase,
 		Alloc:      genesis.Alloc,

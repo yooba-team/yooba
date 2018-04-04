@@ -44,7 +44,6 @@ var (
 	errLargeBlockTime    = errors.New("timestamp too big")
 	errZeroBlockTime     = errors.New("timestamp equals parent's")
 	errNonceOutOfRange   = errors.New("nonce out of range")
-	errInvalidDifficulty = errors.New("non-positive difficulty")
 	errInvalidMixDigest  = errors.New("invalid mix digest")
 	errInvalidPoW        = errors.New("invalid proof-of-work")
 )
@@ -174,12 +173,9 @@ func (ethash *Ethash) verifyHeader(chain consensus.ChainReader, header, parent *
 	if header.Time.Cmp(parent.Time) <= 0 {
 		return errZeroBlockTime
 	}
-	// Verify the block's difficulty based in it's timestamp and parent's difficulty
-	expected := big1;
 
-	if expected.Cmp(header.Difficulty) != 0 {
-		return fmt.Errorf("invalid difficulty: have %v, want %v", header.Difficulty, expected)
-	}
+
+
 	// Verify that the gas limit is <= 2^63-1
 	cap := uint64(0x7fffffffffffffff)
 	if header.GasLimit > cap {
@@ -280,7 +276,6 @@ func (ethash *Ethash) Prepare(chain consensus.ChainReader, header *types.Header)
 	if parent == nil {
 		return consensus.ErrUnknownAncestor
 	}
-	header.Difficulty = big.NewInt(1);
 	return nil
 }
 

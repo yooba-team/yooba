@@ -85,7 +85,6 @@ func newTester() *downloadTester {
 		ownHeaders:        map[common.Hash]*types.Header{genesis.Hash(): genesis.Header()},
 		ownBlocks:         map[common.Hash]*types.Block{genesis.Hash(): genesis},
 		ownReceipts:       map[common.Hash]types.Receipts{genesis.Hash(): nil},
-		ownChainTd:        map[common.Hash]*big.Int{genesis.Hash(): genesis.Difficulty()},
 		peerHashes:        make(map[string][]common.Hash),
 		peerHeaders:       make(map[string]map[common.Hash]*types.Header),
 		peerBlocks:        make(map[string]map[common.Hash]*types.Block),
@@ -109,7 +108,6 @@ func (dl *downloadTester) makeChain(n int, seed byte, parent *types.Block, paren
 	blocks, receipts := core.GenerateChain(params.TestChainConfig, parent, ethash.NewFaker(), dl.peerDb, n, func(i int, block *core.BlockGen) {
 		block.SetCoinbase(common.Address{seed})
 
-		// If a heavy chain is requested, delay blocks to raise difficulty
 		if heavy {
 			block.OffsetTime(-1)
 		}
@@ -286,13 +284,7 @@ func (dl *downloadTester) FastSyncCommitHead(hash common.Hash) error {
 	return fmt.Errorf("non existent block: %x", hash[:4])
 }
 
-// GetTd retrieves the block's total difficulty from the canonical chain.
-func (dl *downloadTester) GetTd(hash common.Hash, number uint64) *big.Int {
-	dl.lock.RLock()
-	defer dl.lock.RUnlock()
 
-	return dl.ownChainTd[hash]
-}
 
 // InsertHeaderChain injects a new batch of headers into the simulated chain.
 func (dl *downloadTester) InsertHeaderChain(headers []*types.Header, checkFreq int) (int, error) {
@@ -318,7 +310,6 @@ func (dl *downloadTester) InsertHeaderChain(headers []*types.Header, checkFreq i
 		}
 		dl.ownHashes = append(dl.ownHashes, header.Hash())
 		dl.ownHeaders[header.Hash()] = header
-		dl.ownChainTd[header.Hash()] = new(big.Int).Add(dl.ownChainTd[header.ParentHash], header.Difficulty)
 	}
 	return len(headers), nil
 }
@@ -340,7 +331,6 @@ func (dl *downloadTester) InsertChain(blocks types.Blocks) (int, error) {
 		}
 		dl.ownBlocks[block.Hash()] = block
 		dl.stateDb.Put(block.Root().Bytes(), []byte{0x00})
-		dl.ownChainTd[block.Hash()] = new(big.Int).Add(dl.ownChainTd[block.ParentHash()], block.Difficulty())
 	}
 	return len(blocks), nil
 }
@@ -406,11 +396,9 @@ func (dl *downloadTester) newSlowPeer(id string, version int, hashes []common.Ha
 		genesis := hashes[len(hashes)-1]
 		if header := headers[genesis]; header != nil {
 			dl.peerHeaders[id][genesis] = header
-			dl.peerChainTds[id][genesis] = header.Difficulty
 		}
 		if block := blocks[genesis]; block != nil {
 			dl.peerBlocks[id][genesis] = block
-			dl.peerChainTds[id][genesis] = block.Difficulty()
 		}
 
 		for i := len(hashes) - 2; i >= 0; i-- {
@@ -418,15 +406,10 @@ func (dl *downloadTester) newSlowPeer(id string, version int, hashes []common.Ha
 
 			if header, ok := headers[hash]; ok {
 				dl.peerHeaders[id][hash] = header
-				if _, ok := dl.peerHeaders[id][header.ParentHash]; ok {
-					dl.peerChainTds[id][hash] = new(big.Int).Add(header.Difficulty, dl.peerChainTds[id][header.ParentHash])
-				}
+
 			}
 			if block, ok := blocks[hash]; ok {
 				dl.peerBlocks[id][hash] = block
-				if _, ok := dl.peerBlocks[id][block.ParentHash()]; ok {
-					dl.peerChainTds[id][hash] = new(big.Int).Add(block.Difficulty(), dl.peerChainTds[id][block.ParentHash()])
-				}
 			}
 			if receipt, ok := receipts[hash]; ok {
 				dl.peerReceipts[id][hash] = receipt
@@ -474,7 +457,7 @@ func (dlp *downloadTesterPeer) waitDelay() {
 }
 
 // Head constructs a function to retrieve a peer's current head hash
-// and total difficulty.
+
 func (dlp *downloadTesterPeer) Head() (common.Hash, *big.Int) {
 	dlp.dl.lock.RLock()
 	defer dlp.dl.lock.RUnlock()
@@ -914,7 +897,7 @@ func TestInactiveDownloader62(t *testing.T) {
 	if err := tester.downloader.DeliverHeaders("bad peer", []*types.Header{}); err != errNoSyncActive {
 		t.Errorf("error mismatch: have %v, want %v", err, errNoSyncActive)
 	}
-	if err := tester.downloader.DeliverBodies("bad peer", [][]*types.Transaction{}, [][]*types.Header{}); err != errNoSyncActive {
+	if err := tester.downloader.DeliverBodies("bad peer", [][]*types.Transaction{}); err != errNoSyncActive {
 		t.Errorf("error mismatch: have %v, want %v", err, errNoSyncActive)
 	}
 }
@@ -931,9 +914,7 @@ func TestInactiveDownloader63(t *testing.T) {
 	if err := tester.downloader.DeliverHeaders("bad peer", []*types.Header{}); err != errNoSyncActive {
 		t.Errorf("error mismatch: have %v, want %v", err, errNoSyncActive)
 	}
-	if err := tester.downloader.DeliverBodies("bad peer", [][]*types.Transaction{}, [][]*types.Header{}); err != errNoSyncActive {
-		t.Errorf("error mismatch: have %v, want %v", err, errNoSyncActive)
-	}
+
 	if err := tester.downloader.DeliverReceipts("bad peer", [][]*types.Receipt{}); err != errNoSyncActive {
 		t.Errorf("error mismatch: have %v, want %v", err, errNoSyncActive)
 	}

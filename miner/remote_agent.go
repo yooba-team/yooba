@@ -121,7 +121,6 @@ func (a *RemoteAgent) GetWork() ([3]string, error) {
 		// Calculate the "target" to be returned to the external miner
 		n := big.NewInt(1)
 		n.Lsh(n, 255)
-		n.Div(n, block.Difficulty())
 		n.Lsh(n, 1)
 		res[2] = common.BytesToHash(n.Bytes()).Hex()
 

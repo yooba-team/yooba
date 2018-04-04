@@ -22,8 +22,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"math/big"
-
 	"github.com/yooba-team/yooba/common"
 	"github.com/yooba-team/yooba/core/types"
 	"github.com/yooba-team/yooba/ethdb"
@@ -197,20 +195,6 @@ func GetBody(db DatabaseReader, hash common.Hash, number uint64) *types.Body {
 	return body
 }
 
-// GetTd retrieves a block's total difficulty corresponding to the hash, nil if
-// none found.
-func GetTd(db DatabaseReader, hash common.Hash, number uint64) *big.Int {
-	data, _ := db.Get(append(append(append(headerPrefix, encodeBlockNumber(number)...), hash[:]...), tdSuffix...))
-	if len(data) == 0 {
-		return nil
-	}
-	td := new(big.Int)
-	if err := rlp.Decode(bytes.NewReader(data), td); err != nil {
-		log.Error("Invalid block total difficulty RLP", "hash", hash, "err", err)
-		return nil
-	}
-	return td
-}
 
 // GetBlock retrieves an entire block corresponding to the hash, assembling it
 // back from the stored header and body. If either the header or body could not
@@ -412,18 +396,6 @@ func WriteBodyRLP(db ethdb.Putter, hash common.Hash, number uint64, rlp rlp.RawV
 	return nil
 }
 
-// WriteTd serializes the total difficulty of a block into the database.
-func WriteTd(db ethdb.Putter, hash common.Hash, number uint64, td *big.Int) error {
-	data, err := rlp.EncodeToBytes(td)
-	if err != nil {
-		return err
-	}
-	key := append(append(append(headerPrefix, encodeBlockNumber(number)...), hash.Bytes()...), tdSuffix...)
-	if err := db.Put(key, data); err != nil {
-		log.Crit("Failed to store block total difficulty", "err", err)
-	}
-	return nil
-}
 
 // WriteBlock serializes a block into the database, header and body separately.
 func WriteBlock(db ethdb.Putter, block *types.Block) error {
@@ -509,17 +481,12 @@ func DeleteBody(db DatabaseDeleter, hash common.Hash, number uint64) {
 	db.Delete(append(append(bodyPrefix, encodeBlockNumber(number)...), hash.Bytes()...))
 }
 
-// DeleteTd removes all block total difficulty data associated with a hash.
-func DeleteTd(db DatabaseDeleter, hash common.Hash, number uint64) {
-	db.Delete(append(append(append(headerPrefix, encodeBlockNumber(number)...), hash.Bytes()...), tdSuffix...))
-}
 
 // DeleteBlock removes all block data associated with a hash.
 func DeleteBlock(db DatabaseDeleter, hash common.Hash, number uint64) {
 	DeleteBlockReceipts(db, hash, number)
 	DeleteHeader(db, hash, number)
 	DeleteBody(db, hash, number)
-	DeleteTd(db, hash, number)
 }
 
 // DeleteBlockReceipts removes all receipt data associated with a block hash.

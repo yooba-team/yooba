@@ -20,7 +20,6 @@ import (
 	"context"
 	"time"
 
-	"github.com/yooba-team/yooba/core"
 	"github.com/yooba-team/yooba/eth/downloader"
 	"github.com/yooba-team/yooba/light"
 )
@@ -59,11 +58,6 @@ func (pm *ProtocolManager) syncer() {
 	}
 }
 
-func (pm *ProtocolManager) needToSync(peerHead blockInfo) bool {
-	head := pm.blockchain.CurrentHeader()
-	currentTd := core.GetTd(pm.chainDb, head.Hash(), head.Number.Uint64())
-	return currentTd != nil && peerHead.Td.Cmp(currentTd) > 0
-}
 
 // synchronise tries to sync up our local block chain with a remote peer.
 func (pm *ProtocolManager) synchronise(peer *peer) {
@@ -72,13 +66,10 @@ func (pm *ProtocolManager) synchronise(peer *peer) {
 		return
 	}
 
-	// Make sure the peer's TD is higher than our own.
-	if !pm.needToSync(peer.headBlockInfo()) {
-		return
-	}
+
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
 	defer cancel()
 	pm.blockchain.(*light.LightChain).SyncCht(ctx)
-	pm.downloader.Synchronise(peer.id, peer.Head(), peer.Td(), downloader.LightSync)
+	pm.downloader.Synchronise(peer.id, peer.Head(), downloader.LightSync)
 }

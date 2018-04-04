@@ -22,7 +22,6 @@ import (
 	"fmt"
 	"io"
 	"math/big"
-	mrand "math/rand"
 	"sync"
 	"sync/atomic"
 	"time"
@@ -242,15 +241,11 @@ func (bc *BlockChain) loadLastState() error {
 			bc.currentFastBlock = block
 		}
 	}
+	
 
-	// Issue a status log for the user
-	headerTd := bc.GetTd(currentHeader.Hash(), currentHeader.Number.Uint64())
-	blockTd := bc.GetTd(bc.currentBlock.Hash(), bc.currentBlock.NumberU64())
-	fastTd := bc.GetTd(bc.currentFastBlock.Hash(), bc.currentFastBlock.NumberU64())
-
-	log.Info("Loaded most recent local header", "number", currentHeader.Number, "hash", currentHeader.Hash(), "td", headerTd)
-	log.Info("Loaded most recent local full block", "number", bc.currentBlock.Number(), "hash", bc.currentBlock.Hash(), "td", blockTd)
-	log.Info("Loaded most recent local fast block", "number", bc.currentFastBlock.Number(), "hash", bc.currentFastBlock.Hash(), "td", fastTd)
+	log.Info("Loaded most recent local header", "number", currentHeader.Number, "hash", currentHeader.Hash())
+	log.Info("Loaded most recent local full block", "number", bc.currentBlock.Number(), "hash", bc.currentBlock.Hash())
+	log.Info("Loaded most recent local fast block", "number", bc.currentFastBlock.Number(), "hash", bc.currentFastBlock.Hash())
 
 	return nil
 }
@@ -407,10 +402,6 @@ func (bc *BlockChain) ResetWithGenesisBlock(genesis *types.Block) error {
 	bc.mu.Lock()
 	defer bc.mu.Unlock()
 
-	// Prepare the genesis block and reinitialise the chain
-	if err := bc.hc.WriteTd(genesis.Hash(), genesis.NumberU64(), genesis.Difficulty()); err != nil {
-		log.Crit("Failed to write genesis block TD", "err", err)
-	}
 	if err := WriteBlock(bc.db, genesis); err != nil {
 		log.Crit("Failed to write genesis block", "err", err)
 	}
@@ -820,14 +811,7 @@ func (bc *BlockChain) InsertReceiptChain(blockChain types.Blocks, receiptChain [
 	// Update the head fast sync block if better
 	bc.mu.Lock()
 	head := blockChain[len(blockChain)-1]
-	if td := bc.GetTd(head.Hash(), head.NumberU64()); td != nil { // Rewind may have occurred, skip in that case
-		if bc.GetTd(bc.currentFastBlock.Hash(), bc.currentFastBlock.NumberU64()).Cmp(td) < 0 {
-			if err := WriteHeadFastBlockHash(bc.db, head.Hash()); err != nil {
-				log.Crit("Failed to update head fast block hash", "err", err)
-			}
-			bc.currentFastBlock = head
-		}
-	}
+	bc.currentFastBlock = head
 	bc.mu.Unlock()
 
 	log.Info("Imported new block receipts",
@@ -843,15 +827,10 @@ func (bc *BlockChain) InsertReceiptChain(blockChain types.Blocks, receiptChain [
 var lastWrite uint64
 
 // WriteBlockWithoutState writes only the block and its metadata to the database,
-// but does not write any state. This is used to construct competing side forks
-// up to the point where they exceed the canonical total difficulty.
-func (bc *BlockChain) WriteBlockWithoutState(block *types.Block, td *big.Int) (err error) {
+// but does not write any state.
+func (bc *BlockChain) WriteBlockWithoutState(block *types.Block) (err error) {
 	bc.wg.Add(1)
 	defer bc.wg.Done()
-
-	if err := bc.hc.WriteTd(block.Hash(), block.NumberU64(), td); err != nil {
-		return err
-	}
 	if err := WriteBlock(bc.db, block); err != nil {
 		return err
 	}
@@ -862,23 +841,12 @@ func (bc *BlockChain) WriteBlockWithoutState(block *types.Block, td *big.Int) (e
 func (bc *BlockChain) WriteBlockWithState(block *types.Block, receipts []*types.Receipt, state *state.StateDB) (status WriteStatus, err error) {
 	bc.wg.Add(1)
 	defer bc.wg.Done()
-
-	// Calculate the total difficulty of the block
-	ptd := bc.GetTd(block.ParentHash(), block.NumberU64()-1)
-	if ptd == nil {
-		return NonStatTy, consensus.ErrUnknownAncestor
-	}
 	// Make sure no inconsistent state is leaked during insertion
 	bc.mu.Lock()
 	defer bc.mu.Unlock()
 
-	localTd := bc.GetTd(bc.currentBlock.Hash(), bc.currentBlock.NumberU64())
-	externTd := new(big.Int).Add(block.Difficulty(), ptd)
 
-	// Irrelevant of the canonical status, write the block itself to the database
-	if err := bc.hc.WriteTd(block.Hash(), block.NumberU64(), externTd); err != nil {
-		return NonStatTy, err
-	}
+
 	// Write other block data using a batch.
 	batch := bc.db.NewBatch()
 	if err := WriteBlock(batch, block); err != nil {
@@ -943,14 +911,9 @@ func (bc *BlockChain) WriteBlockWithState(block *types.Block, receipts []*types.
 	if err := WriteBlockReceipts(batch, block.Hash(), block.NumberU64(), receipts); err != nil {
 		return NonStatTy, err
 	}
-	// If the total difficulty is higher than our known, add it to the canonical chain
-	// Second clause in the if statement reduces the vulnerability to selfish mining.
-	// Please refer to http://www.cs.cornell.edu/~ie53/publications/btcProcFC.pdf
-	reorg := externTd.Cmp(localTd) > 0
-	if !reorg && externTd.Cmp(localTd) == 0 {
-		// Split same-difficulty blocks by number, then at random
-		reorg = block.NumberU64() < bc.currentBlock.NumberU64() || (block.NumberU64() == bc.currentBlock.NumberU64() && mrand.Float64() < 0.5)
-	}
+
+	reorg := true
+
 	if reorg {
 		// Reorganise the chain if the parent is not the head block
 		if block.ParentHash() != bc.currentBlock.Hash() {
@@ -1083,14 +1046,12 @@ func (bc *BlockChain) insertChain(chain types.Blocks) (int, []interface{}, []*ty
 		case err == consensus.ErrPrunedAncestor:
 			// Block competing with the canonical chain, store in the db, but don't process
 			// until the competitor TD goes above the canonical TD
-			localTd := bc.GetTd(bc.currentBlock.Hash(), bc.currentBlock.NumberU64())
-			externTd := new(big.Int).Add(bc.GetTd(block.ParentHash(), block.NumberU64()-1), block.Difficulty())
-			if localTd.Cmp(externTd) > 0 {
-				if err = bc.WriteBlockWithoutState(block, externTd); err != nil {
+		
+				if err = bc.WriteBlockWithoutState(block); err != nil {
 					return i, events, coalescedLogs, err
 				}
 				continue
-			}
+			
 			// Competitor chain beat canonical, gather all blocks from the common ancestor
 			var winner []*types.Block
 
@@ -1161,7 +1122,7 @@ func (bc *BlockChain) insertChain(chain types.Blocks) (int, []interface{}, []*ty
 			bc.gcproc += proctime
 
 		case SideStatTy:
-			log.Debug("Inserted forked block", "number", block.Number(), "hash", block.Hash(), "diff", block.Difficulty(), "elapsed",
+			log.Debug("Inserted forked block", "number", block.Number(), "hash", block.Hash(), "diff", "elapsed",
 				common.PrettyDuration(time.Since(bstart)), "txs", len(block.Transactions()), "gas", block.GasUsed())
 
 			blockInsertTimer.UpdateSince(bstart)
@@ -1449,10 +1410,7 @@ func (bc *BlockChain) InsertHeaderChain(chain []*types.Header, checkFreq int) (i
 	return bc.hc.InsertHeaderChain(chain, whFunc, start)
 }
 
-// writeHeader writes a header into the local chain, given that its parent is
-// already known. If the total difficulty of the newly inserted header becomes
-// greater than the current known TD, the canonical chain is re-routed.
-//
+
 // Note: This method is not concurrent-safe with inserting blocks simultaneously
 // into the chain, as side effects caused by reorganisations cannot be emulated
 // without the real blocks. Hence, writing headers directly should only be done
@@ -1478,17 +1436,9 @@ func (bc *BlockChain) CurrentHeader() *types.Header {
 	return bc.hc.CurrentHeader()
 }
 
-// GetTd retrieves a block's total difficulty in the canonical chain from the
-// database by hash and number, caching it if found.
-func (bc *BlockChain) GetTd(hash common.Hash, number uint64) *big.Int {
-	return bc.hc.GetTd(hash, number)
-}
 
-// GetTdByHash retrieves a block's total difficulty in the canonical chain from the
-// database by hash, caching it if found.
-func (bc *BlockChain) GetTdByHash(hash common.Hash) *big.Int {
-	return bc.hc.GetTdByHash(hash)
-}
+
+
 
 // GetHeader retrieves a block header from the database by hash and number,
 // caching it if found.

@@ -5,7 +5,6 @@ package tests
 import (
 	"encoding/json"
 	"errors"
-	"math/big"
 
 	"github.com/yooba-team/yooba/common"
 	"github.com/yooba-team/yooba/common/math"
@@ -23,7 +22,6 @@ func (s stEnv) MarshalJSON() ([]byte, error) {
 	}
 	var enc stEnv
 	enc.Coinbase = common.UnprefixedAddress(s.Coinbase)
-	enc.Difficulty = (*math.HexOrDecimal256)(s.Difficulty)
 	enc.GasLimit = math.HexOrDecimal64(s.GasLimit)
 	enc.Number = math.HexOrDecimal64(s.Number)
 	enc.Timestamp = math.HexOrDecimal64(s.Timestamp)
@@ -49,7 +47,6 @@ func (s *stEnv) UnmarshalJSON(input []byte) error {
 	if dec.Difficulty == nil {
 		return errors.New("missing required field 'currentDifficulty' for stEnv")
 	}
-	s.Difficulty = (*big.Int)(dec.Difficulty)
 	if dec.GasLimit == nil {
 		return errors.New("missing required field 'currentGasLimit' for stEnv")
 	}

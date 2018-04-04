@@ -120,8 +120,7 @@ func (hc *HeaderChain) GetBlockNumber(hash common.Hash) uint64 {
 }
 
 // WriteHeader writes a header into the local chain, given that its parent is
-// already known. If the total difficulty of the newly inserted header becomes
-// greater than the current known TD, the canonical chain is re-routed.
+// already known.
 //
 // Note: This method is not concurrent-safe with inserting blocks simultaneously
 // into the chain, as side effects caused by reorganisations cannot be emulated
@@ -134,25 +133,14 @@ func (hc *HeaderChain) WriteHeader(header *types.Header) (status WriteStatus, er
 		hash   = header.Hash()
 		number = header.Number.Uint64()
 	)
-	// Calculate the total difficulty of the header
-	ptd := hc.GetTd(header.ParentHash, number-1)
-	if ptd == nil {
-		return NonStatTy, consensus.ErrUnknownAncestor
-	}
-	localTd := hc.GetTd(hc.currentHeaderHash, hc.currentHeader.Number.Uint64())
-	externTd := new(big.Int).Add(header.Difficulty, ptd)
 
-	// Irrelevant of the canonical status, write the td and header to the database
-	if err := hc.WriteTd(hash, number, externTd); err != nil {
-		log.Crit("Failed to write header total difficulty", "err", err)
-	}
+
 	if err := WriteHeader(hc.chainDb, header); err != nil {
 		log.Crit("Failed to write header content", "err", err)
 	}
-	// If the total difficulty is higher than our known, add it to the canonical chain
 	// Second clause in the if statement reduces the vulnerability to selfish mining.
 	// Please refer to http://www.cs.cornell.edu/~ie53/publications/btcProcFC.pdf
-	if externTd.Cmp(localTd) > 0 || (externTd.Cmp(localTd) == 0 && mrand.Float64() < 0.5) {
+	if mrand.Float64() < 0.5 {
 		// Delete any canonical number assignments above the new head
 		for i := number + 1; ; i++ {
 			hash := GetCanonicalHash(hc.chainDb, i)
@@ -307,37 +295,11 @@ func (hc *HeaderChain) GetBlockHashesFromHash(hash common.Hash, max uint64) []co
 	return chain
 }
 
-// GetTd retrieves a block's total difficulty in the canonical chain from the
-// database by hash and number, caching it if found.
-func (hc *HeaderChain) GetTd(hash common.Hash, number uint64) *big.Int {
-	// Short circuit if the td's already in the cache, retrieve otherwise
-	if cached, ok := hc.tdCache.Get(hash); ok {
-		return cached.(*big.Int)
-	}
-	td := GetTd(hc.chainDb, hash, number)
-	if td == nil {
-		return nil
-	}
-	// Cache the found body for next time and return
-	hc.tdCache.Add(hash, td)
-	return td
-}
+//
 
-// GetTdByHash retrieves a block's total difficulty in the canonical chain from the
-// database by hash, caching it if found.
-func (hc *HeaderChain) GetTdByHash(hash common.Hash) *big.Int {
-	return hc.GetTd(hash, hc.GetBlockNumber(hash))
-}
 
-// WriteTd stores a block's total difficulty into the database, also caching it
-// along the way.
-func (hc *HeaderChain) WriteTd(hash common.Hash, number uint64, td *big.Int) error {
-	if err := WriteTd(hc.chainDb, hash, number, td); err != nil {
-		return err
-	}
-	hc.tdCache.Add(hash, new(big.Int).Set(td))
-	return nil
-}
+
+
 
 // GetHeader retrieves a block header from the database by hash and number,
 // caching it if found.
@@ -414,7 +376,6 @@ func (hc *HeaderChain) SetHead(head uint64, delFn DeleteCallback) {
 			delFn(hash, num)
 		}
 		DeleteHeader(hc.chainDb, hash, num)
-		DeleteTd(hc.chainDb, hash, num)
 		hc.currentHeader = hc.GetHeader(hc.currentHeader.ParentHash, hc.currentHeader.Number.Uint64()-1)
 	}
 	// Roll back the canonical chain numbering

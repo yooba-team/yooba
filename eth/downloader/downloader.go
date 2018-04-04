@@ -20,7 +20,6 @@ package downloader
 import (
 	"errors"
 	"fmt"
-	"math/big"
 	"sync"
 	"sync/atomic"
 	"time"
@@ -159,8 +158,6 @@ type LightChain interface {
 	// CurrentHeader retrieves the head header from the local chain.
 	CurrentHeader() *types.Header
 
-	// GetTd returns the total difficulty of a local block.
-	GetTd(common.Hash, uint64) *big.Int
 
 	// InsertHeaderChain inserts a batch of headers into the local chain.
 	InsertHeaderChain([]*types.Header, int) (int, error)
@@ -308,8 +305,8 @@ func (d *Downloader) UnregisterPeer(id string) error {
 
 // Synchronise tries to sync up our local block chain with a remote peer, both
 // adding various sanity checks as well as wrapping it with various log entries.
-func (d *Downloader) Synchronise(id string, head common.Hash, td *big.Int, mode SyncMode) error {
-	err := d.synchronise(id, head, td, mode)
+func (d *Downloader) Synchronise(id string, head common.Hash,mode SyncMode) error {
+	err := d.synchronise(id, head, mode)
 	switch err {
 	case nil:
 	case errBusy:
@@ -334,7 +331,7 @@ func (d *Downloader) Synchronise(id string, head common.Hash, td *big.Int, mode 
 // synchronise will select the peer and use it for synchronising. If an empty string is given
 // it will use the best peer possible and synchronize if its TD is higher than our own. If any of the
 // checks fail an error will be returned. This method is synchronous
-func (d *Downloader) synchronise(id string, hash common.Hash, td *big.Int, mode SyncMode) error {
+func (d *Downloader) synchronise(id string, hash common.Hash,  mode SyncMode) error {
 	// Mock out the synchronisation if testing
 	if d.synchroniseMock != nil {
 		return d.synchroniseMock(id, hash)
@@ -391,12 +388,12 @@ func (d *Downloader) synchronise(id string, hash common.Hash, td *big.Int, mode 
 	if p == nil {
 		return errUnknownPeer
 	}
-	return d.syncWithPeer(p, hash, td)
+	return d.syncWithPeer(p, hash)
 }
 
 // syncWithPeer starts a block synchronization based on the hash chain from the
 // specified peer and head hash.
-func (d *Downloader) syncWithPeer(p *peerConnection, hash common.Hash, td *big.Int) (err error) {
+func (d *Downloader) syncWithPeer(p *peerConnection, hash common.Hash) (err error) {
 	d.mux.Post(StartEvent{})
 	defer func() {
 		// reset on error
@@ -410,7 +407,7 @@ func (d *Downloader) syncWithPeer(p *peerConnection, hash common.Hash, td *big.I
 		return errTooOld
 	}
 
-	log.Debug("Synchronising with the network", "peer", p.id, "eth", p.version, "head", hash, "td", td, "mode", d.mode)
+	log.Debug("Synchronising with the network", "peer", p.id, "eth", p.version, "head", hash, "td", "mode", d.mode)
 	defer func(start time.Time) {
 		log.Debug("Synchronisation terminated", "elapsed", time.Since(start))
 	}(time.Now())
@@ -459,7 +456,7 @@ func (d *Downloader) syncWithPeer(p *peerConnection, hash common.Hash, td *big.I
 		func() error { return d.fetchHeaders(p, origin+1, pivot) }, // Headers are always retrieved
 		func() error { return d.fetchBodies(origin + 1) },          // Bodies are retrieved during normal and fast sync
 		func() error { return d.fetchReceipts(origin + 1) },        // Receipts are retrieved during fast sync
-		func() error { return d.processHeaders(origin+1, pivot, td) },
+		func() error { return d.processHeaders(origin+1, pivot) },
 	}
 	if d.mode == FastSync {
 		fetchers = append(fetchers, func() error { return d.processFastSyncContent(latest) })
@@ -536,7 +533,7 @@ func (d *Downloader) fetchHeight(p *peerConnection) (*types.Header, error) {
 	p.log.Debug("Retrieving remote chain height")
 
 	// Request the advertised remote head block and wait for the response
-	head, _ := p.peer.Head()
+	head := p.peer.Head()
 	go p.peer.RequestHeadersByHash(head, 1, 0, false)
 
 	ttl := d.requestTTL()
@@ -1146,7 +1143,7 @@ func (d *Downloader) fetchParts(errCancel error, deliveryCh chan dataPack, deliv
 // processHeaders takes batches of retrieved headers from an input channel and
 // keeps processing and scheduling them into the header chain and downloader's
 // queue until the stream ends or a failure occurs.
-func (d *Downloader) processHeaders(origin uint64, pivot uint64, td *big.Int) error {
+func (d *Downloader) processHeaders(origin uint64, pivot uint64) error {
 	// Keep a count of uncertain headers to roll back
 	rollback := []*types.Header{}
 	defer func() {
@@ -1174,8 +1171,7 @@ func (d *Downloader) processHeaders(origin uint64, pivot uint64, td *big.Int) er
 		}
 	}()
 
-	// Wait for batches of headers to process
-	gotHeaders := false
+
 
 	for {
 		select {
@@ -1192,43 +1188,11 @@ func (d *Downloader) processHeaders(origin uint64, pivot uint64, td *big.Int) er
 					case <-d.cancelCh:
 					}
 				}
-				// If no headers were retrieved at all, the peer violated its TD promise that it had a
-				// better chain compared to ours. The only exception is if its promised blocks were
-				// already imported by other means (e.g. fecher):
-				//
-				// R <remote peer>, L <local node>: Both at block 10
-				// R: Mine block 11, and propagate it to L
-				// L: Queue block 11 for import
-				// L: Notice that R's head and TD increased compared to ours, start sync
-				// L: Import of block 11 finishes
-				// L: Sync begins, and finds common ancestor at 11
-				// L: Request new headers up from 11 (R's TD was higher, it must have something)
-				// R: Nothing to give
-				if d.mode != LightSync {
-					head := d.blockchain.CurrentBlock()
-					if !gotHeaders && td.Cmp(d.blockchain.GetTd(head.Hash(), head.NumberU64())) > 0 {
-						return errStallingPeer
-					}
-				}
-				// If fast or light syncing, ensure promised headers are indeed delivered. This is
-				// needed to detect scenarios where an attacker feeds a bad pivot and then bails out
-				// of delivering the post-pivot blocks that would flag the invalid content.
-				//
-				// This check cannot be executed "as is" for full imports, since blocks may still be
-				// queued for processing when the header download completes. However, as long as the
-				// peer gave us something useful, we're already happy/progressed (above check).
-				if d.mode == FastSync || d.mode == LightSync {
-					head := d.lightchain.CurrentHeader()
-					if td.Cmp(d.lightchain.GetTd(head.Hash(), head.Number.Uint64())) > 0 {
-						return errStallingPeer
-					}
-				}
 				// Disable any rollback and return
 				rollback = nil
 				return nil
 			}
-			// Otherwise split the chunk of headers into batches and process them
-			gotHeaders = true
+
 
 			for len(headers) > 0 {
 				// Terminate if something failed in between processing chunks

@@ -168,12 +168,9 @@ func (pm *ProtocolManager) synchronise(peer *peer) {
 	}
 	// Make sure the peer's TD is higher than our own
 	currentBlock := pm.blockchain.CurrentBlock()
-	td := pm.blockchain.GetTd(currentBlock.Hash(), currentBlock.NumberU64())
 
-	pHead, pTd := peer.Head()
-	if pTd.Cmp(td) <= 0 {
-		return
-	}
+	pHead := peer.Head()
+
 	// Otherwise try to sync with the downloader
 	mode := downloader.FullSync
 	if atomic.LoadUint32(&pm.fastSync) == 1 {
@@ -189,7 +186,7 @@ func (pm *ProtocolManager) synchronise(peer *peer) {
 		mode = downloader.FastSync
 	}
 	// Run the sync cycle, and disable fast sync if we've went past the pivot block
-	if err := pm.downloader.Synchronise(peer.id, pHead, pTd, mode); err != nil {
+	if err := pm.downloader.Synchronise(peer.id, pHead, mode); err != nil {
 		return
 	}
 	if atomic.LoadUint32(&pm.fastSync) == 1 {

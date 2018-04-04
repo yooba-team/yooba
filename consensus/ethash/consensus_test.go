@@ -19,21 +19,15 @@ package ethash
 import (
 	"encoding/json"
 	"math/big"
-	"os"
-	"path/filepath"
-	"testing"
 
 	"github.com/yooba-team/yooba/common/math"
-	"github.com/yooba-team/yooba/core/types"
-	"github.com/yooba-team/yooba/params"
+
 )
 
 type diffTest struct {
 	ParentTimestamp    uint64
-	ParentDifficulty   *big.Int
 	CurrentTimestamp   uint64
 	CurrentBlocknumber *big.Int
-	CurrentDifficulty  *big.Int
 }
 
 func (d *diffTest) UnmarshalJSON(b []byte) (err error) {
@@ -49,10 +43,8 @@ func (d *diffTest) UnmarshalJSON(b []byte) (err error) {
 	}
 
 	d.ParentTimestamp = math.MustParseUint64(ext.ParentTimestamp)
-	d.ParentDifficulty = math.MustParseBig256(ext.ParentDifficulty)
 	d.CurrentTimestamp = math.MustParseUint64(ext.CurrentTimestamp)
 	d.CurrentBlocknumber = math.MustParseBig256(ext.CurrentBlocknumber)
-	d.CurrentDifficulty = math.MustParseBig256(ext.CurrentDifficulty)
 
 	return nil
 }

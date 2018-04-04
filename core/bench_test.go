@@ -214,14 +214,12 @@ func makeChainForBench(db ethdb.Database, full bool, count uint64) {
 			Coinbase:    common.Address{},
 			Number:      big.NewInt(int64(n)),
 			ParentHash:  hash,
-			Difficulty:  big.NewInt(1),
 			TxHash:      types.EmptyRootHash,
 			ReceiptHash: types.EmptyRootHash,
 		}
 		hash = header.Hash()
 		WriteHeader(db, header)
 		WriteCanonicalHash(db, hash, n)
-		WriteTd(db, hash, n, big.NewInt(int64(n+1)))
 		if full || n == 0 {
 			block := types.NewBlockWithHeader(header)
 			WriteBody(db, hash, n, block.Body())

@@ -70,7 +70,6 @@ func newCanonical(n int) (ethdb.Database, *LightChain, error) {
 func newTestLightChain() *LightChain {
 	db, _ := ethdb.NewMemDatabase()
 	gspec := &core.Genesis{
-		Difficulty: big.NewInt(1),
 		Config:     params.TestChainConfig,
 	}
 	gspec.MustCommit(db)
@@ -122,110 +121,13 @@ func testHeaderChainImport(chain []*types.Header, lightchain *LightChain) error 
 		}
 		// Manually insert the header into the database, but don't reorganize (allows subsequent testing)
 		lightchain.mu.Lock()
-		core.WriteTd(lightchain.chainDb, header.Hash(), header.Number.Uint64(), new(big.Int).Add(header.Difficulty, lightchain.GetTdByHash(header.ParentHash)))
 		core.WriteHeader(lightchain.chainDb, header)
 		lightchain.mu.Unlock()
 	}
 	return nil
 }
 
-// Tests that given a starting canonical chain of a given size, it can be extended
-// with various length chains.
-func TestExtendCanonicalHeaders(t *testing.T) {
-	length := 5
 
-	// Make first chain starting from genesis
-	_, processor, err := newCanonical(length)
-	if err != nil {
-		t.Fatalf("failed to make new canonical chain: %v", err)
-	}
-	// Define the difficulty comparator
-	better := func(td1, td2 *big.Int) {
-		if td2.Cmp(td1) <= 0 {
-			t.Errorf("total difficulty mismatch: have %v, expected more than %v", td2, td1)
-		}
-	}
-	// Start fork from current height
-	testFork(t, processor, length, 1, better)
-	testFork(t, processor, length, 2, better)
-	testFork(t, processor, length, 5, better)
-	testFork(t, processor, length, 10, better)
-}
-
-// Tests that given a starting canonical chain of a given size, creating shorter
-// forks do not take canonical ownership.
-func TestShorterForkHeaders(t *testing.T) {
-	length := 10
-
-	// Make first chain starting from genesis
-	_, processor, err := newCanonical(length)
-	if err != nil {
-		t.Fatalf("failed to make new canonical chain: %v", err)
-	}
-	// Define the difficulty comparator
-	worse := func(td1, td2 *big.Int) {
-		if td2.Cmp(td1) >= 0 {
-			t.Errorf("total difficulty mismatch: have %v, expected less than %v", td2, td1)
-		}
-	}
-	// Sum of numbers must be less than `length` for this to be a shorter fork
-	testFork(t, processor, 0, 3, worse)
-	testFork(t, processor, 0, 7, worse)
-	testFork(t, processor, 1, 1, worse)
-	testFork(t, processor, 1, 7, worse)
-	testFork(t, processor, 5, 3, worse)
-	testFork(t, processor, 5, 4, worse)
-}
-
-// Tests that given a starting canonical chain of a given size, creating longer
-// forks do take canonical ownership.
-func TestLongerForkHeaders(t *testing.T) {
-	length := 10
-
-	// Make first chain starting from genesis
-	_, processor, err := newCanonical(length)
-	if err != nil {
-		t.Fatalf("failed to make new canonical chain: %v", err)
-	}
-	// Define the difficulty comparator
-	better := func(td1, td2 *big.Int) {
-		if td2.Cmp(td1) <= 0 {
-			t.Errorf("total difficulty mismatch: have %v, expected more than %v", td2, td1)
-		}
-	}
-	// Sum of numbers must be greater than `length` for this to be a longer fork
-	testFork(t, processor, 0, 11, better)
-	testFork(t, processor, 0, 15, better)
-	testFork(t, processor, 1, 10, better)
-	testFork(t, processor, 1, 12, better)
-	testFork(t, processor, 5, 6, better)
-	testFork(t, processor, 5, 8, better)
-}
-
-// Tests that given a starting canonical chain of a given size, creating equal
-// forks do take canonical ownership.
-func TestEqualForkHeaders(t *testing.T) {
-	length := 10
-
-	// Make first chain starting from genesis
-	_, processor, err := newCanonical(length)
-	if err != nil {
-		t.Fatalf("failed to make new canonical chain: %v", err)
-	}
-	// Define the difficulty comparator
-	equal := func(td1, td2 *big.Int) {
-		if td2.Cmp(td1) != 0 {
-			t.Errorf("total difficulty mismatch: have %v, want %v", td2, td1)
-		}
-	}
-	// Sum of numbers must be equal to `length` for this to be an equal fork
-	testFork(t, processor, 0, 10, equal)
-	testFork(t, processor, 1, 9, equal)
-	testFork(t, processor, 2, 8, equal)
-	testFork(t, processor, 5, 5, equal)
-	testFork(t, processor, 6, 4, equal)
-	testFork(t, processor, 9, 1, equal)
-}
 
 // Tests that chains missing links do not get accepted by the processor.
 func TestBrokenHeaderChain(t *testing.T) {
@@ -247,7 +149,6 @@ func makeHeaderChainWithDiff(genesis *types.Block, d []int, seed byte) []*types.
 		header := &types.Header{
 			Coinbase:    common.Address{seed},
 			Number:      big.NewInt(int64(i + 1)),
-			Difficulty:  big.NewInt(int64(difficulty)),
 			TxHash:      types.EmptyRootHash,
 			ReceiptHash: types.EmptyRootHash,
 		}
@@ -299,11 +200,7 @@ func testReorg(t *testing.T, first, second []int, td int64) {
 			t.Errorf("parent header hash mismatch: have %x, want %x", prev.ParentHash, header.Hash())
 		}
 	}
-	// Make sure the chain total difficulty is the correct one
-	want := new(big.Int).Add(bc.genesisBlock.Difficulty(), big.NewInt(td))
-	if have := bc.GetTdByHash(bc.CurrentHeader().Hash()); have.Cmp(want) != 0 {
-		t.Errorf("total difficulty mismatch: have %v, want %v", have, want)
-	}
+
 }
 
 // Tests that the insertion functions detect banned hashes.

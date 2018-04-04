@@ -28,7 +28,6 @@ func TestBlockchain(t *testing.T) {
 	bt.skipLoad(`^GeneralStateTests/`)
 	// Skip random failures due to selfish mining test.
 	bt.skipLoad(`^bcMultiChainTest/(ChainAtoChainB_blockorder|CallContractFromNotBestBlock)`)
-	bt.skipLoad(`^bcTotalDifficultyTest/(lotsOfLeafs|lotsOfBranches|sideChainWithMoreTransactions)`)
 	// Constantinople is not implemented yet.
 	bt.skipLoad(`(?i)(constantinople)`)
 

@@ -21,7 +21,6 @@ import (
 	"errors"
 	"fmt"
 	"math"
-	"math/big"
 	"sync"
 	"sync/atomic"
 	"time"
@@ -258,10 +257,8 @@ func (pm *ProtocolManager) handle(p *peer) error {
 		genesis = pm.blockchain.Genesis()
 		head    = pm.blockchain.CurrentHeader()
 		hash    = head.Hash()
-		number  = head.Number.Uint64()
-		td      = pm.blockchain.GetTd(hash, number)
 	)
-	if err := p.Handshake(pm.networkId, td, hash, genesis.Hash()); err != nil {
+	if err := p.Handshake(pm.networkId, hash, genesis.Hash()); err != nil {
 		p.Log().Debug("Ethereum handshake failed", "err", err)
 		return err
 	}
@@ -577,24 +574,8 @@ func (pm *ProtocolManager) handleMsg(p *peer) error {
 		p.MarkBlock(request.Block.Hash())
 		pm.fetcher.Enqueue(p.id, request.Block)
 
-		// Assuming the block is importable by the peer, but possibly not yet done so,
-		// calculate the head hash and TD that the peer truly must have.
-		var (
-			trueHead = request.Block.ParentHash()
-			trueTD   = new(big.Int).Sub(request.TD, request.Block.Difficulty())
-		)
-		// Update the peers total difficulty if better than the previous
-		if _, td := p.Head(); trueTD.Cmp(td) > 0 {
-			p.SetHead(trueHead, trueTD)
 
-			// Schedule a sync if above ours. Note, this will not fire a sync for a gap of
-			// a singe block (as the true TD is below the propagated block), however this
-			// scenario should easily be covered by the fetcher.
-			currentBlock := pm.blockchain.CurrentBlock()
-			if trueTD.Cmp(pm.blockchain.GetTd(currentBlock.Hash(), currentBlock.NumberU64())) > 0 {
-				go pm.synchronise(p)
-			}
-		}
+
 
 	case msg.Code == TxMsg:
 		// Transactions arrived, make sure we have a valid and fresh chain to handle them
@@ -629,18 +610,11 @@ func (pm *ProtocolManager) BroadcastBlock(block *types.Block, propagate bool) {
 
 	// If propagation is requested, send to a subset of the peer
 	if propagate {
-		// Calculate the TD of the block (it's not imported yet, so block.Td is not valid)
-		var td *big.Int
-		if parent := pm.blockchain.GetBlock(block.ParentHash(), block.NumberU64()-1); parent != nil {
-			td = new(big.Int).Add(block.Difficulty(), pm.blockchain.GetTd(block.ParentHash(), block.NumberU64()-1))
-		} else {
-			log.Error("Propagating dangling block", "number", block.Number(), "hash", hash)
-			return
-		}
+
 		// Send the block to a subset of our peers
 		transfer := peers[:int(math.Sqrt(float64(len(peers))))]
 		for _, peer := range transfer {
-			peer.SendNewBlock(block, td)
+			peer.SendNewBlock(block)
 		}
 		log.Trace("Propagated block", "hash", hash, "recipients", len(transfer), "duration", common.PrettyDuration(time.Since(block.ReceivedAt)))
 		return
@@ -695,7 +669,6 @@ func (self *ProtocolManager) txBroadcastLoop() {
 // known about the host peer.
 type NodeInfo struct {
 	Network    uint64              `json:"network"`    // Ethereum network ID (1=Frontier, 2=Morden, Ropsten=3, Rinkeby=4)
-	Difficulty *big.Int            `json:"difficulty"` // Total difficulty of the host's blockchain
 	Genesis    common.Hash         `json:"genesis"`    // SHA3 hash of the host's genesis block
 	Config     *params.ChainConfig `json:"config"`     // Chain configuration for the fork rules
 	Head       common.Hash         `json:"head"`       // SHA3 hash of the host's best owned block
@@ -706,7 +679,6 @@ func (self *ProtocolManager) NodeInfo() *NodeInfo {
 	currentBlock := self.blockchain.CurrentBlock()
 	return &NodeInfo{
 		Network:    self.networkId,
-		Difficulty: self.blockchain.GetTd(currentBlock.Hash(), currentBlock.NumberU64()),
 		Genesis:    self.blockchain.Genesis().Hash(),
 		Config:     self.blockchain.Config(),
 		Head:       currentBlock.Hash(),

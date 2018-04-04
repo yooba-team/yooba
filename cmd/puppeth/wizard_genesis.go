@@ -37,7 +37,6 @@ func (w *wizard) makeGenesis() {
 	genesis := &core.Genesis{
 		Timestamp:  uint64(time.Now().Unix()),
 		GasLimit:   4700000,
-		Difficulty: big.NewInt(524288),
 		Alloc:      make(core.GenesisAlloc),
 		Config: &params.ChainConfig{
 			ByzantiumBlock: big.NewInt(4),
@@ -58,7 +57,6 @@ func (w *wizard) makeGenesis() {
 
 	case choice == "" || choice == "2":
 		// In the case of clique, configure the consensus parameters
-		genesis.Difficulty = big.NewInt(1)
 		genesis.Config.Clique = &params.CliqueConfig{
 			Period: 15,
 			Epoch:  30000,

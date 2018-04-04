@@ -23,7 +23,6 @@ import (
 	"math"
 	"sync"
 
-	"github.com/yooba-team/yooba/common"
 	"github.com/yooba-team/yooba/core"
 	"github.com/yooba-team/yooba/core/types"
 	"github.com/yooba-team/yooba/eth"
@@ -320,7 +319,6 @@ func (pm *ProtocolManager) blockLoop() {
 	headSub := pm.blockchain.SubscribeChainHeadEvent(headCh)
 	go func() {
 		var lastHead *types.Header
-		lastBroadcastTd := common.Big0
 		for {
 			select {
 			case ev := <-headCh:
@@ -329,18 +327,15 @@ func (pm *ProtocolManager) blockLoop() {
 					header := ev.Block.Header()
 					hash := header.Hash()
 					number := header.Number.Uint64()
-					td := core.GetTd(pm.chainDb, hash, number)
-					if td != nil && td.Cmp(lastBroadcastTd) > 0 {
 						var reorg uint64
 						if lastHead != nil {
 							reorg = lastHead.Number.Uint64() - core.FindCommonAncestor(pm.chainDb, header, lastHead).Number.Uint64()
 						}
 						lastHead = header
-						lastBroadcastTd = td
 
-						log.Debug("Announcing block to peers", "number", number, "hash", hash, "td", td, "reorg", reorg)
+						log.Debug("Announcing block to peers", "number", number, "hash", hash, "td", "reorg", reorg)
 
-						announce := announceData{Hash: hash, Number: number, Td: td, ReorgDepth: reorg}
+						announce := announceData{Hash: hash, Number: number, ReorgDepth: reorg}
 						var (
 							signed         bool
 							signedAnnounce announceData
@@ -370,7 +365,7 @@ func (pm *ProtocolManager) blockLoop() {
 								}
 							}
 						}
-					}
+
 				}
 			case <-pm.quitSync:
 				headSub.Unsubscribe()

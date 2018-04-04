@@ -17,7 +17,6 @@
 package downloader
 
 import (
-	"math/big"
 
 	"github.com/yooba-team/yooba/common"
 	"github.com/yooba-team/yooba/core"
@@ -42,9 +41,9 @@ func NewFakePeer(id string, db ethdb.Database, hc *core.HeaderChain, dl *Downloa
 
 // Head implements downloader.Peer, returning the current head hash and number
 // of the best known header.
-func (p *FakePeer) Head() (common.Hash, *big.Int) {
+func (p *FakePeer) Head() (common.Hash) {
 	header := p.hc.CurrentHeader()
-	return header.Hash(), header.Number
+	return header.Hash()
 }
 
 // RequestHeadersByHash implements downloader.Peer, returning a batch of headers
