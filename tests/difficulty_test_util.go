@@ -20,8 +20,6 @@ import (
 	"fmt"
 	"math/big"
 	"github.com/yooba-team/yooba/common/math"
-	"github.com/yooba-team/yooba/consensus/ethash"
-	"github.com/yooba-team/yooba/core/types"
 	"github.com/yooba-team/yooba/params"
 )
 
@@ -44,14 +42,7 @@ type difficultyTestMarshaling struct {
 }
 
 func (test *DifficultyTest) Run(config *params.ChainConfig) error {
-	parentNumber := big.NewInt(int64(test.CurrentBlockNumber - 1))
-	parent := &types.Header{
-		Difficulty: test.ParentDifficulty,
-		Time:       test.ParentTimestamp,
-		Number:     parentNumber,
-	}
-
-	actual := ethash.CalcDifficulty(config, test.CurrentTimestamp.Uint64(), parent)
+	actual := big.NewInt(1)
 	exp := test.CurrentDifficulty
 
 	if actual.Cmp(exp) != 0 {

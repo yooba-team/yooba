@@ -518,7 +518,7 @@ func (c *Clique) Prepare(chain consensus.ChainReader, header *types.Header) erro
 		c.lock.RUnlock()
 	}
 	// Set the correct difficulty
-	header.Difficulty = CalcDifficulty(snap, c.signer)
+	header.Difficulty = big.NewInt(1)
 
 	// Ensure the extra data has all it's components
 	if len(header.Extra) < extraVanity {
@@ -632,26 +632,8 @@ func (c *Clique) Seal(chain consensus.ChainReader, block *types.Block, stop <-ch
 	return block.WithSeal(header), nil
 }
 
-// CalcDifficulty is the difficulty adjustment algorithm. It returns the difficulty
-// that a new block should have based on the previous blocks in the chain and the
-// current signer.
-func (c *Clique) CalcDifficulty(chain consensus.ChainReader, time uint64, parent *types.Header) *big.Int {
-	snap, err := c.snapshot(chain, parent.Number.Uint64(), parent.Hash(), nil)
-	if err != nil {
-		return nil
-	}
-	return CalcDifficulty(snap, c.signer)
-}
 
-// CalcDifficulty is the difficulty adjustment algorithm. It returns the difficulty
-// that a new block should have based on the previous blocks in the chain and the
-// current signer.
-func CalcDifficulty(snap *Snapshot, signer common.Address) *big.Int {
-	if snap.inturn(snap.Number+1, signer) {
-		return new(big.Int).Set(diffInTurn)
-	}
-	return new(big.Int).Set(diffNoTurn)
-}
+
 
 // APIs implements consensus.Engine, returning the user facing RPC API to allow
 // controlling the signer voting.
