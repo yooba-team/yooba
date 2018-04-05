@@ -48,7 +48,7 @@ import (
 	"github.com/yooba-team/yooba/core/types"
 	"github.com/yooba-team/yooba/yoo"
 	"github.com/yooba-team/yooba/yoo/downloader"
-	"github.com/yooba-team/yooba/ethclient"
+	"github.com/yooba-team/yooba/yooclient"
 	"github.com/yooba-team/yooba/ethstats"
 	"github.com/yooba-team/yooba/les"
 	"github.com/yooba-team/yooba/log"
@@ -196,7 +196,7 @@ type request struct {
 type faucet struct {
 	config *params.ChainConfig // Chain configurations for signing
 	stack  *node.Node          // Ethereum protocol stack
-	client *ethclient.Client   // Client connection to the Ethereum chain
+	client *yooclient.Client   // Client connection to the Ethereum chain
 	index  []byte              // Index page to serve up on the web
 
 	keystore *keystore.KeyStore // Keystore containing the single signer
@@ -264,7 +264,7 @@ func newFaucet(genesis *core.Genesis, port int, enodes []*discv5.Node, network u
 		stack.Stop()
 		return nil, err
 	}
-	client := ethclient.NewClient(api)
+	client := yooclient.NewClient(api)
 
 	return &faucet{
 		config:   genesis.Config,

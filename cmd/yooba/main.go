@@ -31,7 +31,7 @@ import (
 	"github.com/yooba-team/yooba/common"
 	"github.com/yooba-team/yooba/console"
 	"github.com/yooba-team/yooba/yoo"
-	"github.com/yooba-team/yooba/ethclient"
+	"github.com/yooba-team/yooba/yooclient"
 	"github.com/yooba-team/yooba/internal/debug"
 	"github.com/yooba-team/yooba/log"
 	"github.com/yooba-team/yooba/metrics"
@@ -248,7 +248,7 @@ func startNode(ctx *cli.Context, stack *node.Node) {
 		if err != nil {
 			utils.Fatalf("Failed to attach to self: %v", err)
 		}
-		stateReader := ethclient.NewClient(rpcClient)
+		stateReader := yooclient.NewClient(rpcClient)
 
 		// Open any wallets already attached
 		for _, wallet := range stack.AccountManager().Wallets() {
@@ -287,7 +287,7 @@ func startNode(ctx *cli.Context, stack *node.Node) {
 		}
 		var fullYooba *yoo.FullYooba
 		if err := stack.Service(&fullYooba); err != nil {
-			utils.Fatalf("Ethereum service not running: %v", err)
+			utils.Fatalf("fullYooba service not running: %v", err)
 		}
 		// Use a reduced number of threads if requested
 		if threads := ctx.GlobalInt(utils.MinerThreadsFlag.Name); threads > 0 {

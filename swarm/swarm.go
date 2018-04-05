@@ -28,7 +28,7 @@ import (
 	"github.com/yooba-team/yooba/contracts/chequebook"
 	"github.com/yooba-team/yooba/contracts/ens"
 	"github.com/yooba-team/yooba/crypto"
-	"github.com/yooba-team/yooba/ethclient"
+	"github.com/yooba-team/yooba/yooclient"
 	"github.com/yooba-team/yooba/log"
 	"github.com/yooba-team/yooba/node"
 	"github.com/yooba-team/yooba/p2p"
@@ -76,7 +76,7 @@ func (self *Swarm) API() *SwarmAPI {
 
 // creates a new swarm service instance
 // implements node.Service
-func NewSwarm(ctx *node.ServiceContext, backend chequebook.Backend, ensClient *ethclient.Client, config *api.Config, swapEnabled, syncEnabled bool, cors string) (self *Swarm, err error) {
+func NewSwarm(ctx *node.ServiceContext, backend chequebook.Backend, ensClient *yooclient.Client, config *api.Config, swapEnabled, syncEnabled bool, cors string) (self *Swarm, err error) {
 	if bytes.Equal(common.FromHex(config.PublicKey), storage.ZeroKey) {
 		return nil, fmt.Errorf("empty public key")
 	}

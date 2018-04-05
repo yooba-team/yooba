@@ -22,17 +22,17 @@ import (
 	"math/big"
 
 	"github.com/yooba-team/yooba/core/types"
-	"github.com/yooba-team/yooba/ethclient"
+	"github.com/yooba-team/yooba/yooclient"
 )
 
 // EthereumClient provides access to the Ethereum APIs.
 type EthereumClient struct {
-	client *ethclient.Client
+	client *yooclient.Client
 }
 
 // NewEthereumClient connects a client to the given URL.
 func NewEthereumClient(rawurl string) (client *EthereumClient, _ error) {
-	rawClient, err := ethclient.Dial(rawurl)
+	rawClient, err := yooclient.Dial(rawurl)
 	return &EthereumClient{rawClient}, err
 }
 

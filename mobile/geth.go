@@ -27,7 +27,7 @@ import (
 	"github.com/yooba-team/yooba/core"
 	"github.com/yooba-team/yooba/yoo"
 	"github.com/yooba-team/yooba/yoo/downloader"
-	"github.com/yooba-team/yooba/ethclient"
+	"github.com/yooba-team/yooba/yooclient"
 	"github.com/yooba-team/yooba/ethstats"
 	"github.com/yooba-team/yooba/les"
 	"github.com/yooba-team/yooba/node"
@@ -194,7 +194,7 @@ func (n *Node) GetEthereumClient() (client *EthereumClient, _ error) {
 	if err != nil {
 		return nil, err
 	}
-	return &EthereumClient{ethclient.NewClient(rpc)}, nil
+	return &EthereumClient{yooclient.NewClient(rpc)}, nil
 }
 
 // GetNodeInfo gathers and returns a collection of metadata known about the host.
