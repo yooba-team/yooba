@@ -40,7 +40,7 @@ import android.test.MoreAsserts;
 import java.math.BigInteger;
 import java.util.Arrays;
 
-import org.ethereum.yooba. *;
+import org.yooba.yooba. *;
 
 public class AndroidTest extends InstrumentationTestCase {
 	public AndroidTest() {}

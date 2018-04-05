@@ -188,8 +188,8 @@ func (n *Node) Stop() error {
 	return n.node.Stop()
 }
 
-// GetEthereumClient retrieves a client to access the Yooba subsystem.
-func (n *Node) GetEthereumClient() (client *YoobaClient, _ error) {
+// GetYoobaClient retrieves a client to access the Yooba subsystem.
+func (n *Node) GetYoobaClient() (client *YoobaClient, _ error) {
 	rpc, err := n.node.Attach()
 	if err != nil {
 		return nil, err
