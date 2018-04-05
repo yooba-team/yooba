@@ -22,7 +22,7 @@ package storage
 import (
 	"fmt"
 
-	"github.com/yooba-team/yooba/compression/rle"
+	"github.com/yooba-team/yooba/common/compression/rle"
 	"github.com/syndtr/goleveldb/leveldb"
 	"github.com/syndtr/goleveldb/leveldb/iterator"
 	"github.com/syndtr/goleveldb/leveldb/opt"

@@ -24,7 +24,7 @@ import (
 	"io"
 	"sync"
 
-	"github.com/yooba-team/yooba/bmt"
+	"github.com/yooba-team/yooba/common/bmt"
 	"github.com/yooba-team/yooba/common"
 	"github.com/yooba-team/yooba/crypto/sha3"
 )
