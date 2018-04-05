@@ -144,7 +144,7 @@ type Block struct {
 	hash atomic.Value
 	size atomic.Value
 
-	// These fields are used by package eth to track
+	// These fields are used by package yoo to track
 	// inter-peer block relay.
 	ReceivedAt   time.Time
 	ReceivedFrom interface{}

@@ -205,8 +205,8 @@ type PrivateAdminAPI struct {
 
 // NewPrivateAdminAPI creates a new API definition for the full node private
 // admin methods of the Yooba service.
-func NewPrivateAdminAPI(eth *FullYooba) *PrivateAdminAPI {
-	return &PrivateAdminAPI{yoo: eth}
+func NewPrivateAdminAPI(yoo *FullYooba) *PrivateAdminAPI {
+	return &PrivateAdminAPI{yoo: yoo}
 }
 
 // ExportChain exports the current blockchain into a local file.
@@ -298,8 +298,8 @@ type PublicDebugAPI struct {
 
 // NewPublicDebugAPI creates a new API definition for the full node-
 // related public debug methods of the Yooba service.
-func NewPublicDebugAPI(eth *FullYooba) *PublicDebugAPI {
-	return &PublicDebugAPI{yoo: eth}
+func NewPublicDebugAPI(yoo *FullYooba) *PublicDebugAPI {
+	return &PublicDebugAPI{yoo: yoo}
 }
 
 // DumpBlock retrieves the entire state of the database at a given block.
@@ -336,8 +336,8 @@ type PrivateDebugAPI struct {
 
 // NewPrivateDebugAPI creates a new API definition for the full node-related
 // private debug methods of the Yooba service.
-func NewPrivateDebugAPI(config *params.ChainConfig, eth *FullYooba) *PrivateDebugAPI {
-	return &PrivateDebugAPI{config: config, yoo: eth}
+func NewPrivateDebugAPI(config *params.ChainConfig, yoo *FullYooba) *PrivateDebugAPI {
+	return &PrivateDebugAPI{config: config, yoo: yoo}
 }
 
 // Preimage is a debug API function that returns the preimage for a sha3 hash, if known.

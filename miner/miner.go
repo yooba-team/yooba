@@ -50,7 +50,7 @@ type Miner struct {
 
 	coinbase common.Address
 	mining   int32
-	eth      Backend
+	yoo      Backend
 	engine   consensus.Engine
 
 	canStart    int32 // can start indicates whether we can start the mining operation
@@ -59,7 +59,7 @@ type Miner struct {
 
 func New(yoo Backend, config *params.ChainConfig, mux *event.TypeMux, engine consensus.Engine) *Miner {
 	miner := &Miner{
-		eth:      yoo,
+		yoo:      yoo,
 		mux:      mux,
 		engine:   engine,
 		worker:   newWorker(config, engine, common.Address{}, yoo, mux),
