@@ -28,7 +28,7 @@ import (
 	"github.com/yooba-team/yooba/yoo"
 	"github.com/yooba-team/yooba/yoo/downloader"
 	"github.com/yooba-team/yooba/yooclient"
-	"github.com/yooba-team/yooba/ethstats"
+	"github.com/yooba-team/yooba/yoobastats"
 	"github.com/yooba-team/yooba/les"
 	"github.com/yooba-team/yooba/node"
 	"github.com/yooba-team/yooba/p2p"
@@ -160,7 +160,7 @@ func NewNode(datadir string, config *NodeConfig) (stack *Node, _ error) {
 				var lesServ *les.LightYooba
 				ctx.Service(&lesServ)
 
-				return ethstats.New(config.YoobaNetStats, nil, lesServ)
+				return yoobastats.New(config.YoobaNetStats, nil, lesServ)
 			}); err != nil {
 				return nil, fmt.Errorf("netstats init: %v", err)
 			}

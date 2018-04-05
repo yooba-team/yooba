@@ -44,7 +44,7 @@ import (
 	"github.com/yooba-team/yooba/yoo/downloader"
 	"github.com/yooba-team/yooba/yoo/gasprice"
 	"github.com/yooba-team/yooba/yoobadb"
-	"github.com/yooba-team/yooba/ethstats"
+	"github.com/yooba-team/yooba/yoobastats"
 	"github.com/yooba-team/yooba/les"
 	"github.com/yooba-team/yooba/log"
 	"github.com/yooba-team/yooba/metrics"
@@ -362,8 +362,8 @@ var (
 	}
 	// Logging and debug settings
 	EthStatsURLFlag = cli.StringFlag{
-		Name:  "ethstats",
-		Usage: "Reporting URL of a ethstats service (nodename:secret@host:port)",
+		Name:  "yoobastats",
+		Usage: "Reporting URL of a yoobastats service (nodename:secret@host:port)",
 	}
 	MetricsEnabledFlag = cli.BoolFlag{
 		Name:  metrics.MetricsEnabledFlag,
@@ -1171,7 +1171,7 @@ func RegisterEthStatsService(stack *node.Node, url string) {
 		var lesServ *les.LightYooba
 		ctx.Service(&lesServ)
 
-		return ethstats.New(url, ethServ, lesServ)
+		return yoobastats.New(url, ethServ, lesServ)
 	}); err != nil {
 		Fatalf("Failed to register the Yooba Stats service: %v", err)
 	}

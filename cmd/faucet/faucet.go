@@ -49,7 +49,7 @@ import (
 	"github.com/yooba-team/yooba/yoo"
 	"github.com/yooba-team/yooba/yoo/downloader"
 	"github.com/yooba-team/yooba/yooclient"
-	"github.com/yooba-team/yooba/ethstats"
+	"github.com/yooba-team/yooba/yoobastats"
 	"github.com/yooba-team/yooba/les"
 	"github.com/yooba-team/yooba/log"
 	"github.com/yooba-team/yooba/node"
@@ -67,7 +67,7 @@ var (
 	ethPortFlag = flag.Int("ethport", 30303, "Listener port for the devp2p connection")
 	bootFlag    = flag.String("bootnodes", "", "Comma separated bootnode enode URLs to seed with")
 	netFlag     = flag.Uint64("network", 0, "Network ID to use for the Yooba protocol")
-	statsFlag   = flag.String("ethstats", "", "Ethstats network monitoring auth string")
+	statsFlag   = flag.String("yoobastats", "", "Ethstats network monitoring auth string")
 
 	netnameFlag = flag.String("faucet.name", "", "Network name to assign to the faucet")
 	payoutFlag  = flag.Int("faucet.amount", 1, "Number of Ethers to pay out per user request")
@@ -240,12 +240,12 @@ func newFaucet(genesis *core.Genesis, port int, enodes []*discv5.Node, network u
 	}); err != nil {
 		return nil, err
 	}
-	// Assemble the ethstats monitoring and reporting service'
+	// Assemble the yoobastats monitoring and reporting service'
 	if stats != "" {
 		if err := stack.Register(func(ctx *node.ServiceContext) (node.Service, error) {
 			var serv *les.LightYooba
 			ctx.Service(&serv)
-			return ethstats.New(stats, nil, serv)
+			return yoobastats.New(stats, nil, serv)
 		}); err != nil {
 			return nil, err
 		}
