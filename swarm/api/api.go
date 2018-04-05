@@ -43,7 +43,7 @@ type Resolver interface {
 /*
 Api implements webserver/file system related content storage and retrieval
 on top of the dpa
-it is the public interface of the dpa which is included in the ethereum stack
+it is the public interface of the dpa which is included in the yooba stack
 */
 type Api struct {
 	dpa *storage.DPA

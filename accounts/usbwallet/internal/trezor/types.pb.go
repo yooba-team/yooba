@@ -42,7 +42,7 @@ It has these top-level messages:
 	GetPublicKey
 	PublicKey
 	GetAddress
-	EthereumGetAddress
+	YoobaGetAddress
 	Address
 	EthereumAddress
 	WipeDevice
@@ -69,12 +69,12 @@ It has these top-level messages:
 	SimpleSignTx
 	TxRequest
 	TxAck
-	EthereumSignTx
-	EthereumTxRequest
-	EthereumTxAck
-	EthereumSignMessage
-	EthereumVerifyMessage
-	EthereumMessageSignature
+	YoobaSignTx
+	YoobaTxRequest
+	YoobaTxAck
+	YoobaSignMessage
+	YoobaVerifyMessage
+	YoobaMessageSignature
 	SignIdentity
 	SignedIdentity
 	GetECDHSessionKey

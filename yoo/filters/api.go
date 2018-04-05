@@ -50,7 +50,7 @@ type filter struct {
 }
 
 // PublicFilterAPI offers support to create and manage filters. This will allow external clients to retrieve various
-// information related to the Ethereum protocol such als blocks, transactions and logs.
+// information related to the Yooba protocol such als blocks, transactions and logs.
 type PublicFilterAPI struct {
 	backend   Backend
 	mux       *event.TypeMux
@@ -269,7 +269,7 @@ func (api *PublicFilterAPI) Logs(ctx context.Context, crit FilterCriteria) (*rpc
 
 // FilterCriteria represents a request to create a new filter.
 //
-// TODO(karalabe): Kill this in favor of ethereum.FilterQuery.
+// TODO(karalabe): Kill this in favor of yooba.FilterQuery.
 type FilterCriteria struct {
 	FromBlock *big.Int
 	ToBlock   *big.Int

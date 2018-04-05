@@ -90,7 +90,7 @@ class Header extends Component<Props> {
 						{this.arrow}
 					</Transition>
 					<Typography type='title' color='inherit' noWrap className={classes.title}>
-						Go Ethereum Dashboard
+						Go Yooba Dashboard
 					</Typography>
 				</Toolbar>
 			</AppBar>

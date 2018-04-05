@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
 
-// Package les implements the Light Ethereum Subprotocol.
+// Package les implements the Light Yooba Subprotocol.
 package les
 
 import (
@@ -173,7 +173,7 @@ func (s *LightYooba) Mining() bool {
 	return false
 }
 
-// APIs returns the collection of RPC services the ethereum package offers.
+// APIs returns the collection of RPC services the Yooba package offers.
 // NOTE, some of these services probably need to be moved to somewhere else.
 func (s *LightYooba) APIs() []rpc.API {
 	return append(ethapi.GetAPIs(s.ApiBackend), []rpc.API{
@@ -219,7 +219,7 @@ func (s *LightYooba) Protocols() []p2p.Protocol {
 }
 
 // Start implements node.Service, starting all internal goroutines needed by the
-// Ethereum protocol implementation.
+// Yooba protocol implementation.
 func (s *LightYooba) Start(srvr *p2p.Server) error {
 	s.startBloomHandlers()
 	log.Warn("Light client mode is an experimental feature")
@@ -232,7 +232,7 @@ func (s *LightYooba) Start(srvr *p2p.Server) error {
 }
 
 // Stop implements node.Service, terminating all internal goroutines used by the
-// Ethereum protocol.
+// Yooba protocol.
 func (s *LightYooba) Stop() error {
 	s.odr.Stop()
 	if s.bloomIndexer != nil {

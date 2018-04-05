@@ -18,7 +18,7 @@ package yooclient
 
 import "github.com/yooba-team/yooba"
 
-// Verify that Client implements the ethereum interfaces.
+// Verify that Client implements the Yooba interfaces.
 var (
 	_ = yooba.ChainReader(&Client{})
 	_ = yooba.TransactionReader(&Client{})
@@ -29,6 +29,6 @@ var (
 	_ = yooba.GasPricer(&Client{})
 	_ = yooba.LogFilterer(&Client{})
 	_ = yooba.PendingStateReader(&Client{})
-	// _ = ethereum.PendingStateEventer(&Client{})
+	// _ = yooba.PendingStateEventer(&Client{})
 	_ = yooba.PendingContractCaller(&Client{})
 )

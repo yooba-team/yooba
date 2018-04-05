@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
 
-// Package yooclient provides a client for the Ethereum RPC API.
+// Package yooclient provides a client for the Yooba RPC API.
 package yooclient
 
 import (
@@ -32,7 +32,7 @@ import (
 	"github.com/yooba-team/yooba/rpc"
 )
 
-// Client defines typed wrappers for the Ethereum RPC API.
+// Client defines typed wrappers for the Yooba RPC API.
 type Client struct {
 	c *rpc.Client
 }
