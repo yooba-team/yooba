@@ -93,7 +93,7 @@ func New(ctx *node.ServiceContext, config *yoo.Config) (*LightYooba, error) {
 	peers := newPeerSet()
 	quitSync := make(chan struct{})
 
-	leth := &LightYooba{
+	lightYoo := &LightYooba{
 		config:           config,
 		chainConfig:      chainConfig,
 		chainDb:          chainDb,
@@ -110,32 +110,32 @@ func New(ctx *node.ServiceContext, config *yoo.Config) (*LightYooba, error) {
 		bloomTrieIndexer: light.NewBloomTrieIndexer(chainDb, true),
 	}
 
-	leth.relay = NewLesTxRelay(peers, leth.reqDist)
-	leth.serverPool = newServerPool(chainDb, quitSync, &leth.wg)
-	leth.retriever = newRetrieveManager(peers, leth.reqDist, leth.serverPool)
-	leth.odr = NewLesOdr(chainDb, leth.chtIndexer, leth.bloomTrieIndexer, leth.bloomIndexer, leth.retriever)
-	if leth.blockchain, err = light.NewLightChain(leth.odr, leth.chainConfig, leth.engine); err != nil {
+	lightYoo.relay = NewLesTxRelay(peers, lightYoo.reqDist)
+	lightYoo.serverPool = newServerPool(chainDb, quitSync, &lightYoo.wg)
+	lightYoo.retriever = newRetrieveManager(peers, lightYoo.reqDist, lightYoo.serverPool)
+	lightYoo.odr = NewLesOdr(chainDb, lightYoo.chtIndexer, lightYoo.bloomTrieIndexer, lightYoo.bloomIndexer, lightYoo.retriever)
+	if lightYoo.blockchain, err = light.NewLightChain(lightYoo.odr, lightYoo.chainConfig, lightYoo.engine); err != nil {
 		return nil, err
 	}
-	leth.bloomIndexer.Start(leth.blockchain)
+	lightYoo.bloomIndexer.Start(lightYoo.blockchain)
 	// Rewind the chain in case of an incompatible config upgrade.
 	if compat, ok := genesisErr.(*params.ConfigCompatError); ok {
 		log.Warn("Rewinding chain to upgrade configuration", "err", compat)
-		leth.blockchain.SetHead(compat.RewindTo)
+		lightYoo.blockchain.SetHead(compat.RewindTo)
 		core.WriteChainConfig(chainDb, genesisHash, chainConfig)
 	}
 
-	leth.txPool = light.NewTxPool(leth.chainConfig, leth.blockchain, leth.relay)
-	if leth.protocolManager, err = NewProtocolManager(leth.chainConfig, true, ClientProtocolVersions, config.NetworkId, leth.eventMux, leth.engine, leth.peers, leth.blockchain, nil, chainDb, leth.odr, leth.relay, quitSync, &leth.wg); err != nil {
+	lightYoo.txPool = light.NewTxPool(lightYoo.chainConfig, lightYoo.blockchain, lightYoo.relay)
+	if lightYoo.protocolManager, err = NewProtocolManager(lightYoo.chainConfig, true, ClientProtocolVersions, config.NetworkId, lightYoo.eventMux, lightYoo.engine, lightYoo.peers, lightYoo.blockchain, nil, chainDb, lightYoo.odr, lightYoo.relay, quitSync, &lightYoo.wg); err != nil {
 		return nil, err
 	}
-	leth.ApiBackend = &LesApiBackend{leth, nil}
+	lightYoo.ApiBackend = &LesApiBackend{lightYoo, nil}
 	gpoParams := config.GPO
 	if gpoParams.Default == nil {
 		gpoParams.Default = config.GasPrice
 	}
-	leth.ApiBackend.gpo = gasprice.NewOracle(leth.ApiBackend, gpoParams)
-	return leth, nil
+	lightYoo.ApiBackend.gpo = gasprice.NewOracle(lightYoo.ApiBackend, gpoParams)
+	return lightYoo, nil
 }
 
 func lesTopic(genesisHash common.Hash, protocolVersion uint) discv5.Topic {
@@ -153,30 +153,30 @@ func lesTopic(genesisHash common.Hash, protocolVersion uint) discv5.Topic {
 
 type LightDummyAPI struct{}
 
-// Etherbase is the address that mining rewards will be send to
-func (s *LightYooba) Etherbase() (common.Address, error) {
+// Yoobase is the address that mining rewards will be send to
+func (yoo *LightYooba) Yoobase() (common.Address, error) {
 	return common.Address{}, fmt.Errorf("not supported")
 }
 
-// Coinbase is the address that mining rewards will be send to (alias for Etherbase)
-func (s *LightYooba) Coinbase() (common.Address, error) {
+// Coinbase is the address that mining rewards will be send to (alias for Yoobase)
+func (yoo *LightYooba) Coinbase() (common.Address, error) {
 	return common.Address{}, fmt.Errorf("not supported")
 }
 
 // Hashrate returns the POW hashrate
-func (s *LightYooba) Hashrate() hexutil.Uint {
+func (yoo *LightYooba) Hashrate() hexutil.Uint {
 	return 0
 }
 
 // Mining returns an indication if this node is currently mining.
-func (s *LightYooba) Mining() bool {
+func (yoo *LightYooba) Mining() bool {
 	return false
 }
 
 // APIs returns the collection of RPC services the Yooba package offers.
 // NOTE, some of these services probably need to be moved to somewhere else.
-func (s *LightYooba) APIs() []rpc.API {
-	return append(ethapi.GetAPIs(s.ApiBackend), []rpc.API{
+func (yoo *LightYooba) APIs() []rpc.API {
+	return append(ethapi.GetAPIs(yoo.ApiBackend), []rpc.API{
 		{
 			Namespace: "yoo",
 			Version:   "1.0",
@@ -185,74 +185,74 @@ func (s *LightYooba) APIs() []rpc.API {
 		}, {
 			Namespace: "yoo",
 			Version:   "1.0",
-			Service:   downloader.NewPublicDownloaderAPI(s.protocolManager.downloader, s.eventMux),
+			Service:   downloader.NewPublicDownloaderAPI(yoo.protocolManager.downloader, yoo.eventMux),
 			Public:    true,
 		}, {
 			Namespace: "yoo",
 			Version:   "1.0",
-			Service:   filters.NewPublicFilterAPI(s.ApiBackend, true),
+			Service:   filters.NewPublicFilterAPI(yoo.ApiBackend, true),
 			Public:    true,
 		}, {
 			Namespace: "net",
 			Version:   "1.0",
-			Service:   s.netRPCService,
+			Service:   yoo.netRPCService,
 			Public:    true,
 		},
 	}...)
 }
 
-func (s *LightYooba) ResetWithGenesisBlock(gb *types.Block) {
-	s.blockchain.ResetWithGenesisBlock(gb)
+func (yoo *LightYooba) ResetWithGenesisBlock(gb *types.Block) {
+	yoo.blockchain.ResetWithGenesisBlock(gb)
 }
 
-func (s *LightYooba) BlockChain() *light.LightChain      { return s.blockchain }
-func (s *LightYooba) TxPool() *light.TxPool              { return s.txPool }
-func (s *LightYooba) Engine() consensus.Engine           { return s.engine }
-func (s *LightYooba) LesVersion() int                    { return int(s.protocolManager.SubProtocols[0].Version) }
-func (s *LightYooba) Downloader() *downloader.Downloader { return s.protocolManager.downloader }
-func (s *LightYooba) EventMux() *event.TypeMux           { return s.eventMux }
+func (yoo *LightYooba) BlockChain() *light.LightChain      { return yoo.blockchain }
+func (yoo *LightYooba) TxPool() *light.TxPool              { return yoo.txPool }
+func (yoo *LightYooba) Engine() consensus.Engine           { return yoo.engine }
+func (yoo *LightYooba) LesVersion() int                    { return int(yoo.protocolManager.SubProtocols[0].Version) }
+func (yoo *LightYooba) Downloader() *downloader.Downloader { return yoo.protocolManager.downloader }
+func (yoo *LightYooba) EventMux() *event.TypeMux           { return yoo.eventMux }
 
 // Protocols implements node.Service, returning all the currently configured
 // network protocols to start.
-func (s *LightYooba) Protocols() []p2p.Protocol {
-	return s.protocolManager.SubProtocols
+func (yoo *LightYooba) Protocols() []p2p.Protocol {
+	return yoo.protocolManager.SubProtocols
 }
 
 // Start implements node.Service, starting all internal goroutines needed by the
 // Yooba protocol implementation.
-func (s *LightYooba) Start(srvr *p2p.Server) error {
-	s.startBloomHandlers()
+func (yoo *LightYooba) Start(srvr *p2p.Server) error {
+	yoo.startBloomHandlers()
 	log.Warn("Light client mode is an experimental feature")
-	s.netRPCService = ethapi.NewPublicNetAPI(srvr, s.networkId)
+	yoo.netRPCService = ethapi.NewPublicNetAPI(srvr, yoo.networkId)
 	// clients are searching for the first advertised protocol in the list
 	protocolVersion := AdvertiseProtocolVersions[0]
-	s.serverPool.start(srvr, lesTopic(s.blockchain.Genesis().Hash(), protocolVersion))
-	s.protocolManager.Start(s.config.LightPeers)
+	yoo.serverPool.start(srvr, lesTopic(yoo.blockchain.Genesis().Hash(), protocolVersion))
+	yoo.protocolManager.Start(yoo.config.LightPeers)
 	return nil
 }
 
 // Stop implements node.Service, terminating all internal goroutines used by the
 // Yooba protocol.
-func (s *LightYooba) Stop() error {
-	s.odr.Stop()
-	if s.bloomIndexer != nil {
-		s.bloomIndexer.Close()
+func (yoo *LightYooba) Stop() error {
+	yoo.odr.Stop()
+	if yoo.bloomIndexer != nil {
+		yoo.bloomIndexer.Close()
 	}
-	if s.chtIndexer != nil {
-		s.chtIndexer.Close()
+	if yoo.chtIndexer != nil {
+		yoo.chtIndexer.Close()
 	}
-	if s.bloomTrieIndexer != nil {
-		s.bloomTrieIndexer.Close()
+	if yoo.bloomTrieIndexer != nil {
+		yoo.bloomTrieIndexer.Close()
 	}
-	s.blockchain.Stop()
-	s.protocolManager.Stop()
-	s.txPool.Stop()
+	yoo.blockchain.Stop()
+	yoo.protocolManager.Stop()
+	yoo.txPool.Stop()
 
-	s.eventMux.Stop()
+	yoo.eventMux.Stop()
 
 	time.Sleep(time.Millisecond * 200)
-	s.chainDb.Close()
-	close(s.shutdownChan)
+	yoo.chainDb.Close()
+	close(yoo.shutdownChan)
 
 	return nil
 }

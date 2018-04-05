@@ -43,7 +43,7 @@ type testyooba struct {
 }
 
 func init() {
-	// Run the app if we've been exec'd as "yooba-test" in runGeth.
+	// Run the app if we've been exec'd as "yooba-test" in run yooba.
 	reexec.Register("yooba-test", func() {
 		if err := app.Run(os.Args); err != nil {
 			fmt.Fprintln(os.Stderr, err)

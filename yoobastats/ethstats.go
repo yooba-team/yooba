@@ -68,10 +68,10 @@ type blockChain interface {
 // Service implements an Yooba netstats reporting daemon that pushes local
 // chain statistics up to a monitoring server.
 type Service struct {
-	server *p2p.Server        // Peer-to-peer server to retrieve networking infos
-	eth    *yoo.FullYooba      // Full Yooba service if monitoring a full node
-	les    *les.LightYooba // Light Yooba service if monitoring a light node
-	engine consensus.Engine   // Consensus engine to retrieve variadic block fields
+	server *p2p.Server      // Peer-to-peer server to retrieve networking infos
+	yoo    *yoo.FullYooba   // Full Yooba service if monitoring a full node
+	les    *les.LightYooba  // Light Yooba service if monitoring a light node
+	engine consensus.Engine // Consensus engine to retrieve variadic block fields
 
 	node string // Name of the node to display on the monitoring page
 	pass string // Password to authorize access to the monitoring page
@@ -97,7 +97,7 @@ func New(url string, ethServ *yoo.FullYooba, lesServ *les.LightYooba) (*Service,
 		engine = lesServ.Engine()
 	}
 	return &Service{
-		eth:    ethServ,
+		yoo:    ethServ,
 		les:    lesServ,
 		engine: engine,
 		node:   parts[1],
@@ -137,9 +137,9 @@ func (s *Service) loop() {
 	// Subscribe to chain events to execute updates on
 	var blockchain blockChain
 	var txpool txPool
-	if s.eth != nil {
-		blockchain = s.eth.BlockChain()
-		txpool = s.eth.TxPool()
+	if s.yoo != nil {
+		blockchain = s.yoo.BlockChain()
+		txpool = s.yoo.TxPool()
 	} else {
 		blockchain = s.les.BlockChain()
 		txpool = s.les.TxPool()
@@ -514,10 +514,10 @@ func (s *Service) assembleBlockStats(block *types.Block) *blockStats {
 		header *types.Header
 		txs    []txStats
 	)
-	if s.eth != nil {
+	if s.yoo != nil {
 		// Full nodes have all needed information available
 		if block == nil {
-			block = s.eth.BlockChain().CurrentBlock()
+			block = s.yoo.BlockChain().CurrentBlock()
 		}
 		header = block.Header()
 
@@ -562,8 +562,8 @@ func (s *Service) reportHistory(conn *websocket.Conn, list []uint64) error {
 	} else {
 		// No indexes requested, send back the top ones
 		var head int64
-		if s.eth != nil {
-			head = s.eth.BlockChain().CurrentHeader().Number.Int64()
+		if s.yoo != nil {
+			head = s.yoo.BlockChain().CurrentHeader().Number.Int64()
 		} else {
 			head = s.les.BlockChain().CurrentHeader().Number.Int64()
 		}
@@ -580,8 +580,8 @@ func (s *Service) reportHistory(conn *websocket.Conn, list []uint64) error {
 	for i, number := range indexes {
 		// Retrieve the next block if it's known to us
 		var block *types.Block
-		if s.eth != nil {
-			block = s.eth.BlockChain().GetBlockByNumber(number)
+		if s.yoo != nil {
+			block = s.yoo.BlockChain().GetBlockByNumber(number)
 		} else {
 			if header := s.les.BlockChain().GetHeaderByNumber(number); header != nil {
 				block = types.NewBlockWithHeader(header)
@@ -622,8 +622,8 @@ type pendStats struct {
 func (s *Service) reportPending(conn *websocket.Conn) error {
 	// Retrieve the pending count from the local blockchain
 	var pending int
-	if s.eth != nil {
-		pending, _ = s.eth.TxPool().Stats()
+	if s.yoo != nil {
+		pending, _ = s.yoo.TxPool().Stats()
 	} else {
 		pending = s.les.TxPool().Stats()
 	}
@@ -663,14 +663,14 @@ func (s *Service) reportStats(conn *websocket.Conn) error {
 		syncing  bool
 		gasprice int
 	)
-	if s.eth != nil {
-		mining = s.eth.Miner().Mining()
-		hashrate = int(s.eth.Miner().HashRate())
+	if s.yoo != nil {
+		mining = s.yoo.Miner().Mining()
+		hashrate = int(s.yoo.Miner().HashRate())
 
-		sync := s.eth.Downloader().Progress()
-		syncing = s.eth.BlockChain().CurrentHeader().Number.Uint64() >= sync.HighestBlock
+		sync := s.yoo.Downloader().Progress()
+		syncing = s.yoo.BlockChain().CurrentHeader().Number.Uint64() >= sync.HighestBlock
 
-		price, _ := s.eth.ApiBackend.SuggestPrice(context.Background())
+		price, _ := s.yoo.ApiBackend.SuggestPrice(context.Background())
 		gasprice = int(price.Uint64())
 	} else {
 		sync := s.les.Downloader().Progress()

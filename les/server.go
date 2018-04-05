@@ -48,16 +48,16 @@ type LesServer struct {
 	chtIndexer, bloomTrieIndexer *core.ChainIndexer
 }
 
-func NewLesServer(eth *yoo.FullYooba, config *yoo.Config) (*LesServer, error) {
+func NewLesServer(yoo *yoo.FullYooba, config *yoo.Config) (*LesServer, error) {
 	quitSync := make(chan struct{})
-	pm, err := NewProtocolManager(eth.BlockChain().Config(), false, ServerProtocolVersions, config.NetworkId, eth.EventMux(), eth.Engine(), newPeerSet(), eth.BlockChain(), eth.TxPool(), eth.ChainDb(), nil, nil, quitSync, new(sync.WaitGroup))
+	pm, err := NewProtocolManager(yoo.BlockChain().Config(), false, ServerProtocolVersions, config.NetworkId, yoo.EventMux(), yoo.Engine(), newPeerSet(), yoo.BlockChain(), yoo.TxPool(), yoo.ChainDb(), nil, nil, quitSync, new(sync.WaitGroup))
 	if err != nil {
 		return nil, err
 	}
 
 	lesTopics := make([]discv5.Topic, len(AdvertiseProtocolVersions))
 	for i, pv := range AdvertiseProtocolVersions {
-		lesTopics[i] = lesTopic(eth.BlockChain().Genesis().Hash(), pv)
+		lesTopics[i] = lesTopic(yoo.BlockChain().Genesis().Hash(), pv)
 	}
 
 	srv := &LesServer{
@@ -65,8 +65,8 @@ func NewLesServer(eth *yoo.FullYooba, config *yoo.Config) (*LesServer, error) {
 		protocolManager:  pm,
 		quitSync:         quitSync,
 		lesTopics:        lesTopics,
-		chtIndexer:       light.NewChtIndexer(eth.ChainDb(), false),
-		bloomTrieIndexer: light.NewBloomTrieIndexer(eth.ChainDb(), false),
+		chtIndexer:       light.NewChtIndexer(yoo.ChainDb(), false),
+		bloomTrieIndexer: light.NewBloomTrieIndexer(yoo.ChainDb(), false),
 	}
 	logger := log.New()
 
@@ -89,7 +89,7 @@ func NewLesServer(eth *yoo.FullYooba, config *yoo.Config) (*LesServer, error) {
 		logger.Info("Loaded bloom trie", "section", bloomTrieLastSection, "head", bloomTrieSectionHead, "root", bloomTrieRoot)
 	}
 
-	srv.chtIndexer.Start(eth.BlockChain())
+	srv.chtIndexer.Start(yoo.BlockChain())
 	pm.server = srv
 
 	srv.defParams = &flowcontrol.ServerParams{
@@ -97,7 +97,7 @@ func NewLesServer(eth *yoo.FullYooba, config *yoo.Config) (*LesServer, error) {
 		MinRecharge: 50000,
 	}
 	srv.fcManager = flowcontrol.NewClientManager(uint64(config.LightServ), 10, 1000000000)
-	srv.fcCostStats = newCostStats(eth.ChainDb())
+	srv.fcCostStats = newCostStats(yoo.ChainDb())
 	return srv, nil
 }
 

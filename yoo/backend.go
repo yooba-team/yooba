@@ -82,7 +82,7 @@ type FullYooba struct {
 	bloomRequests chan chan *bloombits.Retrieval // Channel receiving bloom data retrieval requests
 	bloomIndexer  *core.ChainIndexer             // Bloom indexer operating during block imports
 
-	ApiBackend *EthApiBackend
+	ApiBackend *YooApiBackend
 
 	miner     *miner.Miner
 	gasPrice  *big.Int
@@ -91,12 +91,12 @@ type FullYooba struct {
 	networkId     uint64
 	netRPCService *ethapi.PublicNetAPI
 
-	lock sync.RWMutex // Protects the variadic fields (e.g. gas price and etherbase)
+	lock sync.RWMutex // Protects the variadic fields (e.g. gas price and yoobase)
 }
 
-func (s *FullYooba) AddLesServer(ls LesServer) {
-	s.lesServer = ls
-	ls.SetBloomBitsIndexer(s.bloomIndexer)
+func (yoo *FullYooba) AddLesServer(ls LesServer) {
+	yoo.lesServer = ls
+	ls.SetBloomBitsIndexer(yoo.bloomIndexer)
 }
 
 // New creates a new FullYooba object (including the
@@ -119,7 +119,7 @@ func New(ctx *node.ServiceContext, config *Config) (*FullYooba, error) {
 	}
 	log.Info("Initialised chain configuration", "config", chainConfig)
 
-	eth := &FullYooba{
+	yoo := &FullYooba{
 		config:         config,
 		chainDb:        chainDb,
 		chainConfig:    chainConfig,
@@ -148,37 +148,37 @@ func New(ctx *node.ServiceContext, config *Config) (*FullYooba, error) {
 		vmConfig    = vm.Config{EnablePreimageRecording: config.EnablePreimageRecording}
 		cacheConfig = &core.CacheConfig{Disabled: config.NoPruning, TrieNodeLimit: config.TrieCache, TrieTimeLimit: config.TrieTimeout}
 	)
-	eth.blockchain, err = core.NewBlockChain(chainDb, cacheConfig, eth.chainConfig, eth.engine, vmConfig)
+	yoo.blockchain, err = core.NewBlockChain(chainDb, cacheConfig, yoo.chainConfig, yoo.engine, vmConfig)
 	if err != nil {
 		return nil, err
 	}
 	// Rewind the chain in case of an incompatible config upgrade.
 	if compat, ok := genesisErr.(*params.ConfigCompatError); ok {
 		log.Warn("Rewinding chain to upgrade configuration", "err", compat)
-		eth.blockchain.SetHead(compat.RewindTo)
+		yoo.blockchain.SetHead(compat.RewindTo)
 		core.WriteChainConfig(chainDb, genesisHash, chainConfig)
 	}
-	eth.bloomIndexer.Start(eth.blockchain)
+	yoo.bloomIndexer.Start(yoo.blockchain)
 
 	if config.TxPool.Journal != "" {
 		config.TxPool.Journal = ctx.ResolvePath(config.TxPool.Journal)
 	}
-	eth.txPool = core.NewTxPool(config.TxPool, eth.chainConfig, eth.blockchain)
+	yoo.txPool = core.NewTxPool(config.TxPool, yoo.chainConfig, yoo.blockchain)
 
-	if eth.protocolManager, err = NewProtocolManager(eth.chainConfig, config.SyncMode, config.NetworkId, eth.eventMux, eth.txPool, eth.engine, eth.blockchain, chainDb); err != nil {
+	if yoo.protocolManager, err = NewProtocolManager(yoo.chainConfig, config.SyncMode, config.NetworkId, yoo.eventMux, yoo.txPool, yoo.engine, yoo.blockchain, chainDb); err != nil {
 		return nil, err
 	}
-	eth.miner = miner.New(eth, eth.chainConfig, eth.EventMux(), eth.engine)
-	eth.miner.SetExtra(makeExtraData(config.ExtraData))
+	yoo.miner = miner.New(yoo, yoo.chainConfig, yoo.EventMux(), yoo.engine)
+	yoo.miner.SetExtra(makeExtraData(config.ExtraData))
 
-	eth.ApiBackend = &EthApiBackend{eth, nil}
+	yoo.ApiBackend = &YooApiBackend{yoo, nil}
 	gpoParams := config.GPO
 	if gpoParams.Default == nil {
 		gpoParams.Default = config.GasPrice
 	}
-	eth.ApiBackend.gpo = gasprice.NewOracle(eth.ApiBackend, gpoParams)
+	yoo.ApiBackend.gpo = gasprice.NewOracle(yoo.ApiBackend, gpoParams)
 
-	return eth, nil
+	return yoo, nil
 }
 
 func makeExtraData(extra []byte) []byte {
@@ -243,107 +243,107 @@ func CreateConsensusEngine(ctx *node.ServiceContext, config *ethash.Config, chai
 
 // APIs returns the collection of RPC services the Yooba package offers.
 // NOTE, some of these services probably need to be moved to somewhere else.
-func (s *FullYooba) APIs() []rpc.API {
-	apis := ethapi.GetAPIs(s.ApiBackend)
+func (yoo *FullYooba) APIs() []rpc.API {
+	apis := ethapi.GetAPIs(yoo.ApiBackend)
 
 	// Append any APIs exposed explicitly by the consensus engine
-	apis = append(apis, s.engine.APIs(s.BlockChain())...)
+	apis = append(apis, yoo.engine.APIs(yoo.BlockChain())...)
 
 	// Append all the local APIs and return
 	return append(apis, []rpc.API{
 		{
 			Namespace: "yoo",
 			Version:   "1.0",
-			Service:   NewPublicEthereumAPI(s),
+			Service:   NewPublicEthereumAPI(yoo),
 			Public:    true,
 		}, {
 			Namespace: "yoo",
 			Version:   "1.0",
-			Service:   NewPublicMinerAPI(s),
+			Service:   NewPublicMinerAPI(yoo),
 			Public:    true,
 		}, {
 			Namespace: "yoo",
 			Version:   "1.0",
-			Service:   downloader.NewPublicDownloaderAPI(s.protocolManager.downloader, s.eventMux),
+			Service:   downloader.NewPublicDownloaderAPI(yoo.protocolManager.downloader, yoo.eventMux),
 			Public:    true,
 		}, {
 			Namespace: "miner",
 			Version:   "1.0",
-			Service:   NewPrivateMinerAPI(s),
+			Service:   NewPrivateMinerAPI(yoo),
 			Public:    false,
 		}, {
 			Namespace: "yoo",
 			Version:   "1.0",
-			Service:   filters.NewPublicFilterAPI(s.ApiBackend, false),
+			Service:   filters.NewPublicFilterAPI(yoo.ApiBackend, false),
 			Public:    true,
 		}, {
 			Namespace: "admin",
 			Version:   "1.0",
-			Service:   NewPrivateAdminAPI(s),
+			Service:   NewPrivateAdminAPI(yoo),
 		}, {
 			Namespace: "debug",
 			Version:   "1.0",
-			Service:   NewPublicDebugAPI(s),
+			Service:   NewPublicDebugAPI(yoo),
 			Public:    true,
 		}, {
 			Namespace: "debug",
 			Version:   "1.0",
-			Service:   NewPrivateDebugAPI(s.chainConfig, s),
+			Service:   NewPrivateDebugAPI(yoo.chainConfig, yoo),
 		}, {
 			Namespace: "net",
 			Version:   "1.0",
-			Service:   s.netRPCService,
+			Service:   yoo.netRPCService,
 			Public:    true,
 		},
 	}...)
 }
 
-func (s *FullYooba) ResetWithGenesisBlock(gb *types.Block) {
-	s.blockchain.ResetWithGenesisBlock(gb)
+func (yoo *FullYooba) ResetWithGenesisBlock(gb *types.Block) {
+	yoo.blockchain.ResetWithGenesisBlock(gb)
 }
 
-func (s *FullYooba) Etherbase() (eb common.Address, err error) {
-	s.lock.RLock()
-	etherbase := s.etherbase
-	s.lock.RUnlock()
+func (yoo *FullYooba) Yoobase() (eb common.Address, err error) {
+	yoo.lock.RLock()
+	yoobase := yoo.etherbase
+	yoo.lock.RUnlock()
 
-	if etherbase != (common.Address{}) {
-		return etherbase, nil
+	if yoobase != (common.Address{}) {
+		return yoobase, nil
 	}
-	if wallets := s.AccountManager().Wallets(); len(wallets) > 0 {
+	if wallets := yoo.AccountManager().Wallets(); len(wallets) > 0 {
 		if accounts := wallets[0].Accounts(); len(accounts) > 0 {
-			etherbase := accounts[0].Address
+			yoobase := accounts[0].Address
 
-			s.lock.Lock()
-			s.etherbase = etherbase
-			s.lock.Unlock()
+			yoo.lock.Lock()
+			yoo.etherbase = yoobase
+			yoo.lock.Unlock()
 
-			log.Info("Etherbase automatically configured", "address", etherbase)
-			return etherbase, nil
+			log.Info("Yoobase automatically configured", "address", yoobase)
+			return yoobase, nil
 		}
 	}
-	return common.Address{}, fmt.Errorf("etherbase must be explicitly specified")
+	return common.Address{}, fmt.Errorf("yoobase must be explicitly specified")
 }
 
 // set in js console via admin interface or wrapper from cli flags
-func (self *FullYooba) SetEtherbase(etherbase common.Address) {
-	self.lock.Lock()
-	self.etherbase = etherbase
-	self.lock.Unlock()
+func (yoo *FullYooba) SetEtherbase(yoobase common.Address) {
+	yoo.lock.Lock()
+	yoo.etherbase = yoobase
+	yoo.lock.Unlock()
 
-	self.miner.SetEtherbase(etherbase)
+	yoo.miner.SetEtherbase(yoobase)
 }
 
-func (s *FullYooba) StartMining(local bool) error {
-	eb, err := s.Etherbase()
+func (yoo *FullYooba) StartMining(local bool) error {
+	eb, err := yoo.Yoobase()
 	if err != nil {
-		log.Error("Cannot start mining without etherbase", "err", err)
+		log.Error("Cannot start mining without yoobase", "err", err)
 		return fmt.Errorf("etherbase missing: %v", err)
 	}
-	if clique, ok := s.engine.(*clique.Clique); ok {
-		wallet, err := s.accountManager.Find(accounts.Account{Address: eb})
+	if clique, ok := yoo.engine.(*clique.Clique); ok {
+		wallet, err := yoo.accountManager.Find(accounts.Account{Address: eb})
 		if wallet == nil || err != nil {
-			log.Error("Etherbase account unavailable locally", "err", err)
+			log.Error("Yoobase account unavailable locally", "err", err)
 			return fmt.Errorf("signer missing: %v", err)
 		}
 		clique.Authorize(eb, wallet.SignHash)
@@ -353,79 +353,79 @@ func (s *FullYooba) StartMining(local bool) error {
 		// mechanism introduced to speed sync times. CPU mining on mainnet is ludicrous
 		// so noone will ever hit this path, whereas marking sync done on CPU mining
 		// will ensure that private networks work in single miner mode too.
-		atomic.StoreUint32(&s.protocolManager.acceptTxs, 1)
+		atomic.StoreUint32(&yoo.protocolManager.acceptTxs, 1)
 	}
-	go s.miner.Start(eb)
+	go yoo.miner.Start(eb)
 	return nil
 }
 
-func (s *FullYooba) StopMining()         { s.miner.Stop() }
-func (s *FullYooba) IsMining() bool      { return s.miner.Mining() }
-func (s *FullYooba) Miner() *miner.Miner { return s.miner }
+func (yoo *FullYooba) StopMining()         { yoo.miner.Stop() }
+func (yoo *FullYooba) IsMining() bool      { return yoo.miner.Mining() }
+func (yoo *FullYooba) Miner() *miner.Miner { return yoo.miner }
 
-func (s *FullYooba) AccountManager() *accounts.Manager  { return s.accountManager }
-func (s *FullYooba) BlockChain() *core.BlockChain       { return s.blockchain }
-func (s *FullYooba) TxPool() *core.TxPool               { return s.txPool }
-func (s *FullYooba) EventMux() *event.TypeMux           { return s.eventMux }
-func (s *FullYooba) Engine() consensus.Engine           { return s.engine }
-func (s *FullYooba) ChainDb() yoobadb.Database          { return s.chainDb }
-func (s *FullYooba) IsListening() bool                  { return true } // Always listening
-func (s *FullYooba) EthVersion() int                    { return int(s.protocolManager.SubProtocols[0].Version) }
-func (s *FullYooba) NetVersion() uint64                 { return s.networkId }
-func (s *FullYooba) Downloader() *downloader.Downloader { return s.protocolManager.downloader }
+func (yoo *FullYooba) AccountManager() *accounts.Manager  { return yoo.accountManager }
+func (yoo *FullYooba) BlockChain() *core.BlockChain       { return yoo.blockchain }
+func (yoo *FullYooba) TxPool() *core.TxPool               { return yoo.txPool }
+func (yoo *FullYooba) EventMux() *event.TypeMux           { return yoo.eventMux }
+func (yoo *FullYooba) Engine() consensus.Engine           { return yoo.engine }
+func (yoo *FullYooba) ChainDb() yoobadb.Database          { return yoo.chainDb }
+func (yoo *FullYooba) IsListening() bool                  { return true } // Always listening
+func (yoo *FullYooba) EthVersion() int                    { return int(yoo.protocolManager.SubProtocols[0].Version) }
+func (yoo *FullYooba) NetVersion() uint64                 { return yoo.networkId }
+func (yoo *FullYooba) Downloader() *downloader.Downloader { return yoo.protocolManager.downloader }
 
 // Protocols implements node.Service, returning all the currently configured
 // network protocols to start.
-func (s *FullYooba) Protocols() []p2p.Protocol {
-	if s.lesServer == nil {
-		return s.protocolManager.SubProtocols
+func (yoo *FullYooba) Protocols() []p2p.Protocol {
+	if yoo.lesServer == nil {
+		return yoo.protocolManager.SubProtocols
 	}
-	return append(s.protocolManager.SubProtocols, s.lesServer.Protocols()...)
+	return append(yoo.protocolManager.SubProtocols, yoo.lesServer.Protocols()...)
 }
 
 // Start implements node.Service, starting all internal goroutines needed by the
 // Yooba protocol implementation.
-func (s *FullYooba) Start(srvr *p2p.Server) error {
+func (yoo *FullYooba) Start(srvr *p2p.Server) error {
 	// Start the bloom bits servicing goroutines
-	s.startBloomHandlers()
+	yoo.startBloomHandlers()
 
 	// Start the RPC service
-	s.netRPCService = ethapi.NewPublicNetAPI(srvr, s.NetVersion())
+	yoo.netRPCService = ethapi.NewPublicNetAPI(srvr, yoo.NetVersion())
 
 	// Figure out a max peers count based on the server limits
 	maxPeers := srvr.MaxPeers
-	if s.config.LightServ > 0 {
-		if s.config.LightPeers >= srvr.MaxPeers {
-			return fmt.Errorf("invalid peer config: light peer count (%d) >= total peer count (%d)", s.config.LightPeers, srvr.MaxPeers)
+	if yoo.config.LightServ > 0 {
+		if yoo.config.LightPeers >= srvr.MaxPeers {
+			return fmt.Errorf("invalid peer config: light peer count (%d) >= total peer count (%d)", yoo.config.LightPeers, srvr.MaxPeers)
 		}
-		maxPeers -= s.config.LightPeers
+		maxPeers -= yoo.config.LightPeers
 	}
 	// Start the networking layer and the light server if requested
-	s.protocolManager.Start(maxPeers)
-	if s.lesServer != nil {
-		s.lesServer.Start(srvr)
+	yoo.protocolManager.Start(maxPeers)
+	if yoo.lesServer != nil {
+		yoo.lesServer.Start(srvr)
 	}
 	return nil
 }
 
 // Stop implements node.Service, terminating all internal goroutines used by the
 // Yooba protocol.
-func (s *FullYooba) Stop() error {
-	if s.stopDbUpgrade != nil {
-		s.stopDbUpgrade()
+func (yoo *FullYooba) Stop() error {
+	if yoo.stopDbUpgrade != nil {
+		yoo.stopDbUpgrade()
 	}
-	s.bloomIndexer.Close()
-	s.blockchain.Stop()
-	s.protocolManager.Stop()
-	if s.lesServer != nil {
-		s.lesServer.Stop()
+	yoo.bloomIndexer.Close()
+	yoo.blockchain.Stop()
+	yoo.protocolManager.Stop()
+	if yoo.lesServer != nil {
+		yoo.lesServer.Stop()
 	}
-	s.txPool.Stop()
-	s.miner.Stop()
-	s.eventMux.Stop()
+	yoo.txPool.Stop()
+	yoo.miner.Stop()
+	yoo.eventMux.Stop()
 
-	s.chainDb.Close()
-	close(s.shutdownChan)
+	yoo.chainDb.Close()
+	close(yoo.shutdownChan)
 
 	return nil
 }

@@ -59,7 +59,7 @@ func TestConsoleWelcome(t *testing.T) {
 Welcome to the yooba JavaScript console!
 
 instance: yooba/v{{gethver}}/{{goos}}-{{goarch}}/{{gover}}
-coinbase: {{.Etherbase}}
+coinbase: {{.Yoobase}}
 at block: 0 ({{niltime}})
  datadir: {{.Datadir}}
  modules: {{apis}}

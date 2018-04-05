@@ -151,19 +151,19 @@ type Block struct {
 }
 
 
-// [deprecated by eth/63]
+// [deprecated by yoo/63]
 // StorageBlock defines the RLP encoding of a Block stored in the
 // state database. The StorageBlock encoding contains fields that
 // would otherwise need to be recomputed.
 type StorageBlock Block
 
-// "external" block encoding. used for eth protocol, etc.
+// "external" block encoding. used for yoo protocol, etc.
 type extblock struct {
 	Header *Header
 	Txs    []*Transaction
 }
 
-// [deprecated by eth/63]
+// [deprecated by yoo/63]
 // "storage" block encoding. used for database.
 type storageblock struct {
 	Header *Header
@@ -247,7 +247,7 @@ func (b *Block) EncodeRLP(w io.Writer) error {
 	})
 }
 
-// [deprecated by eth/63]
+// [deprecated by yoo/63]
 func (b *StorageBlock) DecodeRLP(s *rlp.Stream) error {
 	var sb storageblock
 	if err := s.Decode(&sb); err != nil {
