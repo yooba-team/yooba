@@ -4,9 +4,9 @@ Priority: extra
 Maintainer: {{.Author}}
 Build-Depends: debhelper (>= 8.0.0), golang-1.9
 Standards-Version: 3.9.5
-Homepage: https://ethereum.org
-Vcs-Git: git://github.com/ethereum/go-ethereum.git
-Vcs-Browser: https://github.com/ethereum/go-ethereum
+Homepage: https://www.yooba.org
+Vcs-Git: git://github.com/yooba-team/yooba.git
+Vcs-Browser: https://github.com/yooba-team/yooba
 
 Package: {{.Name}}
 Architecture: any

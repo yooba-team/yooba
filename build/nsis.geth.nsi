@@ -29,7 +29,7 @@
 # - sign installer
 CRCCheck on
 
-!define GROUPNAME "Ethereum"
+!define GROUPNAME "Yooba"
 !define APPNAME "yooba"
 !define DESCRIPTION "Official Go implementation of the Yooba protocol"
 !addplugindir .\
