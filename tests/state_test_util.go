@@ -32,7 +32,7 @@ import (
 	"github.com/yooba-team/yooba/core/vm"
 	"github.com/yooba-team/yooba/crypto"
 	"github.com/yooba-team/yooba/crypto/sha3"
-	"github.com/yooba-team/yooba/ethdb"
+	"github.com/yooba-team/yooba/yoobadb"
 	"github.com/yooba-team/yooba/params"
 	"github.com/yooba-team/yooba/rlp"
 )
@@ -124,7 +124,7 @@ func (t *StateTest) Run(subtest StateSubtest, vmconfig vm.Config) (*state.StateD
 		return nil, UnsupportedForkError{subtest.Fork}
 	}
 	block := t.genesis(config).ToBlock(nil)
-	db, _ := ethdb.NewMemDatabase()
+	db, _ := yoobadb.NewMemDatabase()
 	statedb := MakePreState(db, t.json.Pre)
 
 	post := t.json.Post[subtest.Fork][subtest.Index]
@@ -156,7 +156,7 @@ func (t *StateTest) gasLimit(subtest StateSubtest) uint64 {
 	return t.json.Tx.GasLimit[t.json.Post[subtest.Fork][subtest.Index].Indexes.Gas]
 }
 
-func MakePreState(db ethdb.Database, accounts core.GenesisAlloc) *state.StateDB {
+func MakePreState(db yoobadb.Database, accounts core.GenesisAlloc) *state.StateDB {
 	sdb := state.NewDatabase(db)
 	statedb, _ := state.New(common.Hash{}, sdb)
 	for addr, a := range accounts {

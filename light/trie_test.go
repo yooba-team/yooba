@@ -27,15 +27,15 @@ import (
 	"github.com/yooba-team/yooba/core"
 	"github.com/yooba-team/yooba/core/state"
 	"github.com/yooba-team/yooba/core/vm"
-	"github.com/yooba-team/yooba/ethdb"
+	"github.com/yooba-team/yooba/yoobadb"
 	"github.com/yooba-team/yooba/params"
 	"github.com/yooba-team/yooba/trie"
 )
 
 func TestNodeIterator(t *testing.T) {
 	var (
-		fulldb, _  = ethdb.NewMemDatabase()
-		lightdb, _ = ethdb.NewMemDatabase()
+		fulldb, _  = yoobadb.NewMemDatabase()
+		lightdb, _ = yoobadb.NewMemDatabase()
 		gspec      = core.Genesis{Alloc: core.GenesisAlloc{testBankAddress: {Balance: testBankFunds}}}
 		genesis    = gspec.MustCommit(fulldb)
 	)

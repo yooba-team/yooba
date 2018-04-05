@@ -21,7 +21,7 @@ import (
 	"testing"
 
 	"github.com/yooba-team/yooba/common"
-	"github.com/yooba-team/yooba/ethdb"
+	"github.com/yooba-team/yooba/yoobadb"
 )
 
 // Tests that the node iterator indeed walks over the entire database contents.
@@ -51,7 +51,7 @@ func TestNodeIteratorCoverage(t *testing.T) {
 			t.Errorf("state entry not reported %x", hash)
 		}
 	}
-	for _, key := range db.TrieDB().DiskDB().(*ethdb.MemDatabase).Keys() {
+	for _, key := range db.TrieDB().DiskDB().(*yoobadb.MemDatabase).Keys() {
 		if bytes.HasPrefix(key, []byte("secure-key-")) {
 			continue
 		}

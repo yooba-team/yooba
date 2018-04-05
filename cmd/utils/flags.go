@@ -43,7 +43,7 @@ import (
 	"github.com/yooba-team/yooba/eth"
 	"github.com/yooba-team/yooba/eth/downloader"
 	"github.com/yooba-team/yooba/eth/gasprice"
-	"github.com/yooba-team/yooba/ethdb"
+	"github.com/yooba-team/yooba/yoobadb"
 	"github.com/yooba-team/yooba/ethstats"
 	"github.com/yooba-team/yooba/les"
 	"github.com/yooba-team/yooba/log"
@@ -1184,7 +1184,7 @@ func SetupNetwork(ctx *cli.Context) {
 }
 
 // MakeChainDatabase open an LevelDB using the flags passed to the client and will hard crash if it fails.
-func MakeChainDatabase(ctx *cli.Context, stack *node.Node) ethdb.Database {
+func MakeChainDatabase(ctx *cli.Context, stack *node.Node) yoobadb.Database {
 	var (
 		cache   = ctx.GlobalInt(CacheFlag.Name) * ctx.GlobalInt(CacheDatabaseFlag.Name) / 100
 		handles = makeDatabaseHandles()
@@ -1214,7 +1214,7 @@ func MakeGenesis(ctx *cli.Context) *core.Genesis {
 }
 
 // MakeChain creates a chain manager from set command line flags.
-func MakeChain(ctx *cli.Context, stack *node.Node) (chain *core.BlockChain, chainDb ethdb.Database) {
+func MakeChain(ctx *cli.Context, stack *node.Node) (chain *core.BlockChain, chainDb yoobadb.Database) {
 	var err error
 	chainDb = MakeChainDatabase(ctx, stack)
 

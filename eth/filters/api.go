@@ -29,7 +29,7 @@ import (
 	"github.com/yooba-team/yooba/common"
 	"github.com/yooba-team/yooba/common/hexutil"
 	"github.com/yooba-team/yooba/core/types"
-	"github.com/yooba-team/yooba/ethdb"
+	"github.com/yooba-team/yooba/yoobadb"
 	"github.com/yooba-team/yooba/event"
 	"github.com/yooba-team/yooba/rpc"
 )
@@ -55,7 +55,7 @@ type PublicFilterAPI struct {
 	backend   Backend
 	mux       *event.TypeMux
 	quit      chan struct{}
-	chainDb   ethdb.Database
+	chainDb   yoobadb.Database
 	events    *EventSystem
 	filtersMu sync.Mutex
 	filters   map[rpc.ID]*filter

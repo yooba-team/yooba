@@ -24,13 +24,13 @@ import (
 	"github.com/yooba-team/yooba/core"
 	"github.com/yooba-team/yooba/core/bloombits"
 	"github.com/yooba-team/yooba/core/types"
-	"github.com/yooba-team/yooba/ethdb"
+	"github.com/yooba-team/yooba/yoobadb"
 	"github.com/yooba-team/yooba/event"
 	"github.com/yooba-team/yooba/rpc"
 )
 
 type Backend interface {
-	ChainDb() ethdb.Database
+	ChainDb() yoobadb.Database
 	EventMux() *event.TypeMux
 	HeaderByNumber(ctx context.Context, blockNr rpc.BlockNumber) (*types.Header, error)
 	GetReceipts(ctx context.Context, blockHash common.Hash) (types.Receipts, error)
@@ -48,7 +48,7 @@ type Backend interface {
 type Filter struct {
 	backend Backend
 
-	db         ethdb.Database
+	db         yoobadb.Database
 	begin, end int64
 	addresses  []common.Address
 	topics     [][]common.Hash

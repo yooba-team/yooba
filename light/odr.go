@@ -25,7 +25,7 @@ import (
 	"github.com/yooba-team/yooba/common"
 	"github.com/yooba-team/yooba/core"
 	"github.com/yooba-team/yooba/core/types"
-	"github.com/yooba-team/yooba/ethdb"
+	"github.com/yooba-team/yooba/yoobadb"
 )
 
 // NoOdr is the default context passed to an ODR capable function when the ODR
@@ -34,7 +34,7 @@ var NoOdr = context.Background()
 
 // OdrBackend is an interface to a backend service that handles ODR retrievals type
 type OdrBackend interface {
-	Database() ethdb.Database
+	Database() yoobadb.Database
 	ChtIndexer() *core.ChainIndexer
 	BloomTrieIndexer() *core.ChainIndexer
 	BloomIndexer() *core.ChainIndexer
@@ -43,7 +43,7 @@ type OdrBackend interface {
 
 // OdrRequest is an interface for retrieval requests
 type OdrRequest interface {
-	StoreResult(db ethdb.Database)
+	StoreResult(db yoobadb.Database)
 }
 
 // TrieID identifies a state or account storage trie
@@ -85,7 +85,7 @@ type TrieRequest struct {
 }
 
 // StoreResult stores the retrieved data in local database
-func (req *TrieRequest) StoreResult(db ethdb.Database) {
+func (req *TrieRequest) StoreResult(db yoobadb.Database) {
 	req.Proof.Store(db)
 }
 
@@ -98,7 +98,7 @@ type CodeRequest struct {
 }
 
 // StoreResult stores the retrieved data in local database
-func (req *CodeRequest) StoreResult(db ethdb.Database) {
+func (req *CodeRequest) StoreResult(db yoobadb.Database) {
 	db.Put(req.Hash[:], req.Data)
 }
 
@@ -111,7 +111,7 @@ type BlockRequest struct {
 }
 
 // StoreResult stores the retrieved data in local database
-func (req *BlockRequest) StoreResult(db ethdb.Database) {
+func (req *BlockRequest) StoreResult(db yoobadb.Database) {
 	core.WriteBodyRLP(db, req.Hash, req.Number, req.Rlp)
 }
 
@@ -124,7 +124,7 @@ type ReceiptsRequest struct {
 }
 
 // StoreResult stores the retrieved data in local database
-func (req *ReceiptsRequest) StoreResult(db ethdb.Database) {
+func (req *ReceiptsRequest) StoreResult(db yoobadb.Database) {
 	core.WriteBlockReceipts(db, req.Hash, req.Number, req.Receipts)
 }
 
@@ -139,7 +139,7 @@ type ChtRequest struct {
 }
 
 // StoreResult stores the retrieved data in local database
-func (req *ChtRequest) StoreResult(db ethdb.Database) {
+func (req *ChtRequest) StoreResult(db yoobadb.Database) {
 	// if there is a canonical hash, there is a header too
 	core.WriteHeader(db, req.Header)
 	hash, num := req.Header.Hash(), req.Header.Number.Uint64()
@@ -158,7 +158,7 @@ type BloomRequest struct {
 }
 
 // StoreResult stores the retrieved data in local database
-func (req *BloomRequest) StoreResult(db ethdb.Database) {
+func (req *BloomRequest) StoreResult(db yoobadb.Database) {
 	for i, sectionIdx := range req.SectionIdxList {
 		sectionHead := core.GetCanonicalHash(db, (sectionIdx+1)*BloomTrieFrequency-1)
 		// if we don't have the canonical hash stored for this section head number, we'll still store it under

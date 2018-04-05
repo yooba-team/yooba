@@ -25,7 +25,7 @@ import (
 	"github.com/yooba-team/yooba/core/state"
 	"github.com/yooba-team/yooba/core/types"
 	"github.com/yooba-team/yooba/crypto"
-	"github.com/yooba-team/yooba/ethdb"
+	"github.com/yooba-team/yooba/yoobadb"
 	"github.com/yooba-team/yooba/trie"
 )
 
@@ -141,7 +141,7 @@ func (t *odrTrie) GetKey(sha []byte) []byte {
 	return nil
 }
 
-func (t *odrTrie) Prove(key []byte, fromLevel uint, proofDb ethdb.Putter) error {
+func (t *odrTrie) Prove(key []byte, fromLevel uint, proofDb yoobadb.Putter) error {
 	return errors.New("not implemented, needs client/server interface split")
 }
 

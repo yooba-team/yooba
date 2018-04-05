@@ -32,7 +32,7 @@ import (
 	"github.com/yooba-team/yooba/core/state"
 	"github.com/yooba-team/yooba/core/types"
 	"github.com/yooba-team/yooba/core/vm"
-	"github.com/yooba-team/yooba/ethdb"
+	"github.com/yooba-team/yooba/yoobadb"
 	"github.com/yooba-team/yooba/params"
 	"github.com/yooba-team/yooba/rlp"
 )
@@ -94,7 +94,7 @@ func (t *BlockTest) Run() error {
 	}
 
 	// import pre accounts & construct test genesis block & state root
-	db, _ := ethdb.NewMemDatabase()
+	db, _ := yoobadb.NewMemDatabase()
 	gblock, err := t.genesis(config).Commit(db)
 	if err != nil {
 		return err

@@ -28,7 +28,7 @@ import (
 	"github.com/yooba-team/yooba/core/state"
 	"github.com/yooba-team/yooba/core/types"
 	"github.com/yooba-team/yooba/core/vm"
-	"github.com/yooba-team/yooba/ethdb"
+	"github.com/yooba-team/yooba/yoobadb"
 	"github.com/yooba-team/yooba/event"
 	"github.com/yooba-team/yooba/log"
 	"github.com/yooba-team/yooba/params"
@@ -102,7 +102,7 @@ type worker struct {
 	eth     Backend
 	chain   *core.BlockChain
 	proc    core.Validator
-	chainDb ethdb.Database
+	chainDb yoobadb.Database
 
 	coinbase common.Address
 	extra    []byte

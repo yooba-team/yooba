@@ -16,7 +16,7 @@
 
 package storage
 
-// this is a clone of an earlier state of the ethereum ethdb/database
+// this is a clone of an earlier state of the ethereum yoobadb/database
 // no need for queueing/caching
 
 import (

@@ -26,7 +26,7 @@ import (
 	"github.com/yooba-team/yooba/core"
 	"github.com/yooba-team/yooba/core/types"
 	"github.com/yooba-team/yooba/eth"
-	"github.com/yooba-team/yooba/ethdb"
+	"github.com/yooba-team/yooba/yoobadb"
 	"github.com/yooba-team/yooba/les/flowcontrol"
 	"github.com/yooba-team/yooba/light"
 	"github.com/yooba-team/yooba/log"
@@ -223,7 +223,7 @@ func linRegFromBytes(data []byte) *linReg {
 
 type requestCostStats struct {
 	lock  sync.RWMutex
-	db    ethdb.Database
+	db    yoobadb.Database
 	stats map[uint64]*linReg
 }
 
@@ -234,7 +234,7 @@ type requestCostStatsRlp []struct {
 
 var rcStatsKey = []byte("_requestCostStats")
 
-func newCostStats(db ethdb.Database) *requestCostStats {
+func newCostStats(db yoobadb.Database) *requestCostStats {
 	stats := make(map[uint64]*linReg)
 	for _, code := range reqList {
 		stats[code] = &linReg{cnt: 100}

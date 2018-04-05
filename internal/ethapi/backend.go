@@ -28,7 +28,7 @@ import (
 	"github.com/yooba-team/yooba/core/types"
 	"github.com/yooba-team/yooba/core/vm"
 	"github.com/yooba-team/yooba/eth/downloader"
-	"github.com/yooba-team/yooba/ethdb"
+	"github.com/yooba-team/yooba/yoobadb"
 	"github.com/yooba-team/yooba/event"
 	"github.com/yooba-team/yooba/params"
 	"github.com/yooba-team/yooba/rpc"
@@ -41,7 +41,7 @@ type Backend interface {
 	Downloader() *downloader.Downloader
 	ProtocolVersion() int
 	SuggestPrice(ctx context.Context) (*big.Int, error)
-	ChainDb() ethdb.Database
+	ChainDb() yoobadb.Database
 	EventMux() *event.TypeMux
 	AccountManager() *accounts.Manager
 

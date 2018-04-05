@@ -38,7 +38,7 @@ import (
 	"github.com/yooba-team/yooba/eth/downloader"
 	"github.com/yooba-team/yooba/eth/filters"
 	"github.com/yooba-team/yooba/eth/gasprice"
-	"github.com/yooba-team/yooba/ethdb"
+	"github.com/yooba-team/yooba/yoobadb"
 	"github.com/yooba-team/yooba/event"
 	"github.com/yooba-team/yooba/internal/ethapi"
 	"github.com/yooba-team/yooba/log"
@@ -73,7 +73,7 @@ type FullYooba struct {
 	lesServer       LesServer
 
 	// DB interfaces
-	chainDb ethdb.Database // Block chain database
+	chainDb yoobadb.Database // Block chain database
 
 	eventMux       *event.TypeMux
 	engine         consensus.Engine
@@ -199,19 +199,19 @@ func makeExtraData(extra []byte) []byte {
 }
 
 // CreateDB creates the chain database.
-func CreateDB(ctx *node.ServiceContext, config *Config, name string) (ethdb.Database, error) {
+func CreateDB(ctx *node.ServiceContext, config *Config, name string) (yoobadb.Database, error) {
 	db, err := ctx.OpenDatabase(name, config.DatabaseCache, config.DatabaseHandles)
 	if err != nil {
 		return nil, err
 	}
-	if db, ok := db.(*ethdb.LDBDatabase); ok {
+	if db, ok := db.(*yoobadb.LDBDatabase); ok {
 		db.Meter("eth/db/chaindata/")
 	}
 	return db, nil
 }
 
 // CreateConsensusEngine creates the required type of consensus engine instance for an Ethereum service
-func CreateConsensusEngine(ctx *node.ServiceContext, config *ethash.Config, chainConfig *params.ChainConfig, db ethdb.Database) consensus.Engine {
+func CreateConsensusEngine(ctx *node.ServiceContext, config *ethash.Config, chainConfig *params.ChainConfig, db yoobadb.Database) consensus.Engine {
 	// If proof-of-authority is requested, set it up
 	if chainConfig.Clique != nil {
 		return clique.New(chainConfig.Clique, db)
@@ -368,7 +368,7 @@ func (s *FullYooba) BlockChain() *core.BlockChain       { return s.blockchain }
 func (s *FullYooba) TxPool() *core.TxPool               { return s.txPool }
 func (s *FullYooba) EventMux() *event.TypeMux           { return s.eventMux }
 func (s *FullYooba) Engine() consensus.Engine           { return s.engine }
-func (s *FullYooba) ChainDb() ethdb.Database            { return s.chainDb }
+func (s *FullYooba) ChainDb() yoobadb.Database          { return s.chainDb }
 func (s *FullYooba) IsListening() bool                  { return true } // Always listening
 func (s *FullYooba) EthVersion() int                    { return int(s.protocolManager.SubProtocols[0].Version) }
 func (s *FullYooba) NetVersion() uint64                 { return s.networkId }

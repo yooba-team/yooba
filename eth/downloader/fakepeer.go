@@ -21,7 +21,7 @@ import (
 	"github.com/yooba-team/yooba/common"
 	"github.com/yooba-team/yooba/core"
 	"github.com/yooba-team/yooba/core/types"
-	"github.com/yooba-team/yooba/ethdb"
+	"github.com/yooba-team/yooba/yoobadb"
 )
 
 // FakePeer is a mock downloader peer that operates on a local database instance
@@ -29,13 +29,13 @@ import (
 // sync commands from an xisting local database.
 type FakePeer struct {
 	id string
-	db ethdb.Database
+	db yoobadb.Database
 	hc *core.HeaderChain
 	dl *Downloader
 }
 
 // NewFakePeer creates a new mock downloader peer with the given data sources.
-func NewFakePeer(id string, db ethdb.Database, hc *core.HeaderChain, dl *Downloader) *FakePeer {
+func NewFakePeer(id string, db yoobadb.Database, hc *core.HeaderChain, dl *Downloader) *FakePeer {
 	return &FakePeer{id: id, db: db, hc: hc, dl: dl}
 }
 

@@ -25,7 +25,7 @@ import (
 	"github.com/yooba-team/yooba/common"
 	"github.com/yooba-team/yooba/core/state"
 	"github.com/yooba-team/yooba/crypto/sha3"
-	"github.com/yooba-team/yooba/ethdb"
+	"github.com/yooba-team/yooba/yoobadb"
 	"github.com/yooba-team/yooba/log"
 	"github.com/yooba-team/yooba/trie"
 )
@@ -317,7 +317,7 @@ func (s *stateSync) loop() error {
 }
 
 func (s *stateSync) commit(force bool) error {
-	if !force && s.bytesUncommitted < ethdb.IdealBatchSize {
+	if !force && s.bytesUncommitted < yoobadb.IdealBatchSize {
 		return nil
 	}
 	start := time.Now()

@@ -24,11 +24,11 @@ import (
 
 	"github.com/yooba-team/yooba/common"
 	"github.com/yooba-team/yooba/crypto"
-	"github.com/yooba-team/yooba/ethdb"
+	"github.com/yooba-team/yooba/yoobadb"
 )
 
 func newEmptySecure() *SecureTrie {
-	diskdb, _ := ethdb.NewMemDatabase()
+	diskdb, _ := yoobadb.NewMemDatabase()
 	triedb := NewDatabase(diskdb)
 
 	trie, _ := NewSecure(common.Hash{}, triedb, 0)
@@ -38,7 +38,7 @@ func newEmptySecure() *SecureTrie {
 // makeTestSecureTrie creates a large enough secure trie for testing.
 func makeTestSecureTrie() (*Database, *SecureTrie, map[string][]byte) {
 	// Create an empty trie
-	diskdb, _ := ethdb.NewMemDatabase()
+	diskdb, _ := yoobadb.NewMemDatabase()
 	triedb := NewDatabase(diskdb)
 
 	trie, _ := NewSecure(common.Hash{}, triedb, 0)

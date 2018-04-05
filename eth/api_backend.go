@@ -30,7 +30,7 @@ import (
 	"github.com/yooba-team/yooba/core/vm"
 	"github.com/yooba-team/yooba/eth/downloader"
 	"github.com/yooba-team/yooba/eth/gasprice"
-	"github.com/yooba-team/yooba/ethdb"
+	"github.com/yooba-team/yooba/yoobadb"
 	"github.com/yooba-team/yooba/event"
 	"github.com/yooba-team/yooba/params"
 	"github.com/yooba-team/yooba/rpc"
@@ -181,7 +181,7 @@ func (b *EthApiBackend) SuggestPrice(ctx context.Context) (*big.Int, error) {
 	return b.gpo.SuggestPrice(ctx)
 }
 
-func (b *EthApiBackend) ChainDb() ethdb.Database {
+func (b *EthApiBackend) ChainDb() yoobadb.Database {
 	return b.eth.ChainDb()
 }
 

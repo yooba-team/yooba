@@ -21,7 +21,7 @@ import (
 	"fmt"
 
 	"github.com/yooba-team/yooba/common"
-	"github.com/yooba-team/yooba/ethdb"
+	"github.com/yooba-team/yooba/yoobadb"
 	"gopkg.in/karalabe/cookiejar.v2/collections/prque"
 )
 
@@ -213,7 +213,7 @@ func (s *TrieSync) Process(results []SyncResult) (bool, int, error) {
 
 // Commit flushes the data stored in the internal membatch out to persistent
 // storage, returning th enumber of items written and any occurred error.
-func (s *TrieSync) Commit(dbw ethdb.Putter) (int, error) {
+func (s *TrieSync) Commit(dbw yoobadb.Putter) (int, error) {
 	// Dump the membatch into a database dbw
 	for i, key := range s.membatch.order {
 		if err := dbw.Put(key[:], s.membatch.batch[key]); err != nil {
