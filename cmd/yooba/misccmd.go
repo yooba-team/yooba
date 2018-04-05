@@ -25,7 +25,7 @@ import (
 
 	"github.com/yooba-team/yooba/cmd/utils"
 	"github.com/yooba-team/yooba/consensus/ethash"
-	"github.com/yooba-team/yooba/eth"
+	"github.com/yooba-team/yooba/yoo"
 	"github.com/yooba-team/yooba/params"
 	"gopkg.in/urfave/cli.v1"
 )
@@ -113,8 +113,8 @@ func version(ctx *cli.Context) error {
 		fmt.Println("Git Commit:", gitCommit)
 	}
 	fmt.Println("Architecture:", runtime.GOARCH)
-	fmt.Println("Protocol Versions:", eth.ProtocolVersions)
-	fmt.Println("Network Id:", eth.DefaultConfig.NetworkId)
+	fmt.Println("Protocol Versions:", yoo.ProtocolVersions)
+	fmt.Println("Network Id:", yoo.DefaultConfig.NetworkId)
 	fmt.Println("Go Version:", runtime.Version())
 	fmt.Println("Operating System:", runtime.GOOS)
 	fmt.Printf("GOPATH=%s\n", os.Getenv("GOPATH"))

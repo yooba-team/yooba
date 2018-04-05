@@ -34,7 +34,7 @@ import (
 	"github.com/yooba-team/yooba/consensus"
 	"github.com/yooba-team/yooba/core"
 	"github.com/yooba-team/yooba/core/types"
-	"github.com/yooba-team/yooba/eth"
+	"github.com/yooba-team/yooba/yoo"
 	"github.com/yooba-team/yooba/event"
 	"github.com/yooba-team/yooba/les"
 	"github.com/yooba-team/yooba/log"
@@ -69,7 +69,7 @@ type blockChain interface {
 // chain statistics up to a monitoring server.
 type Service struct {
 	server *p2p.Server        // Peer-to-peer server to retrieve networking infos
-	eth    *eth.FullYooba      // Full Ethereum service if monitoring a full node
+	eth    *yoo.FullYooba      // Full Ethereum service if monitoring a full node
 	les    *les.LightYooba // Light Ethereum service if monitoring a light node
 	engine consensus.Engine   // Consensus engine to retrieve variadic block fields
 
@@ -82,7 +82,7 @@ type Service struct {
 }
 
 // New returns a monitoring service ready for stats reporting.
-func New(url string, ethServ *eth.FullYooba, lesServ *les.LightYooba) (*Service, error) {
+func New(url string, ethServ *yoo.FullYooba, lesServ *les.LightYooba) (*Service, error) {
 	// Parse the netstats connection url
 	re := regexp.MustCompile("([^:@]*)(:([^@]*))?@(.+)")
 	parts := re.FindStringSubmatch(url)
@@ -372,9 +372,9 @@ func (s *Service) login(conn *websocket.Conn) error {
 	infos := s.server.NodeInfo()
 
 	var network, protocol string
-	if info := infos.Protocols["eth"]; info != nil {
-		network = fmt.Sprintf("%d", info.(*eth.NodeInfo).Network)
-		protocol = fmt.Sprintf("eth/%d", eth.ProtocolVersions[0])
+	if info := infos.Protocols["yoo"]; info != nil {
+		network = fmt.Sprintf("%d", info.(*yoo.NodeInfo).Network)
+		protocol = fmt.Sprintf("yoo/%d", yoo.ProtocolVersions[0])
 	} else {
 		network = fmt.Sprintf("%d", infos.Protocols["les"].(*les.NodeInfo).Network)
 		protocol = fmt.Sprintf("les/%d", les.ClientProtocolVersions[0])

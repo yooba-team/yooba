@@ -46,8 +46,8 @@ import (
 	"github.com/yooba-team/yooba/common"
 	"github.com/yooba-team/yooba/core"
 	"github.com/yooba-team/yooba/core/types"
-	"github.com/yooba-team/yooba/eth"
-	"github.com/yooba-team/yooba/eth/downloader"
+	"github.com/yooba-team/yooba/yoo"
+	"github.com/yooba-team/yooba/yoo/downloader"
 	"github.com/yooba-team/yooba/ethclient"
 	"github.com/yooba-team/yooba/ethstats"
 	"github.com/yooba-team/yooba/les"
@@ -232,7 +232,7 @@ func newFaucet(genesis *core.Genesis, port int, enodes []*discv5.Node, network u
 	}
 	// Assemble the Ethereum light client protocol
 	if err := stack.Register(func(ctx *node.ServiceContext) (node.Service, error) {
-		cfg := eth.DefaultConfig
+		cfg := yoo.DefaultConfig
 		cfg.SyncMode = downloader.LightSync
 		cfg.NetworkId = network
 		cfg.Genesis = genesis

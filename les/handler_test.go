@@ -28,7 +28,7 @@ import (
 	"github.com/yooba-team/yooba/core"
 	"github.com/yooba-team/yooba/core/types"
 	"github.com/yooba-team/yooba/crypto"
-	"github.com/yooba-team/yooba/eth/downloader"
+	"github.com/yooba-team/yooba/yoo/downloader"
 	"github.com/yooba-team/yooba/yoobadb"
 	"github.com/yooba-team/yooba/light"
 	"github.com/yooba-team/yooba/p2p"

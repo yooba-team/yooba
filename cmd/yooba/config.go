@@ -29,7 +29,7 @@ import (
 
 	"github.com/yooba-team/yooba/cmd/utils"
 	"github.com/yooba-team/yooba/dashboard"
-	"github.com/yooba-team/yooba/eth"
+	"github.com/yooba-team/yooba/yoo"
 	"github.com/yooba-team/yooba/node"
 	"github.com/yooba-team/yooba/params"
 	whisper "github.com/yooba-team/yooba/whisper/whisperv5"
@@ -75,7 +75,7 @@ type ethstatsConfig struct {
 }
 
 type gethConfig struct {
-	Eth       eth.Config
+	Eth       yoo.Config
 	Shh       whisper.Config
 	Node      node.Config
 	Ethstats  ethstatsConfig
@@ -101,8 +101,8 @@ func defaultNodeConfig() node.Config {
 	cfg := node.DefaultConfig
 	cfg.Name = clientIdentifier
 	cfg.Version = params.VersionWithCommit(gitCommit)
-	cfg.HTTPModules = append(cfg.HTTPModules, "eth", "shh")
-	cfg.WSModules = append(cfg.WSModules, "eth", "shh")
+	cfg.HTTPModules = append(cfg.HTTPModules, "yoo", "shh")
+	cfg.WSModules = append(cfg.WSModules, "yoo", "shh")
 	cfg.IPCPath = "yooba.ipc"
 	return cfg
 }
@@ -110,7 +110,7 @@ func defaultNodeConfig() node.Config {
 func makeConfigNode(ctx *cli.Context) (*node.Node, gethConfig) {
 	// Load defaults.
 	cfg := gethConfig{
-		Eth:       eth.DefaultConfig,
+		Eth:       yoo.DefaultConfig,
 		Shh:       whisper.DefaultConfig,
 		Node:      defaultNodeConfig(),
 		Dashboard: dashboard.DefaultConfig,

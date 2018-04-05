@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
 
-package eth
+package yoo
 
 import (
 	"fmt"
@@ -25,7 +25,7 @@ import (
 	"github.com/yooba-team/yooba/common"
 	"github.com/yooba-team/yooba/core/types"
 	"github.com/yooba-team/yooba/crypto"
-	"github.com/yooba-team/yooba/eth/downloader"
+	"github.com/yooba-team/yooba/yoo/downloader"
 	"github.com/yooba-team/yooba/p2p"
 	"github.com/yooba-team/yooba/rlp"
 )

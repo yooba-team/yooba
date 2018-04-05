@@ -21,7 +21,7 @@ import (
 	"strings"
 	"unicode"
 
-	"github.com/yooba-team/yooba/eth/tracers/internal/tracers"
+	"github.com/yooba-team/yooba/yoo/tracers/internal/tracers"
 )
 
 // all contains all the built in JavaScript tracers by name.

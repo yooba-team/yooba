@@ -17,7 +17,7 @@
 package network
 
 /*
-bzz implements the swarm wire protocol [bzz] (sister of eth and shh)
+bzz implements the swarm wire protocol [bzz] (sister of yoo and shh)
 the protocol instance is launched on each peer by the network layer if the
 bzz protocol handler is registered on the p2p server.
 

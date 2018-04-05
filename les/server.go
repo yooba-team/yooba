@@ -25,7 +25,7 @@ import (
 
 	"github.com/yooba-team/yooba/core"
 	"github.com/yooba-team/yooba/core/types"
-	"github.com/yooba-team/yooba/eth"
+	"github.com/yooba-team/yooba/yoo"
 	"github.com/yooba-team/yooba/yoobadb"
 	"github.com/yooba-team/yooba/les/flowcontrol"
 	"github.com/yooba-team/yooba/light"
@@ -36,7 +36,7 @@ import (
 )
 
 type LesServer struct {
-	config          *eth.Config
+	config          *yoo.Config
 	protocolManager *ProtocolManager
 	fcManager       *flowcontrol.ClientManager // nil if our node is client only
 	fcCostStats     *requestCostStats
@@ -48,7 +48,7 @@ type LesServer struct {
 	chtIndexer, bloomTrieIndexer *core.ChainIndexer
 }
 
-func NewLesServer(eth *eth.FullYooba, config *eth.Config) (*LesServer, error) {
+func NewLesServer(eth *yoo.FullYooba, config *yoo.Config) (*LesServer, error) {
 	quitSync := make(chan struct{})
 	pm, err := NewProtocolManager(eth.BlockChain().Config(), false, ServerProtocolVersions, config.NetworkId, eth.EventMux(), eth.Engine(), newPeerSet(), eth.BlockChain(), eth.TxPool(), eth.ChainDb(), nil, nil, quitSync, new(sync.WaitGroup))
 	if err != nil {

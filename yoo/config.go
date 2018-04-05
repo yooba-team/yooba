@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
 
-package eth
+package yoo
 
 import (
 	"math/big"
@@ -28,8 +28,8 @@ import (
 	"github.com/yooba-team/yooba/common/hexutil"
 	"github.com/yooba-team/yooba/consensus/ethash"
 	"github.com/yooba-team/yooba/core"
-	"github.com/yooba-team/yooba/eth/downloader"
-	"github.com/yooba-team/yooba/eth/gasprice"
+	"github.com/yooba-team/yooba/yoo/downloader"
+	"github.com/yooba-team/yooba/yoo/gasprice"
 	"github.com/yooba-team/yooba/params"
 )
 

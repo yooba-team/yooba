@@ -20,7 +20,7 @@ import (
 	"context"
 	"time"
 
-	"github.com/yooba-team/yooba/eth/downloader"
+	"github.com/yooba-team/yooba/yoo/downloader"
 	"github.com/yooba-team/yooba/light"
 )
 

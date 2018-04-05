@@ -14,8 +14,8 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
 
-// Package eth implements the Ethereum protocol.
-package eth
+// Package yoo implements the Ethereum protocol.
+package yoo
 
 import (
 	"errors"
@@ -35,9 +35,9 @@ import (
 	"github.com/yooba-team/yooba/core/bloombits"
 	"github.com/yooba-team/yooba/core/types"
 	"github.com/yooba-team/yooba/core/vm"
-	"github.com/yooba-team/yooba/eth/downloader"
-	"github.com/yooba-team/yooba/eth/filters"
-	"github.com/yooba-team/yooba/eth/gasprice"
+	"github.com/yooba-team/yooba/yoo/downloader"
+	"github.com/yooba-team/yooba/yoo/filters"
+	"github.com/yooba-team/yooba/yoo/gasprice"
 	"github.com/yooba-team/yooba/yoobadb"
 	"github.com/yooba-team/yooba/event"
 	"github.com/yooba-team/yooba/internal/ethapi"
@@ -103,7 +103,7 @@ func (s *FullYooba) AddLesServer(ls LesServer) {
 // initialisation of the common FullYooba object)
 func New(ctx *node.ServiceContext, config *Config) (*FullYooba, error) {
 	if config.SyncMode == downloader.LightSync {
-		return nil, errors.New("can't run eth.Ethereum in light sync mode, use les.LightEthereum")
+		return nil, errors.New("can't run yoo.Ethereum in light sync mode, use les.LightEthereum")
 	}
 	if !config.SyncMode.IsValid() {
 		return nil, fmt.Errorf("invalid sync mode %d", config.SyncMode)
@@ -205,7 +205,7 @@ func CreateDB(ctx *node.ServiceContext, config *Config, name string) (yoobadb.Da
 		return nil, err
 	}
 	if db, ok := db.(*yoobadb.LDBDatabase); ok {
-		db.Meter("eth/db/chaindata/")
+		db.Meter("yoo/db/chaindata/")
 	}
 	return db, nil
 }
@@ -252,17 +252,17 @@ func (s *FullYooba) APIs() []rpc.API {
 	// Append all the local APIs and return
 	return append(apis, []rpc.API{
 		{
-			Namespace: "eth",
+			Namespace: "yoo",
 			Version:   "1.0",
 			Service:   NewPublicEthereumAPI(s),
 			Public:    true,
 		}, {
-			Namespace: "eth",
+			Namespace: "yoo",
 			Version:   "1.0",
 			Service:   NewPublicMinerAPI(s),
 			Public:    true,
 		}, {
-			Namespace: "eth",
+			Namespace: "yoo",
 			Version:   "1.0",
 			Service:   downloader.NewPublicDownloaderAPI(s.protocolManager.downloader, s.eventMux),
 			Public:    true,
@@ -272,7 +272,7 @@ func (s *FullYooba) APIs() []rpc.API {
 			Service:   NewPrivateMinerAPI(s),
 			Public:    false,
 		}, {
-			Namespace: "eth",
+			Namespace: "yoo",
 			Version:   "1.0",
 			Service:   filters.NewPublicFilterAPI(s.ApiBackend, false),
 			Public:    true,

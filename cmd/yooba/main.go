@@ -30,7 +30,7 @@ import (
 	"github.com/yooba-team/yooba/cmd/utils"
 	"github.com/yooba-team/yooba/common"
 	"github.com/yooba-team/yooba/console"
-	"github.com/yooba-team/yooba/eth"
+	"github.com/yooba-team/yooba/yoo"
 	"github.com/yooba-team/yooba/ethclient"
 	"github.com/yooba-team/yooba/internal/debug"
 	"github.com/yooba-team/yooba/log"
@@ -285,8 +285,8 @@ func startNode(ctx *cli.Context, stack *node.Node) {
 		if ctx.GlobalBool(utils.LightModeFlag.Name) || ctx.GlobalString(utils.SyncModeFlag.Name) == "light" {
 			utils.Fatalf("Light clients do not support mining")
 		}
-		var ethereum *eth.FullYooba
-		if err := stack.Service(&ethereum); err != nil {
+		var fullYooba *yoo.FullYooba
+		if err := stack.Service(&fullYooba); err != nil {
 			utils.Fatalf("Ethereum service not running: %v", err)
 		}
 		// Use a reduced number of threads if requested
@@ -294,13 +294,13 @@ func startNode(ctx *cli.Context, stack *node.Node) {
 			type threaded interface {
 				SetThreads(threads int)
 			}
-			if th, ok := ethereum.Engine().(threaded); ok {
+			if th, ok := fullYooba.Engine().(threaded); ok {
 				th.SetThreads(threads)
 			}
 		}
 		// Set the gas price to the limits from the CLI and start mining
-		ethereum.TxPool().SetGasPrice(utils.GlobalBig(ctx, utils.GasPriceFlag.Name))
-		if err := ethereum.StartMining(true); err != nil {
+		fullYooba.TxPool().SetGasPrice(utils.GlobalBig(ctx, utils.GasPriceFlag.Name))
+		if err := fullYooba.StartMining(true); err != nil {
 			utils.Fatalf("Failed to start mining: %v", err)
 		}
 	}

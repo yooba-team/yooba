@@ -25,8 +25,8 @@ import (
 	"path/filepath"
 
 	"github.com/yooba-team/yooba/core"
-	"github.com/yooba-team/yooba/eth"
-	"github.com/yooba-team/yooba/eth/downloader"
+	"github.com/yooba-team/yooba/yoo"
+	"github.com/yooba-team/yooba/yoo/downloader"
 	"github.com/yooba-team/yooba/ethclient"
 	"github.com/yooba-team/yooba/ethstats"
 	"github.com/yooba-team/yooba/les"
@@ -144,7 +144,7 @@ func NewNode(datadir string, config *NodeConfig) (stack *Node, _ error) {
 	}
 	// Register the Ethereum protocol if requested
 	if config.EthereumEnabled {
-		ethConf := eth.DefaultConfig
+		ethConf := yoo.DefaultConfig
 		ethConf.Genesis = genesis
 		ethConf.SyncMode = downloader.LightSync
 		ethConf.NetworkId = uint64(config.EthereumNetworkID)

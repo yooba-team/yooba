@@ -29,10 +29,10 @@ import (
 	"github.com/yooba-team/yooba/core"
 	"github.com/yooba-team/yooba/core/bloombits"
 	"github.com/yooba-team/yooba/core/types"
-	"github.com/yooba-team/yooba/eth"
-	"github.com/yooba-team/yooba/eth/downloader"
-	"github.com/yooba-team/yooba/eth/filters"
-	"github.com/yooba-team/yooba/eth/gasprice"
+	"github.com/yooba-team/yooba/yoo"
+	"github.com/yooba-team/yooba/yoo/downloader"
+	"github.com/yooba-team/yooba/yoo/filters"
+	"github.com/yooba-team/yooba/yoo/gasprice"
 	"github.com/yooba-team/yooba/yoobadb"
 	"github.com/yooba-team/yooba/event"
 	"github.com/yooba-team/yooba/internal/ethapi"
@@ -46,7 +46,7 @@ import (
 )
 
 type LightYooba struct {
-	config *eth.Config
+	config *yoo.Config
 
 	odr         *LesOdr
 	relay       *LesTxRelay
@@ -79,8 +79,8 @@ type LightYooba struct {
 	wg sync.WaitGroup
 }
 
-func New(ctx *node.ServiceContext, config *eth.Config) (*LightYooba, error) {
-	chainDb, err := eth.CreateDB(ctx, config, "lightchaindata")
+func New(ctx *node.ServiceContext, config *yoo.Config) (*LightYooba, error) {
+	chainDb, err := yoo.CreateDB(ctx, config, "lightchaindata")
 	if err != nil {
 		return nil, err
 	}
@@ -101,11 +101,11 @@ func New(ctx *node.ServiceContext, config *eth.Config) (*LightYooba, error) {
 		peers:            peers,
 		reqDist:          newRequestDistributor(peers, quitSync),
 		accountManager:   ctx.AccountManager,
-		engine:           eth.CreateConsensusEngine(ctx, &config.Ethash, chainConfig, chainDb),
+		engine:           yoo.CreateConsensusEngine(ctx, &config.Ethash, chainConfig, chainDb),
 		shutdownChan:     make(chan bool),
 		networkId:        config.NetworkId,
 		bloomRequests:    make(chan chan *bloombits.Retrieval),
-		bloomIndexer:     eth.NewBloomIndexer(chainDb, light.BloomTrieFrequency),
+		bloomIndexer:     yoo.NewBloomIndexer(chainDb, light.BloomTrieFrequency),
 		chtIndexer:       light.NewChtIndexer(chainDb, true),
 		bloomTrieIndexer: light.NewBloomTrieIndexer(chainDb, true),
 	}
@@ -178,17 +178,17 @@ func (s *LightYooba) Mining() bool {
 func (s *LightYooba) APIs() []rpc.API {
 	return append(ethapi.GetAPIs(s.ApiBackend), []rpc.API{
 		{
-			Namespace: "eth",
+			Namespace: "yoo",
 			Version:   "1.0",
 			Service:   &LightDummyAPI{},
 			Public:    true,
 		}, {
-			Namespace: "eth",
+			Namespace: "yoo",
 			Version:   "1.0",
 			Service:   downloader.NewPublicDownloaderAPI(s.protocolManager.downloader, s.eventMux),
 			Public:    true,
 		}, {
-			Namespace: "eth",
+			Namespace: "yoo",
 			Version:   "1.0",
 			Service:   filters.NewPublicFilterAPI(s.ApiBackend, true),
 			Public:    true,

@@ -28,11 +28,11 @@ import (
 
 	"github.com/yooba-team/yooba/common"
 	"github.com/yooba-team/yooba/core/types"
-	"github.com/yooba-team/yooba/eth"
 	"github.com/yooba-team/yooba/les/flowcontrol"
 	"github.com/yooba-team/yooba/light"
 	"github.com/yooba-team/yooba/p2p"
 	"github.com/yooba-team/yooba/rlp"
+	"github.com/yooba-team/yooba/yoo"
 )
 
 var (
@@ -102,8 +102,8 @@ func (p *peer) queueSend(f func()) {
 }
 
 // Info gathers and returns a collection of metadata known about a peer.
-func (p *peer) Info() *eth.PeerInfo {
-	return &eth.PeerInfo{
+func (p *peer) Info() *yoo.PeerInfo {
+	return &yoo.PeerInfo{
 		Version:    p.version,
 		Head:       fmt.Sprintf("%x", p.Head()),
 	}
