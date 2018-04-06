@@ -617,11 +617,7 @@ module.exports = SolidityTypeBytes;
     You should have received a copy of the GNU Lesser General Public License
     along with yoobajs.js.  If not, see <http://www.gnu.org/licenses/>.
 */
-/**
- * @file coder.js
- * @author Marek Kotewicz <marek@ethdev.com>
- * @date 2015
- */
+
 
 var f = require('./formatters');
 
@@ -1761,40 +1757,40 @@ if (typeof XMLHttpRequest === 'undefined') {
 /// required to define YOO_BIGNUMBER_ROUNDING_MODE
 var BigNumber = require('bignumber.js');
 
-var ETH_UNITS = [
+var YOO_UNITS = [
     'wei',
     'kwei',
     'Mwei',
     'Gwei',
     'szabo',
     'finney',
-    'femtoether',
-    'picoether',
-    'nanoether',
-    'microether',
-    'milliether',
+    'femtoyoo',
+    'picoyoo',
+    'nanoyoo',
+    'microyoo',
+    'milliyoo',
     'nano',
     'micro',
     'milli',
-    'ether',
+    'yoo',
     'grand',
-    'Mether',
-    'Gether',
-    'Tether',
-    'Pether',
-    'Eether',
-    'Zether',
-    'Yether',
-    'Nether',
-    'Dether',
-    'Vether',
-    'Uether'
+    'Myoo',
+    'Gyoo',
+    'Tyoo',
+    'Pyoo',
+    'Eyoo',
+    'Zypp',
+    'Yyoo',
+    'Nyoo',
+    'Dyoo',
+    'Vyoo',
+    'Uyoo'
 ];
 
 module.exports = {
     YOO_PADDING: 32,
     YOO_SIGNATURE_LENGTH: 4,
-    YOO_UNITS: ETH_UNITS,
+    YOO_UNITS: YOO_UNITS,
     YOO_BIGNUMBER_ROUNDING_MODE: { ROUNDING_MODE: BigNumber.ROUND_DOWN },
     YOO_POLLING_TIMEOUT: 1000/2,
     defaultBlock: 'latest',
@@ -2610,7 +2606,7 @@ var properties = function () {
         }),
         new Property({
             name: 'version.ethereum',
-            getter: 'eth_protocolVersion',
+            getter: 'yoo_protocolVersion',
             inputFormatter: utils.toDecimal
         }),
         new Property({
@@ -4199,7 +4195,7 @@ SolidityFunction.prototype.request = function () {
     var format = this.unpackOutput.bind(this);
 
     return {
-        method: this._constant ? 'eth_call' : 'eth_sendTransaction',
+        method: this._constant ? 'yoo_call' : 'yoo_sendTransaction',
         callback: callback,
         params: [payload],
         format: format
@@ -5181,7 +5177,7 @@ module.exports = DB;
     along with yoobajs.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 /**
- * @file yoo.js
+ * @file yooba.js
  * @author Marek Kotewicz <marek@ethdev.com>
  * @author Fabian Vogelsteller <fabian@ethdev.com>
  * @date 2015
@@ -5203,17 +5199,17 @@ var Iban = require('../iban');
 var transfer = require('../transfer');
 
 var blockCall = function (args) {
-    return (utils.isString(args[0]) && args[0].indexOf('0x') === 0) ? "eth_getBlockByHash" : "eth_getBlockByNumber";
+    return (utils.isString(args[0]) && args[0].indexOf('0x') === 0) ? "yoo_getBlockByHash" : "yoo_getBlockByNumber";
 };
 
 var transactionFromBlockCall = function (args) {
-    return (utils.isString(args[0]) && args[0].indexOf('0x') === 0) ? 'eth_getTransactionByBlockHashAndIndex' : 'eth_getTransactionByBlockNumberAndIndex';
+    return (utils.isString(args[0]) && args[0].indexOf('0x') === 0) ? 'yoo_getTransactionByBlockHashAndIndex' : 'yoo_getTransactionByBlockNumberAndIndex';
 };
 
 
 
 var getBlockTransactionCountCall = function (args) {
-    return (utils.isString(args[0]) && args[0].indexOf('0x') === 0) ? 'eth_getBlockTransactionCountByHash' : 'eth_getBlockTransactionCountByNumber';
+    return (utils.isString(args[0]) && args[0].indexOf('0x') === 0) ? 'yoo_getBlockTransactionCountByHash' : 'yoo_getBlockTransactionCountByNumber';
 };
 
 
@@ -5261,7 +5257,7 @@ Object.defineProperty(Yoo.prototype, 'defaultAccount', {
 var methods = function () {
     var getBalance = new Method({
         name: 'getBalance',
-        call: 'eth_getBalance',
+        call: 'yoo_getBalance',
         params: 2,
         inputFormatter: [formatters.inputAddressFormatter, formatters.inputDefaultBlockNumberFormatter],
         outputFormatter: formatters.outputBigNumberFormatter
@@ -5269,14 +5265,14 @@ var methods = function () {
 
     var getStorageAt = new Method({
         name: 'getStorageAt',
-        call: 'eth_getStorageAt',
+        call: 'yoo_getStorageAt',
         params: 3,
         inputFormatter: [null, utils.toHex, formatters.inputDefaultBlockNumberFormatter]
     });
 
     var getCode = new Method({
         name: 'getCode',
-        call: 'eth_getCode',
+        call: 'yoo_getCode',
         params: 2,
         inputFormatter: [formatters.inputAddressFormatter, formatters.inputDefaultBlockNumberFormatter]
     });
@@ -5293,7 +5289,7 @@ var methods = function () {
 
     var getCompilers = new Method({
         name: 'getCompilers',
-        call: 'eth_getCompilers',
+        call: 'yoo_getCompilers',
         params: 0
     });
 
@@ -5309,7 +5305,7 @@ var methods = function () {
 
     var getTransaction = new Method({
         name: 'getTransaction',
-        call: 'eth_getTransactionByHash',
+        call: 'yoo_getTransactionByHash',
         params: 1,
         outputFormatter: formatters.outputTransactionFormatter
     });
@@ -5324,14 +5320,14 @@ var methods = function () {
 
     var getTransactionReceipt = new Method({
         name: 'getTransactionReceipt',
-        call: 'eth_getTransactionReceipt',
+        call: 'yoo_getTransactionReceipt',
         params: 1,
         outputFormatter: formatters.outputTransactionReceiptFormatter
     });
 
     var getTransactionCount = new Method({
         name: 'getTransactionCount',
-        call: 'eth_getTransactionCount',
+        call: 'yoo_getTransactionCount',
         params: 2,
         inputFormatter: [null, formatters.inputDefaultBlockNumberFormatter],
         outputFormatter: utils.toDecimal
@@ -5339,42 +5335,42 @@ var methods = function () {
 
     var sendRawTransaction = new Method({
         name: 'sendRawTransaction',
-        call: 'eth_sendRawTransaction',
+        call: 'yoo_sendRawTransaction',
         params: 1,
         inputFormatter: [null]
     });
 
     var sendTransaction = new Method({
         name: 'sendTransaction',
-        call: 'eth_sendTransaction',
+        call: 'yoo_sendTransaction',
         params: 1,
         inputFormatter: [formatters.inputTransactionFormatter]
     });
 
     var signTransaction = new Method({
         name: 'signTransaction',
-        call: 'eth_signTransaction',
+        call: 'yoo_signTransaction',
         params: 1,
         inputFormatter: [formatters.inputTransactionFormatter]
     });
 
     var sign = new Method({
         name: 'sign',
-        call: 'eth_sign',
+        call: 'yoo_sign',
         params: 2,
         inputFormatter: [formatters.inputAddressFormatter, null]
     });
 
     var call = new Method({
         name: 'call',
-        call: 'eth_call',
+        call: 'yoo_call',
         params: 2,
         inputFormatter: [formatters.inputCallFormatter, formatters.inputDefaultBlockNumberFormatter]
     });
 
     var estimateGas = new Method({
         name: 'estimateGas',
-        call: 'eth_estimateGas',
+        call: 'yoo_estimateGas',
         params: 1,
         inputFormatter: [formatters.inputCallFormatter],
         outputFormatter: utils.toDecimal
@@ -5382,31 +5378,31 @@ var methods = function () {
 
     var compileSolidity = new Method({
         name: 'compile.solidity',
-        call: 'eth_compileSolidity',
+        call: 'yoo_compileSolidity',
         params: 1
     });
 
     var compileLLL = new Method({
         name: 'compile.lll',
-        call: 'eth_compileLLL',
+        call: 'yoo_compileLLL',
         params: 1
     });
 
     var compileSerpent = new Method({
         name: 'compile.serpent',
-        call: 'eth_compileSerpent',
+        call: 'yoo_compileSerpent',
         params: 1
     });
 
     var submitWork = new Method({
         name: 'submitWork',
-        call: 'eth_submitWork',
+        call: 'yoo_submitWork',
         params: 3
     });
 
     var getWork = new Method({
         name: 'getWork',
-        call: 'eth_getWork',
+        call: 'yoo_getWork',
         params: 0
     });
 
@@ -5440,39 +5436,39 @@ var properties = function () {
     return [
         new Property({
             name: 'coinbase',
-            getter: 'eth_coinbase'
+            getter: 'yoo_coinbase'
         }),
         new Property({
             name: 'mining',
-            getter: 'eth_mining'
+            getter: 'yoo_mining'
         }),
         new Property({
             name: 'hashrate',
-            getter: 'eth_hashrate',
+            getter: 'yoo_hashrate',
             outputFormatter: utils.toDecimal
         }),
         new Property({
             name: 'syncing',
-            getter: 'eth_syncing',
+            getter: 'yoo_syncing',
             outputFormatter: formatters.outputSyncingFormatter
         }),
         new Property({
             name: 'gasPrice',
-            getter: 'eth_gasPrice',
+            getter: 'yoo_gasPrice',
             outputFormatter: formatters.outputBigNumberFormatter
         }),
         new Property({
             name: 'accounts',
-            getter: 'eth_accounts'
+            getter: 'yoo_accounts'
         }),
         new Property({
             name: 'blockNumber',
-            getter: 'eth_blockNumber',
+            getter: 'yoo_blockNumber',
             outputFormatter: utils.toDecimal
         }),
         new Property({
             name: 'protocolVersion',
-            getter: 'eth_protocolVersion'
+            getter: 'yoo_protocolVersion'
         })
     ];
 };
@@ -5998,13 +5994,13 @@ var yoo = function () {
             case 'latest':
                 args.shift();
                 this.params = 0;
-                return 'eth_newBlockFilter';
+                return 'yoo_newBlockFilter';
             case 'pending':
                 args.shift();
                 this.params = 0;
-                return 'eth_newPendingTransactionFilter';
+                return 'yoo_newPendingTransactionFilter';
             default:
-                return 'eth_newFilter';
+                return 'yoo_newFilter';
         }
     };
 
@@ -6016,19 +6012,19 @@ var yoo = function () {
 
     var uninstallFilter = new Method({
         name: 'uninstallFilter',
-        call: 'eth_uninstallFilter',
+        call: 'yoo_uninstallFilter',
         params: 1
     });
 
     var getLogs = new Method({
         name: 'getLogs',
-        call: 'eth_getFilterLogs',
+        call: 'yoo_getFilterLogs',
         params: 1
     });
 
     var poll = new Method({
         name: 'poll',
-        call: 'eth_getFilterChanges',
+        call: 'yoo_getFilterChanges',
         params: 1
     });
 
@@ -6602,7 +6598,7 @@ var pollSyncing = function(self) {
     };
 
     self.requestManager.startPolling({
-        method: 'eth_syncing',
+        method: 'yoo_syncing',
         params: [],
     }, self.pollId, onMessage, self.stopWatching.bind(self));
 
