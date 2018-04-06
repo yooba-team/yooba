@@ -602,20 +602,20 @@ module.exports = SolidityTypeBytes;
 
 },{"./formatters":9,"./type":14}],7:[function(require,module,exports){
 /*
-    This file is part of web3.js.
+    This file is part of yoobajs.js.
 
-    web3.js is free software: you can redistribute it and/or modify
+    yoobajs.js is free software: you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    web3.js is distributed in the hope that it will be useful,
+    yoobajs.js is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU Lesser General Public License for more details.
 
     You should have received a copy of the GNU Lesser General Public License
-    along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
+    along with yoobajs.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 /**
  * @file coder.js
@@ -889,20 +889,20 @@ module.exports = SolidityTypeDynamicBytes;
 
 },{"./formatters":9,"./type":14}],9:[function(require,module,exports){
 /*
-    This file is part of web3.js.
+    This file is part of yoobajs.js.
 
-    web3.js is free software: you can redistribute it and/or modify
+    yoobajs.js is free software: you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    web3.js is distributed in the hope that it will be useful,
+    yoobajs.js is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU Lesser General Public License for more details.
 
     You should have received a copy of the GNU Lesser General Public License
-    along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
+    along with yoobajs.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 /**
  * @file formatters.js
@@ -1177,20 +1177,20 @@ module.exports = SolidityTypeInt;
 
 },{"./formatters":9,"./type":14}],11:[function(require,module,exports){
 /*
-    This file is part of web3.js.
+    This file is part of yoobajs.js.
 
-    web3.js is free software: you can redistribute it and/or modify
+    yoobajs.js is free software: you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    web3.js is distributed in the hope that it will be useful,
+    yoobajs.js is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU Lesser General Public License for more details.
 
     You should have received a copy of the GNU Lesser General Public License
-    along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
+    along with yoobajs.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 /** 
  * @file param.js
@@ -1723,20 +1723,20 @@ if (typeof XMLHttpRequest === 'undefined') {
 
 },{}],18:[function(require,module,exports){
 /*
-    This file is part of web3.js.
+    This file is part of yoobajs.js.
 
-    web3.js is free software: you can redistribute it and/or modify
+    yoobajs.js is free software: you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    web3.js is distributed in the hope that it will be useful,
+    yoobajs.js is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU Lesser General Public License for more details.
 
     You should have received a copy of the GNU Lesser General Public License
-    along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
+    along with yoobajs.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 /** @file config.js
  * @authors:
@@ -1804,20 +1804,20 @@ module.exports = {
 
 },{"bignumber.js":"bignumber.js"}],19:[function(require,module,exports){
 /*
-    This file is part of web3.js.
+    This file is part of yoobajs.js.
 
-    web3.js is free software: you can redistribute it and/or modify
+    yoobajs.js is free software: you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    web3.js is distributed in the hope that it will be useful,
+    yoobajs.js is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU Lesser General Public License for more details.
 
     You should have received a copy of the GNU Lesser General Public License
-    along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
+    along with yoobajs.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 /** 
  * @file sha3.js
@@ -1844,20 +1844,20 @@ module.exports = function (value, options) {
 
 },{"crypto-js":59,"crypto-js/sha3":80}],20:[function(require,module,exports){
 /*
-    This file is part of web3.js.
+    This file is part of yoobajs.js.
 
-    web3.js is free software: you can redistribute it and/or modify
+    yoobajs.js is free software: you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    web3.js is distributed in the hope that it will be useful,
+    yoobajs.js is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU Lesser General Public License for more details.
 
     You should have received a copy of the GNU Lesser General Public License
-    along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
+    along with yoobajs.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 /**
  * @file utils.js
@@ -2480,23 +2480,23 @@ module.exports={
 
 },{}],22:[function(require,module,exports){
 /*
-    This file is part of web3.js.
+    This file is part of yoobajs.js.
 
-    web3.js is free software: you can redistribute it and/or modify
+    yoobajs.js is free software: you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    web3.js is distributed in the hope that it will be useful,
+    yoobajs.js is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU Lesser General Public License for more details.
 
     You should have received a copy of the GNU Lesser General Public License
-    along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
+    along with yoobajs.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 /**
- * @file web3.js
+ * @file yoobajs.js
  * @authors:
  *   Jeffrey Wilcke <jeff@ethdev.com>
  *   Marek Kotewicz <marek@ethdev.com>
@@ -2506,28 +2506,28 @@ module.exports={
  * @date 2014
  */
 
-var RequestManager = require('./web3/requestmanager');
-var Iban = require('./web3/iban');
-var Yoo = require('./web3/methods/yoo');
-var DB = require('./web3/methods/db');
-var Shh = require('./web3/methods/shh');
-var Net = require('./web3/methods/net');
-var Personal = require('./web3/methods/personal');
-var Swarm = require('./web3/methods/swarm');
-var Settings = require('./web3/settings');
+var RequestManager = require('./yoobajs/requestmanager');
+var Iban = require('./yoobajs/iban');
+var Yoo = require('./yoobajs/methods/yoo');
+var DB = require('./yoobajs/methods/db');
+var Shh = require('./yoobajs/methods/shh');
+var Net = require('./yoobajs/methods/net');
+var Personal = require('./yoobajs/methods/personal');
+var Swarm = require('./yoobajs/methods/swarm');
+var Settings = require('./yoobajs/settings');
 var version = require('./version.json');
 var utils = require('./utils/utils');
 var sha3 = require('./utils/sha3');
-var extend = require('./web3/extend');
-var Batch = require('./web3/batch');
-var Property = require('./web3/property');
-var HttpProvider = require('./web3/httpprovider');
-var IpcProvider = require('./web3/ipcprovider');
+var extend = require('./yoobajs/extend');
+var Batch = require('./yoobajs/batch');
+var Property = require('./yoobajs/property');
+var HttpProvider = require('./yoobajs/httpprovider');
+var IpcProvider = require('./yoobajs/ipcprovider');
 var BigNumber = require('bignumber.js');
 
 
 
-function Web3 (provider) {
+function Yoobajs (provider) {
     this._requestManager = new RequestManager(provider);
     this.currentProvider = provider;
     this.yoo = new Yoo(this);
@@ -2551,48 +2551,48 @@ function Web3 (provider) {
 }
 
 // expose providers on the class
-Web3.providers = {
+Yoobajs.providers = {
     HttpProvider: HttpProvider,
     IpcProvider: IpcProvider
 };
 
-Web3.prototype.setProvider = function (provider) {
+Yoobajs.prototype.setProvider = function (provider) {
     this._requestManager.setProvider(provider);
     this.currentProvider = provider;
 };
 
-Web3.prototype.reset = function (keepIsSyncing) {
+Yoobajs.prototype.reset = function (keepIsSyncing) {
     this._requestManager.reset(keepIsSyncing);
     this.settings = new Settings();
 };
 
-Web3.prototype.BigNumber = BigNumber;
-Web3.prototype.toHex = utils.toHex;
-Web3.prototype.toAscii = utils.toAscii;
-Web3.prototype.toUtf8 = utils.toUtf8;
-Web3.prototype.fromAscii = utils.fromAscii;
-Web3.prototype.fromUtf8 = utils.fromUtf8;
-Web3.prototype.toDecimal = utils.toDecimal;
-Web3.prototype.fromDecimal = utils.fromDecimal;
-Web3.prototype.toBigNumber = utils.toBigNumber;
-Web3.prototype.toWei = utils.toWei;
-Web3.prototype.fromWei = utils.fromWei;
-Web3.prototype.isAddress = utils.isAddress;
-Web3.prototype.isChecksumAddress = utils.isChecksumAddress;
-Web3.prototype.toChecksumAddress = utils.toChecksumAddress;
-Web3.prototype.isIBAN = utils.isIBAN;
-Web3.prototype.padLeft = utils.padLeft;
-Web3.prototype.padRight = utils.padRight;
+Yoobajs.prototype.BigNumber = BigNumber;
+Yoobajs.prototype.toHex = utils.toHex;
+Yoobajs.prototype.toAscii = utils.toAscii;
+Yoobajs.prototype.toUtf8 = utils.toUtf8;
+Yoobajs.prototype.fromAscii = utils.fromAscii;
+Yoobajs.prototype.fromUtf8 = utils.fromUtf8;
+Yoobajs.prototype.toDecimal = utils.toDecimal;
+Yoobajs.prototype.fromDecimal = utils.fromDecimal;
+Yoobajs.prototype.toBigNumber = utils.toBigNumber;
+Yoobajs.prototype.toWei = utils.toWei;
+Yoobajs.prototype.fromWei = utils.fromWei;
+Yoobajs.prototype.isAddress = utils.isAddress;
+Yoobajs.prototype.isChecksumAddress = utils.isChecksumAddress;
+Yoobajs.prototype.toChecksumAddress = utils.toChecksumAddress;
+Yoobajs.prototype.isIBAN = utils.isIBAN;
+Yoobajs.prototype.padLeft = utils.padLeft;
+Yoobajs.prototype.padRight = utils.padRight;
 
 
-Web3.prototype.sha3 = function(string, options) {
+Yoobajs.prototype.sha3 = function(string, options) {
     return '0x' + sha3(string, options);
 };
 
 /**
  * Transforms direct icap to address
  */
-Web3.prototype.fromICAP = function (icap) {
+Yoobajs.prototype.fromICAP = function (icap) {
     var iban = new Iban(icap);
     return iban.address();
 };
@@ -2601,7 +2601,7 @@ var properties = function () {
     return [
         new Property({
             name: 'version.node',
-            getter: 'web3_clientVersion'
+            getter: 'yoobajs_clientVersion'
         }),
         new Property({
             name: 'version.network',
@@ -2621,33 +2621,33 @@ var properties = function () {
     ];
 };
 
-Web3.prototype.isConnected = function(){
+Yoobajs.prototype.isConnected = function(){
     return (this.currentProvider && this.currentProvider.isConnected());
 };
 
-Web3.prototype.createBatch = function () {
+Yoobajs.prototype.createBatch = function () {
     return new Batch(this);
 };
 
-module.exports = Web3;
+module.exports = Yoobajs;
 
 
-},{"./utils/sha3":19,"./utils/utils":20,"./version.json":21,"./web3/batch":24,"./web3/extend":28,"./web3/httpprovider":32,"./web3/iban":33,"./web3/ipcprovider":34,"./web3/methods/db":37,"./web3/methods/eth":38,"./web3/methods/net":39,"./web3/methods/personal":40,"./web3/methods/shh":41,"./web3/methods/swarm":42,"./web3/property":45,"./web3/requestmanager":46,"./web3/settings":47,"bignumber.js":"bignumber.js"}],23:[function(require,module,exports){
+},{"./utils/sha3":19,"./utils/utils":20,"./version.json":21,"./yoobajs/batch":24,"./yoobajs/extend":28,"./yoobajs/httpprovider":32,"./yoobajs/iban":33,"./yoobajs/ipcprovider":34,"./yoobajs/methods/db":37,"./yoobajs/methods/eth":38,"./yoobajs/methods/net":39,"./yoobajs/methods/personal":40,"./yoobajs/methods/shh":41,"./yoobajs/methods/swarm":42,"./yoobajs/property":45,"./yoobajs/requestmanager":46,"./yoobajs/settings":47,"bignumber.js":"bignumber.js"}],23:[function(require,module,exports){
 /*
-    This file is part of web3.js.
+    This file is part of yoobajs.js.
 
-    web3.js is free software: you can redistribute it and/or modify
+    yoobajs.js is free software: you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    web3.js is distributed in the hope that it will be useful,
+    yoobajs.js is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU Lesser General Public License for more details.
 
     You should have received a copy of the GNU Lesser General Public License
-    along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
+    along with yoobajs.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 /**
  * @file allevents.js
@@ -2724,20 +2724,20 @@ module.exports = AllSolidityEvents;
 
 },{"../utils/sha3":19,"../utils/utils":20,"./event":27,"./filter":29,"./formatters":30,"./methods/watches":43}],24:[function(require,module,exports){
 /*
-    This file is part of web3.js.
+    This file is part of yoobajs.js.
 
-    web3.js is free software: you can redistribute it and/or modify
+    yoobajs.js is free software: you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    web3.js is distributed in the hope that it will be useful,
+    yoobajs.js is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU Lesser General Public License for more details.
 
     You should have received a copy of the GNU Lesser General Public License
-    along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
+    along with yoobajs.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 /** 
  * @file batch.js
@@ -2748,8 +2748,8 @@ module.exports = AllSolidityEvents;
 var Jsonrpc = require('./jsonrpc');
 var errors = require('./errors');
 
-var Batch = function (web3) {
-    this.requestManager = web3._requestManager;
+var Batch = function (yoobajs) {
+    this.requestManager = yoobajs._requestManager;
     this.requests = [];
 };
 
@@ -2792,20 +2792,20 @@ module.exports = Batch;
 
 },{"./errors":26,"./jsonrpc":35}],25:[function(require,module,exports){
 /*
-    This file is part of web3.js.
+    This file is part of yoobajs.js.
 
-    web3.js is free software: you can redistribute it and/or modify
+    yoobajs.js is free software: you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    web3.js is distributed in the hope that it will be useful,
+    yoobajs.js is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU Lesser General Public License for more details.
 
     You should have received a copy of the GNU Lesser General Public License
-    along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
+    along with yoobajs.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 /**
  * @file contract.js
@@ -3104,20 +3104,20 @@ module.exports = ContractFactory;
 
 },{"../solidity/coder":7,"../utils/utils":20,"./allevents":23,"./event":27,"./function":31}],26:[function(require,module,exports){
 /*
-    This file is part of web3.js.
+    This file is part of yoobajs.js.
 
-    web3.js is free software: you can redistribute it and/or modify
+    yoobajs.js is free software: you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    web3.js is distributed in the hope that it will be useful,
+    yoobajs.js is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU Lesser General Public License for more details.
 
     You should have received a copy of the GNU Lesser General Public License
-    along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
+    along with yoobajs.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 /** 
  * @file errors.js
@@ -3149,20 +3149,20 @@ module.exports = {
 
 },{}],27:[function(require,module,exports){
 /*
-    This file is part of web3.js.
+    This file is part of yoobajs.js.
 
-    web3.js is free software: you can redistribute it and/or modify
+    yoobajs.js is free software: you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    web3.js is distributed in the hope that it will be useful,
+    yoobajs.js is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU Lesser General Public License for more details.
 
     You should have received a copy of the GNU Lesser General Public License
-    along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
+    along with yoobajs.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 /**
  * @file event.js
@@ -3365,31 +3365,31 @@ var Property = require('./property');
 
 // TODO: refactor, so the input params are not altered.
 // it's necessary to make same 'extension' work with multiple providers
-var extend = function (web3) {
+var extend = function (yoobajs) {
     /* jshint maxcomplexity:5 */
     var ex = function (extension) {
 
         var extendedObject;
         if (extension.property) {
-            if (!web3[extension.property]) {
-                web3[extension.property] = {};
+            if (!yoobajs[extension.property]) {
+                yoobajs[extension.property] = {};
             }
-            extendedObject = web3[extension.property];
+            extendedObject = yoobajs[extension.property];
         } else {
-            extendedObject = web3;
+            extendedObject = yoobajs;
         }
 
         if (extension.methods) {
             extension.methods.forEach(function (method) {
                 method.attachToObject(extendedObject);
-                method.setRequestManager(web3._requestManager);
+                method.setRequestManager(yoobajs._requestManager);
             });
         }
 
         if (extension.properties) {
             extension.properties.forEach(function (property) {
                 property.attachToObject(extendedObject);
-                property.setRequestManager(web3._requestManager);
+                property.setRequestManager(yoobajs._requestManager);
             });
         }
     };
@@ -3409,20 +3409,20 @@ module.exports = extend;
 
 },{"./../utils/utils":20,"./formatters":30,"./method":36,"./property":45}],29:[function(require,module,exports){
 /*
-    This file is part of web3.js.
+    This file is part of yoobajs.js.
 
-    web3.js is free software: you can redistribute it and/or modify
+    yoobajs.js is free software: you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    web3.js is distributed in the hope that it will be useful,
+    yoobajs.js is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU Lesser General Public License for more details.
 
     You should have received a copy of the GNU Lesser General Public License
-    along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
+    along with yoobajs.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 /** @file filter.js
  * @authors:
@@ -3658,20 +3658,20 @@ module.exports = Filter;
 'use strict'
 
 /*
-    This file is part of web3.js.
+    This file is part of yoobajs.js.
 
-    web3.js is free software: you can redistribute it and/or modify
+    yoobajs.js is free software: you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    web3.js is distributed in the hope that it will be useful,
+    yoobajs.js is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU Lesser General Public License for more details.
 
     You should have received a copy of the GNU Lesser General Public License
-    along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
+    along with yoobajs.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 /**
  * @file formatters.js
@@ -3962,20 +3962,20 @@ module.exports = {
 
 },{"../utils/config":18,"../utils/utils":20,"./iban":33}],31:[function(require,module,exports){
 /*
-    This file is part of web3.js.
+    This file is part of yoobajs.js.
 
-    web3.js is free software: you can redistribute it and/or modify
+    yoobajs.js is free software: you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    web3.js is distributed in the hope that it will be useful,
+    yoobajs.js is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU Lesser General Public License for more details.
 
     You should have received a copy of the GNU Lesser General Public License
-    along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
+    along with yoobajs.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 /**
  * @file function.js
@@ -4247,20 +4247,20 @@ module.exports = SolidityFunction;
 
 },{"../solidity/coder":7,"../utils/sha3":19,"../utils/utils":20,"./errors":26,"./formatters":30}],32:[function(require,module,exports){
 /*
-    This file is part of web3.js.
+    This file is part of yoobajs.js.
 
-    web3.js is free software: you can redistribute it and/or modify
+    yoobajs.js is free software: you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    web3.js is distributed in the hope that it will be useful,
+    yoobajs.js is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU Lesser General Public License for more details.
 
     You should have received a copy of the GNU Lesser General Public License
-    along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
+    along with yoobajs.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 /** @file httpprovider.js
  * @authors:
@@ -4406,20 +4406,20 @@ module.exports = HttpProvider;
 
 },{"./errors":26,"xhr2":86,"xmlhttprequest":17}],33:[function(require,module,exports){
 /*
-    This file is part of web3.js.
+    This file is part of yoobajs.js.
 
-    web3.js is free software: you can redistribute it and/or modify
+    yoobajs.js is free software: you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    web3.js is distributed in the hope that it will be useful,
+    yoobajs.js is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU Lesser General Public License for more details.
 
     You should have received a copy of the GNU Lesser General Public License
-    along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
+    along with yoobajs.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 /** 
  * @file iban.js
@@ -4635,20 +4635,20 @@ module.exports = Iban;
 
 },{"bignumber.js":"bignumber.js"}],34:[function(require,module,exports){
 /*
-    This file is part of web3.js.
+    This file is part of yoobajs.js.
 
-    web3.js is free software: you can redistribute it and/or modify
+    yoobajs.js is free software: you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    web3.js is distributed in the hope that it will be useful,
+    yoobajs.js is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU Lesser General Public License for more details.
 
     You should have received a copy of the GNU Lesser General Public License
-    along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
+    along with yoobajs.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 /** @file ipcprovider.js
  * @authors:
@@ -4844,20 +4844,20 @@ module.exports = IpcProvider;
 
 },{"../utils/utils":20,"./errors":26}],35:[function(require,module,exports){
 /*
-    This file is part of web3.js.
+    This file is part of yoobajs.js.
 
-    web3.js is free software: you can redistribute it and/or modify
+    yoobajs.js is free software: you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    web3.js is distributed in the hope that it will be useful,
+    yoobajs.js is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU Lesser General Public License for more details.
 
     You should have received a copy of the GNU Lesser General Public License
-    along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
+    along with yoobajs.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 /** @file jsonrpc.js
  * @authors:
@@ -4931,20 +4931,20 @@ module.exports = Jsonrpc;
 
 },{}],36:[function(require,module,exports){
 /*
-    This file is part of web3.js.
+    This file is part of yoobajs.js.
 
-    web3.js is free software: you can redistribute it and/or modify
+    yoobajs.js is free software: you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    web3.js is distributed in the hope that it will be useful,
+    yoobajs.js is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU Lesser General Public License for more details.
 
     You should have received a copy of the GNU Lesser General Public License
-    along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
+    along with yoobajs.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 /**
  * @file method.js
@@ -5097,20 +5097,20 @@ module.exports = Method;
 
 },{"../utils/utils":20,"./errors":26}],37:[function(require,module,exports){
 /*
-    This file is part of web3.js.
+    This file is part of yoobajs.js.
 
-    web3.js is free software: you can redistribute it and/or modify
+    yoobajs.js is free software: you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    web3.js is distributed in the hope that it will be useful,
+    yoobajs.js is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU Lesser General Public License for more details.
 
     You should have received a copy of the GNU Lesser General Public License
-    along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
+    along with yoobajs.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 /** @file db.js
  * @authors:
@@ -5120,14 +5120,14 @@ module.exports = Method;
 
 var Method = require('../method');
 
-var DB = function (web3) {
-    this._requestManager = web3._requestManager;
+var DB = function (yoobajs) {
+    this._requestManager = yoobajs._requestManager;
 
     var self = this;
     
     methods().forEach(function(method) { 
         method.attachToObject(self);
-        method.setRequestManager(web3._requestManager);
+        method.setRequestManager(yoobajs._requestManager);
     });
 };
 
@@ -5165,20 +5165,20 @@ module.exports = DB;
 
 },{"../method":36}],38:[function(require,module,exports){
 /*
-    This file is part of web3.js.
+    This file is part of yoobajs.js.
 
-    web3.js is free software: you can redistribute it and/or modify
+    yoobajs.js is free software: you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    web3.js is distributed in the hope that it will be useful,
+    yoobajs.js is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU Lesser General Public License for more details.
 
     You should have received a copy of the GNU Lesser General Public License
-    along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
+    along with yoobajs.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 /**
  * @file yoo.js
@@ -5218,8 +5218,8 @@ var getBlockTransactionCountCall = function (args) {
 
 
 
-function Yoo(web3) {
-    this._requestManager = web3._requestManager;
+function Yoo(yoobajs) {
+    this._requestManager = yoobajs._requestManager;
 
     var self = this;
 
@@ -5502,20 +5502,20 @@ module.exports = Yoo;
 
 },{"../../utils/config":18,"../../utils/utils":20,"../contract":25,"../filter":29,"../formatters":30,"../iban":33,"../method":36,"../namereg":44,"../property":45,"../syncing":48,"../transfer":49,"./watches":43}],39:[function(require,module,exports){
 /*
-    This file is part of web3.js.
+    This file is part of yoobajs.js.
 
-    web3.js is free software: you can redistribute it and/or modify
+    yoobajs.js is free software: you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    web3.js is distributed in the hope that it will be useful,
+    yoobajs.js is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU Lesser General Public License for more details.
 
     You should have received a copy of the GNU Lesser General Public License
-    along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
+    along with yoobajs.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 /** @file yoo.js
  * @authors:
@@ -5526,18 +5526,18 @@ module.exports = Yoo;
 var utils = require('../../utils/utils');
 var Property = require('../property');
 
-var Net = function (web3) {
-    this._requestManager = web3._requestManager;
+var Net = function (yoobajs) {
+    this._requestManager = yoobajs._requestManager;
 
     var self = this;
 
     properties().forEach(function(p) { 
         p.attachToObject(self);
-        p.setRequestManager(web3._requestManager);
+        p.setRequestManager(yoobajs._requestManager);
     });
 };
 
-/// @returns an array of objects describing web3.yoo api properties
+/// @returns an array of objects describing yoobajs.yoo api properties
 var properties = function () {
     return [
         new Property({
@@ -5556,20 +5556,20 @@ module.exports = Net;
 
 },{"../../utils/utils":20,"../property":45}],40:[function(require,module,exports){
 /*
-    This file is part of web3.js.
+    This file is part of yoobajs.js.
 
-    web3.js is free software: you can redistribute it and/or modify
+    yoobajs.js is free software: you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    web3.js is distributed in the hope that it will be useful,
+    yoobajs.js is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU Lesser General Public License for more details.
 
     You should have received a copy of the GNU Lesser General Public License
-    along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
+    along with yoobajs.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 /**
  * @file yoo.js
@@ -5584,8 +5584,8 @@ var Method = require('../method');
 var Property = require('../property');
 var formatters = require('../formatters');
 
-function Personal(web3) {
-    this._requestManager = web3._requestManager;
+function Personal(yoobajs) {
+    this._requestManager = yoobajs._requestManager;
 
     var self = this;
 
@@ -5673,20 +5673,20 @@ module.exports = Personal;
 
 },{"../formatters":30,"../method":36,"../property":45}],41:[function(require,module,exports){
 /*
-    This file is part of web3.js.
+    This file is part of yoobajs.js.
 
-    web3.js is free software: you can redistribute it and/or modify
+    yoobajs.js is free software: you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    web3.js is distributed in the hope that it will be useful,
+    yoobajs.js is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU Lesser General Public License for more details.
 
     You should have received a copy of the GNU Lesser General Public License
-    along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
+    along with yoobajs.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 /** @file shh.js
  * @authors:
@@ -5699,8 +5699,8 @@ var Method = require('../method');
 var Filter = require('../filter');
 var watches = require('./watches');
 
-var Shh = function (web3) {
-    this._requestManager = web3._requestManager;
+var Shh = function (yoobajs) {
+    this._requestManager = yoobajs._requestManager;
 
     var self = this;
 
@@ -5819,27 +5819,27 @@ module.exports = Shh;
 
 },{"../filter":29,"../method":36,"./watches":43}],42:[function(require,module,exports){
 /*
-    This file is part of web3.js.
+    This file is part of yoobajs.js.
 
-    web3.js is free software: you can redistribute it and/or modify
+    yoobajs.js is free software: you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    web3.js is distributed in the hope that it will be useful,
+    yoobajs.js is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU Lesser General Public License for more details.
 
     You should have received a copy of the GNU Lesser General Public License
-    along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
+    along with yoobajs.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 /**
  * @file bzz.js
  * @author Alex Beregszaszi <alex@rtfs.hu>
  * @date 2016
  *
- * Reference: https://github.com/ethereum/go-ethereum/blob/swarm/internal/web3ext/web3ext.go#L33
+ * Reference: https://github.com/ethereum/go-ethereum/blob/swarm/internal/yoobajsext/yoobajsext.go#L33
  */
 
 "use strict";
@@ -5847,8 +5847,8 @@ module.exports = Shh;
 var Method = require('../method');
 var Property = require('../property');
 
-function Swarm(web3) {
-    this._requestManager = web3._requestManager;
+function Swarm(yoobajs) {
+    this._requestManager = yoobajs._requestManager;
 
     var self = this;
 
@@ -5966,20 +5966,20 @@ module.exports = Swarm;
 
 },{"../method":36,"../property":45}],43:[function(require,module,exports){
 /*
-    This file is part of web3.js.
+    This file is part of yoobajs.js.
 
-    web3.js is free software: you can redistribute it and/or modify
+    yoobajs.js is free software: you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    web3.js is distributed in the hope that it will be useful,
+    yoobajs.js is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU Lesser General Public License for more details.
 
     You should have received a copy of the GNU Lesser General Public License
-    along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
+    along with yoobajs.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 /** @file watches.js
  * @authors:
@@ -5989,7 +5989,7 @@ module.exports = Swarm;
 
 var Method = require('../method');
 
-/// @returns an array of objects describing web3.yoo.filter api methods
+/// @returns an array of objects describing yoobajs.yoo.filter api methods
 var yoo = function () {
     var newFilterCall = function (args) {
         var type = args[0];
@@ -6040,7 +6040,7 @@ var yoo = function () {
     ];
 };
 
-/// @returns an array of objects describing web3.shh.watch api methods
+/// @returns an array of objects describing yoobajs.shh.watch api methods
 var shh = function () {
 
     return [
@@ -6075,20 +6075,20 @@ module.exports = {
 
 },{"../method":36}],44:[function(require,module,exports){
 /*
-    This file is part of web3.js.
+    This file is part of yoobajs.js.
 
-    web3.js is free software: you can redistribute it and/or modify
+    yoobajs.js is free software: you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    web3.js is distributed in the hope that it will be useful,
+    yoobajs.js is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU Lesser General Public License for more details.
 
     You should have received a copy of the GNU Lesser General Public License
-    along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
+    along with yoobajs.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 /** 
  * @file namereg.js
@@ -6116,20 +6116,20 @@ module.exports = {
 
 },{"../contracts/GlobalRegistrar.json":1,"../contracts/ICAPRegistrar.json":2}],45:[function(require,module,exports){
 /*
-    This file is part of web3.js.
+    This file is part of yoobajs.js.
 
-    web3.js is free software: you can redistribute it and/or modify
+    yoobajs.js is free software: you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    web3.js is distributed in the hope that it will be useful,
+    yoobajs.js is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU Lesser General Public License for more details.
 
     You should have received a copy of the GNU Lesser General Public License
-    along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
+    along with yoobajs.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 /**
  * @file property.js
@@ -6262,20 +6262,20 @@ module.exports = Property;
 
 },{"../utils/utils":20}],46:[function(require,module,exports){
 /*
-    This file is part of web3.js.
+    This file is part of yoobajs.js.
 
-    web3.js is free software: you can redistribute it and/or modify
+    yoobajs.js is free software: you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    web3.js is distributed in the hope that it will be useful,
+    yoobajs.js is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU Lesser General Public License for more details.
 
     You should have received a copy of the GNU Lesser General Public License
-    along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
+    along with yoobajs.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 /** 
  * @file requestmanager.js
@@ -6540,20 +6540,20 @@ module.exports = Settings;
 
 },{}],48:[function(require,module,exports){
 /*
-    This file is part of web3.js.
+    This file is part of yoobajs.js.
 
-    web3.js is free software: you can redistribute it and/or modify
+    yoobajs.js is free software: you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    web3.js is distributed in the hope that it will be useful,
+    yoobajs.js is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU Lesser General Public License for more details.
 
     You should have received a copy of the GNU Lesser General Public License
-    along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
+    along with yoobajs.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 /** @file syncing.js
  * @authors:
@@ -6635,20 +6635,20 @@ module.exports = IsSyncing;
 
 },{"../utils/utils":20,"./formatters":30}],49:[function(require,module,exports){
 /*
-    This file is part of web3.js.
+    This file is part of yoobajs.js.
 
-    web3.js is free software: you can redistribute it and/or modify
+    yoobajs.js is free software: you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    web3.js is distributed in the hope that it will be useful,
+    yoobajs.js is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU Lesser General Public License for more details.
 
     You should have received a copy of the GNU Lesser General Public License
-    along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
+    along with yoobajs.js.  If not, see <http://www.gnu.org/licenses/>.
 */
 /** 
  * @file transfer.js
@@ -13591,15 +13591,15 @@ module.exports = XMLHttpRequest;
 module.exports = BigNumber; // jshint ignore:line
 
 
-},{}],"web3":[function(require,module,exports){
-var Web3 = require('./lib/web3');
+},{}],"yoobajs":[function(require,module,exports){
+var Yoobajs = require('./lib/yoobajs');
 
 // dont override global variable
-if (typeof window !== 'undefined' && typeof window.Web3 === 'undefined') {
-    window.Web3 = Web3;
+if (typeof window !== 'undefined' && typeof window.Yoobajs === 'undefined') {
+    window.Yoobajs = Yoobajs;
 }
 
-module.exports = Web3;
+module.exports = Yoobajs;
 
-},{"./lib/web3":22}]},{},["web3"])
-//# sourceMappingURL=web3-light.js.map
+},{"./lib/yoobajs":22}]},{},["yoobajs"])
+//# sourceMappingURL=yoobajs-light.js.map

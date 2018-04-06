@@ -148,7 +148,7 @@ func NewSwarm(ctx *node.ServiceContext, backend chequebook.Backend, ensClient *y
 
 	self.api = api.NewApi(self.dpa, self.dns)
 	// Manifests for Smart Hosting
-	log.Debug(fmt.Sprintf("-> Web3 virtual server API"))
+	log.Debug(fmt.Sprintf("-> Yoobajs virtual server API"))
 
 	self.sfs = fuse.NewSwarmFS(self.api)
 	log.Debug("-> Initializing Fuse file system")

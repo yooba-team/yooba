@@ -28,7 +28,7 @@ import (
 	"strings"
 
 	"github.com/yooba-team/yooba/internal/jsre"
-	"github.com/yooba-team/yooba/internal/web3ext"
+	"github.com/yooba-team/yooba/internal/yoobajsext"
 	"github.com/yooba-team/yooba/rpc"
 	"github.com/mattn/go-colorable"
 	"github.com/peterh/liner"
@@ -120,34 +120,34 @@ func (c *Console) init(preload []string) error {
 	if err := c.jsre.Compile("bignumber.js", jsre.BigNumber_JS); err != nil {
 		return fmt.Errorf("bignumber.js: %v", err)
 	}
-	if err := c.jsre.Compile("web3.js", jsre.Web3_JS); err != nil {
-		return fmt.Errorf("web3.js: %v", err)
+	if err := c.jsre.Compile("yoobajs.js", jsre.Yoobajs); err != nil {
+		return fmt.Errorf("yoobajs.js: %v", err)
 	}
-	if _, err := c.jsre.Run("var Web3 = require('web3');"); err != nil {
-		return fmt.Errorf("web3 require: %v", err)
+	if _, err := c.jsre.Run("var Yoobajs = require('yoobajs');"); err != nil {
+		return fmt.Errorf("yoobajs require: %v", err)
 	}
-	if _, err := c.jsre.Run("var web3 = new Web3(jeth);"); err != nil {
-		return fmt.Errorf("web3 provider: %v", err)
+	if _, err := c.jsre.Run("var yoobajs = new Yoobajs(jeth);"); err != nil {
+		return fmt.Errorf("yoobajs provider: %v", err)
 	}
 	// Load the supported APIs into the JavaScript runtime environment
 	apis, err := c.client.SupportedModules()
 	if err != nil {
 		return fmt.Errorf("api modules: %v", err)
 	}
-	flatten := "var yoo = web3.yoo; var personal = web3.personal; "
+	flatten := "var yoo = yoobajs.yoo; var personal = yoobajs.personal; "
 	for api := range apis {
-		if api == "web3" {
+		if api == "yoobajs" {
 			continue // manually mapped or ignore
 		}
-		if file, ok := web3ext.Modules[api]; ok {
+		if file, ok := yoobajsext.Modules[api]; ok {
 			// Load our extension for the module.
 			if err = c.jsre.Compile(fmt.Sprintf("%s.js", api), file); err != nil {
 				return fmt.Errorf("%s.js: %v", api, err)
 			}
-			flatten += fmt.Sprintf("var %s = web3.%s; ", api, api)
-		} else if obj, err := c.jsre.Run("web3." + api); err == nil && obj.IsObject() {
-			// Enable web3.js built-in extension if available.
-			flatten += fmt.Sprintf("var %s = web3.%s; ", api, api)
+			flatten += fmt.Sprintf("var %s = yoobajs.%s; ", api, api)
+		} else if obj, err := c.jsre.Run("yoobajs." + api); err == nil && obj.IsObject() {
+			// Enable yoobajs.js built-in extension if available.
+			flatten += fmt.Sprintf("var %s = yoobajs.%s; ", api, api)
 		}
 	}
 	if _, err = c.jsre.Run(flatten); err != nil {
@@ -165,8 +165,8 @@ func (c *Console) init(preload []string) error {
 		}
 		// Override the openWallet, unlockAccount, newAccount and sign methods since
 		// these require user interaction. Assign these method in the Console the
-		// original web3 callbacks. These will be called by the jyoo.* methods after
-		// they got the password from the user and send the original web3 request to
+		// original yoobajs callbacks. These will be called by the jyoo.* methods after
+		// they got the password from the user and send the original yoobajs request to
 		// the backend.
 		if obj := personal.Object(); obj != nil { // make sure the personal api is enabled over the interface
 			if _, err = c.jsre.Run(`jyoo.openWallet = personal.openWallet;`); err != nil {
@@ -256,8 +256,8 @@ func (c *Console) AutoCompleteInput(line string, pos int) (string, []string, str
 		if line[start] == '.' || (line[start] >= 'a' && line[start] <= 'z') || (line[start] >= 'A' && line[start] <= 'Z') {
 			continue
 		}
-		// Handle web3 in a special way (i.e. other numbers aren't auto completed)
-		if start >= 3 && line[start-3:start] == "web3" {
+		// Handle yoobajs in a special way (i.e. other numbers aren't auto completed)
+		if start >= 3 && line[start-3:start] == "yoobajs" {
 			start -= 3
 			continue
 		}
@@ -274,7 +274,7 @@ func (c *Console) Welcome() {
 	// Print some generic yooba metadata
 	fmt.Fprintf(c.printer, "Welcome to the yooba JavaScript console!\n\n")
 	c.jsre.Run(`
-		console.log("instance: " + web3.version.node);
+		console.log("instance: " + yoobajs.version.node);
 		console.log("coinbase: " + yoo.coinbase);
 		console.log("at block: " + yoo.blockNumber + " (" + new Date(1000 * yoo.getBlock(yoo.blockNumber).timestamp) + ")");
 		console.log(" datadir: " + admin.datadir);
