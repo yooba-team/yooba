@@ -24,14 +24,14 @@ Section "yooba" YOOBA_IDX
   createShortCut "$SMPROGRAMS\${APPNAME}\Uninstall.lnk" "$INSTDIR\uninstall.exe" "" "" ""
 
   # Firewall - remove rules (if exists)
-  SimpleFC::AdvRemoveRule "yooba incoming peers (TCP:30303)"
-  SimpleFC::AdvRemoveRule "yooba outgoing peers (TCP:30303)"
-  SimpleFC::AdvRemoveRule "yooba UDP discovery (UDP:30303)"
+  SimpleFC::AdvRemoveRule "yooba incoming peers (TCP:31318)"
+  SimpleFC::AdvRemoveRule "yooba outgoing peers (TCP:31318)"
+  SimpleFC::AdvRemoveRule "yooba UDP discovery (UDP:31318)"
 
   # Firewall - add rules
-  SimpleFC::AdvAddRule "yooba incoming peers (TCP:30303)" ""  6 1 1 2147483647 1 "$INSTDIR\yooba. exe" "" "" "Yooba" 30303 "" "" ""
-  SimpleFC::AdvAddRule "yooba outgoing peers (TCP:30303)" ""  6 2 1 2147483647 1 "$INSTDIR\yooba. exe" "" "" "Yooba" "" 30303 "" ""
-  SimpleFC::AdvAddRule "yooba UDP discovery (UDP:30303)" "" 17 2 1 2147483647 1 "$INSTDIR\yooba. exe" "" "" "Yooba" "" 30303 "" ""
+  SimpleFC::AdvAddRule "yooba incoming peers (TCP:31318)" ""  6 1 1 2147483647 1 "$INSTDIR\yooba. exe" "" "" "Yooba" 31318 "" "" ""
+  SimpleFC::AdvAddRule "yooba outgoing peers (TCP:31318)" ""  6 2 1 2147483647 1 "$INSTDIR\yooba. exe" "" "" "Yooba" "" 31318 "" ""
+  SimpleFC::AdvAddRule "yooba UDP discovery (UDP:31318)" "" 17 2 1 2147483647 1 "$INSTDIR\yooba. exe" "" "" "Yooba" "" 31318 "" ""
 
   ${EnvVarUpdate} $0 "Yooba" "R" "HKLM" "\\.\pipe\yooba. ipc"
   ${EnvVarUpdate} $0 "YOOBA_SOCKET" "A" "HKLM" "\\.\pipe\yooba. ipc"

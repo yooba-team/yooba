@@ -39,7 +39,7 @@ BOOTNODE_URL="enode://${BOOTNODE_PUBKEY}@${BOOTNODE_IP}:${BOOTNODE_PORT}"
 
 # static yooba configuration
 YOOBA_IP="192.168.33.3"
-YOOBA_RPC_PORT="8545"
+YOOBA_RPC_PORT="9687"
 YOOBA_RPC_URL="http://${YOOBA_IP}:${YOOBA_RPC_PORT}"
 
 usage() {

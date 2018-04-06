@@ -17,9 +17,9 @@ Section "Uninstall"
   rmDir "$SMPROGRAMS\${APPNAME}"
 
   # Firewall - remove rules if exists
-  SimpleFC::AdvRemoveRule "yooba incoming peers (TCP:30303)"
-  SimpleFC::AdvRemoveRule "yooba outgoing peers (TCP:30303)"
-  SimpleFC::AdvRemoveRule "yooba UDP discovery (UDP:30303)"
+  SimpleFC::AdvRemoveRule "yooba incoming peers (TCP:31318)"
+  SimpleFC::AdvRemoveRule "yooba outgoing peers (TCP:31318)"
+  SimpleFC::AdvRemoveRule "yooba UDP discovery (UDP:31318)"
 
   ${un.EnvVarUpdate} $0 "YOOBA_SOCKET" "R" "HKLM" "\\.\pipe\yooba. ipc"
 
