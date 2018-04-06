@@ -28,6 +28,5 @@ Official golang implementation of the yooba protocol.It is developed base on go-
 
 
 
-
-Donations are always appreciated!
+### support yooba
 ETH address: 0xe3Fe2b07fdd23BD530164F33fD8dC104Ae5519F5
