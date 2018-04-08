@@ -6,25 +6,17 @@
 Official golang implementation of the yooba protocol.It is developed base on go-ethereum.But in future they are very different. 
  Just standing on the shoulder of giants. They fly towards different way.Thanks for Ethereum.
  
+ # notice 
+Yooba is under development and has not yet been released.
+ 
  ## Build
  
  make all
  
  ## run
  
- ./build/bin/*
+ ./build/bin/yooba
  
- 
-  
- 
-
-
-
-
-
-
-
-
 
 
 
