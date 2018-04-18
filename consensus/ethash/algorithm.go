@@ -344,16 +344,7 @@ func hashimotoLight(size uint64, cache []uint32, hash []byte, nonce uint64) ([]b
 	return hashimoto(hash, nonce, size, lookup)
 }
 
-// hashimotoFull aggregates data from the full dataset (using the full in-memory
-// dataset) in order to produce our final value for a particular header hash and
-// nonce.
-func hashimotoFull(dataset []uint32, hash []byte, nonce uint64) ([]byte, []byte) {
-	lookup := func(index uint32) []uint32 {
-		offset := index * hashWords
-		return dataset[offset : offset+hashWords]
-	}
-	return hashimoto(hash, nonce, uint64(len(dataset))*4, lookup)
-}
+
 
 const maxEpoch = 2048
 

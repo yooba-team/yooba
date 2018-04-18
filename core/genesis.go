@@ -241,7 +241,6 @@ func (g *Genesis) ToBlock(db yoobadb.Database) *types.Block {
 		Extra:      g.ExtraData,
 		GasLimit:   g.GasLimit,
 		GasUsed:    g.GasUsed,
-		MixDigest:  g.Mixhash,
 		Coinbase:   g.Coinbase,
 		Root:       root,
 	}

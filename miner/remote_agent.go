@@ -17,17 +17,13 @@
 package miner
 
 import (
-	"errors"
-	"math/big"
 	"sync"
 	"sync/atomic"
 	"time"
 
 	"github.com/yooba-team/yooba/common"
 	"github.com/yooba-team/yooba/consensus"
-	"github.com/yooba-team/yooba/consensus/ethash"
-	"github.com/yooba-team/yooba/core/types"
-	"github.com/yooba-team/yooba/log"
+
 )
 
 type hashrate struct {
@@ -62,12 +58,6 @@ func NewRemoteAgent(chain consensus.ChainReader, engine consensus.Engine) *Remot
 	}
 }
 
-func (a *RemoteAgent) SubmitHashrate(id common.Hash, rate uint64) {
-	a.hashrateMu.Lock()
-	defer a.hashrateMu.Unlock()
-
-	a.hashrate[id] = hashrate{time.Now(), rate}
-}
 
 func (a *RemoteAgent) Work() chan<- *Work {
 	return a.workCh
@@ -106,60 +96,6 @@ func (a *RemoteAgent) GetHashRate() (tot int64) {
 	return
 }
 
-func (a *RemoteAgent) GetWork() ([3]string, error) {
-	a.mu.Lock()
-	defer a.mu.Unlock()
-
-	var res [3]string
-
-	if a.currentWork != nil {
-		block := a.currentWork.Block
-
-		res[0] = block.HashNoNonce().Hex()
-		seedHash := ethash.SeedHash(block.NumberU64())
-		res[1] = common.BytesToHash(seedHash).Hex()
-		// Calculate the "target" to be returned to the external miner
-		n := big.NewInt(1)
-		n.Lsh(n, 255)
-		n.Lsh(n, 1)
-		res[2] = common.BytesToHash(n.Bytes()).Hex()
-
-		a.work[block.HashNoNonce()] = a.currentWork
-		return res, nil
-	}
-	return res, errors.New("No work available yet, don't panic.")
-}
-
-// SubmitWork tries to inject a pow solution into the remote agent, returning
-// whether the solution was accepted or not (not can be both a bad pow as well as
-// any other error, like no work pending).
-func (a *RemoteAgent) SubmitWork(nonce types.BlockNonce, mixDigest, hash common.Hash) bool {
-	a.mu.Lock()
-	defer a.mu.Unlock()
-
-	// Make sure the work submitted is present
-	work := a.work[hash]
-	if work == nil {
-		log.Info("Work submitted but none pending", "hash", hash)
-		return false
-	}
-	// Make sure the Engine solutions is indeed valid
-	result := work.Block.Header()
-	result.Nonce = nonce
-	result.MixDigest = mixDigest
-
-	if err := a.engine.VerifySeal(a.chain, result); err != nil {
-		log.Warn("Invalid proof-of-work submitted", "hash", hash, "err", err)
-		return false
-	}
-	block := work.Block.WithSeal(result)
-
-	// Solutions seems to be valid, return to the miner and notify acceptance
-	a.returnCh <- &Result{work, block}
-	delete(a.work, hash)
-
-	return true
-}
 
 // loop monitors mining events on the work and quit channels, updating the internal
 // state of the remote miner until a termination is requested.

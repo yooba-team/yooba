@@ -101,8 +101,6 @@ var (
 	// ones).
 	errInvalidCheckpointSigners = errors.New("invalid signer list on checkpoint block")
 
-	// errInvalidMixDigest is returned if a block's mix digest is non-zero.
-	errInvalidMixDigest = errors.New("non-zero mix digest")
 
 	// ErrInvalidTimestamp is returned if the timestamp of a block is lower than
 	// the previous block's timestamp + the minimum block period.
@@ -147,7 +145,6 @@ func sigHash(header *types.Header) (hash common.Hash) {
 		header.GasUsed,
 		header.Time,
 		header.Extra[:len(header.Extra)-65], // Yes, this will panic if extra is too short
-		header.MixDigest,
 		header.Nonce,
 	})
 	hasher.Sum(hash[:0])
@@ -289,10 +286,7 @@ func (c *Clique) verifyHeader(chain consensus.ChainReader, header *types.Header,
 	if checkpoint && signersBytes%common.AddressLength != 0 {
 		return errInvalidCheckpointSigners
 	}
-	// Ensure that the mix digest is zero as we don't have fork protection currently
-	if header.MixDigest != (common.Hash{}) {
-		return errInvalidMixDigest
-	}
+
 
 
 	// All basic checks passed, verify cascading fields
@@ -511,8 +505,6 @@ func (c *Clique) Prepare(chain consensus.ChainReader, header *types.Header) erro
 	}
 	header.Extra = append(header.Extra, make([]byte, extraSeal)...)
 
-	// Mix digest is reserved for now, set to empty
-	header.MixDigest = common.Hash{}
 
 	// Ensure the timestamp has the correct delay
 	parent := chain.GetHeader(header.ParentHash, number-1)

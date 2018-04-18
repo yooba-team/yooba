@@ -79,40 +79,8 @@ func NewPublicMinerAPI(e *FullYooba) *PublicMinerAPI {
 	return &PublicMinerAPI{e, agent}
 }
 
-// Mining returns an indication if this node is currently mining.
-func (api *PublicMinerAPI) Mining() bool {
-	return api.e.IsMining()
-}
 
-// SubmitWork can be used by external miner to submit their POW solution. It returns an indication if the work was
-// accepted. Note, this is not an indication if the provided work was valid!
-func (api *PublicMinerAPI) SubmitWork(nonce types.BlockNonce, solution, digest common.Hash) bool {
-	return api.agent.SubmitWork(nonce, digest, solution)
-}
 
-// GetWork returns a work package for external miner. The work package consists of 3 strings
-// result[0], 32 bytes hex encoded current block header pow-hash
-// result[1], 32 bytes hex encoded seed hash used for DAG
-func (api *PublicMinerAPI) GetWork() ([3]string, error) {
-	if !api.e.IsMining() {
-		if err := api.e.StartMining(false); err != nil {
-			return [3]string{}, err
-		}
-	}
-	work, err := api.agent.GetWork()
-	if err != nil {
-		return work, fmt.Errorf("mining not ready: %v", err)
-	}
-	return work, nil
-}
-
-// SubmitHashrate can be used for remote miners to submit their hash rate. This enables the node to report the combined
-// hash rate of all miners which submit work through this node. It accepts the miner hash rate and an identifier which
-// must be unique between nodes.
-func (api *PublicMinerAPI) SubmitHashrate(hashrate hexutil.Uint64, id common.Hash) bool {
-	api.agent.SubmitHashrate(id, uint64(hashrate))
-	return true
-}
 
 // PrivateMinerAPI provides private RPC methods to control the miner.
 // These methods can be abused by external users and must be considered insecure for use by untrusted users.

@@ -44,7 +44,6 @@ var (
 	errLargeBlockTime    = errors.New("timestamp too big")
 	errZeroBlockTime     = errors.New("timestamp equals parent's")
 	errNonceOutOfRange   = errors.New("nonce out of range")
-	errInvalidMixDigest  = errors.New("invalid mix digest")
 	errInvalidPoW        = errors.New("invalid proof-of-work")
 )
 
