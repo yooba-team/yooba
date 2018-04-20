@@ -42,9 +42,6 @@ func newTestBlockChain(fake bool) *BlockChain {
 	}
 	gspec.MustCommit(db)
 	engine := ethash.NewFullFaker()
-	if !fake {
-		engine = ethash.NewTester()
-	}
 	blockchain, err := NewBlockChain(db, nil, gspec.Config, engine, vm.Config{})
 	if err != nil {
 		panic(err)

@@ -32,11 +32,9 @@ import (
 
 func (ethash *Ethash) Seal(chain consensus.ChainReader, block *types.Block, stop <-chan struct{}) (*types.Block, error) {
 	// If we're running a fake PoW, simply return a 0 nonce immediately
-	if ethash.config.PowMode == ModeFake || ethash.config.PowMode == ModeFullFake {
 		header := block.Header()
 		header.Nonce = types.BlockNonce{}
 		return block.WithSeal(header), nil
-	}
 
 	// Create a runner and the multiple search threads it directs
 	abort := make(chan struct{})
@@ -92,8 +90,6 @@ func (ethash *Ethash) mine(block *types.Block, id int, seed uint64, abort chan s
 	// Extract some data from the header
 	var (
 		header  = block.Header()
-		number  = header.Number.Uint64()
-		dataset = ethash.dataset(number)
 	)
 	// Start generating random nonces until we abort or find a good one
 	var (
@@ -133,7 +129,5 @@ search:
 				break search
 		}
 	}
-	// Datasets are unmapped in a finalizer. Ensure that the dataset stays live
-	// during sealing so it's not unmapped while being read.
-	runtime.KeepAlive(dataset)
+
 }

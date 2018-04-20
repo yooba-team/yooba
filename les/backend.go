@@ -101,7 +101,7 @@ func New(ctx *node.ServiceContext, config *yoo.Config) (*LightYooba, error) {
 		peers:            peers,
 		reqDist:          newRequestDistributor(peers, quitSync),
 		accountManager:   ctx.AccountManager,
-		engine:           yoo.CreateConsensusEngine(ctx, &config.Ethash, chainConfig, chainDb),
+		engine:           yoo.CreateConsensusEngine(ctx, chainConfig, chainDb),
 		shutdownChan:     make(chan bool),
 		networkId:        config.NetworkId,
 		bloomRequests:    make(chan chan *bloombits.Retrieval),
