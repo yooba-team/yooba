@@ -102,6 +102,11 @@ type Account struct {
 	Balance  *big.Int
 	Root     common.Hash // merkle root of the storage trie
 	CodeHash []byte
+	Homepage string
+	Score int8
+	Goodsurl   common.Hash
+	Historyurl common.Hash
+	Ordersurl  common.Hash
 }
 
 // newObject creates a state object.
@@ -341,6 +346,7 @@ func (self *stateObject) SetCode(codeHash common.Hash, code []byte) {
 	self.setCode(codeHash, code)
 }
 
+
 func (self *stateObject) setCode(codeHash common.Hash, code []byte) {
 	self.code = code
 	self.data.CodeHash = codeHash[:]
@@ -367,6 +373,88 @@ func (self *stateObject) setNonce(nonce uint64) {
 	}
 }
 
+func (self *stateObject) SetHomepage(homepage string) {
+	self.db.journal = append(self.db.journal, homepageChange{
+		account: &self.address,
+		prev:    self.data.Homepage,
+	})
+	self.setHomepage(homepage)
+}
+
+func (self *stateObject) setHomepage(homepage string) {
+	self.data.Homepage = homepage
+	if self.onDirty != nil {
+		self.onDirty(self.Address())
+		self.onDirty = nil
+	}
+}
+
+func (self *stateObject) SetHistoryurl(historyurl common.Hash) {
+	self.db.journal = append(self.db.journal, historyurlChange{
+		account: &self.address,
+		prev:    self.data.Historyurl,
+	})
+	self.setHistoryurl(historyurl)
+}
+
+func (self *stateObject) setHistoryurl(historyurl common.Hash) {
+	self.data.Historyurl = historyurl
+	if self.onDirty != nil {
+		self.onDirty(self.Address())
+		self.onDirty = nil
+	}
+}
+
+func (self *stateObject) SetGoodsurl(goodsurl common.Hash) {
+	self.db.journal = append(self.db.journal, goodsChange{
+		account: &self.address,
+		prev:    self.data.Goodsurl,
+	})
+	self.setGoodsurl(goodsurl)
+}
+
+func (self *stateObject) setGoodsurl(goodsurl common.Hash) {
+	self.data.Goodsurl = goodsurl
+	if self.onDirty != nil {
+		self.onDirty(self.Address())
+		self.onDirty = nil
+	}
+}
+
+
+func (self *stateObject) SetOrdersurl(ordersurl common.Hash) {
+	self.db.journal = append(self.db.journal, orderurlChange{
+		account: &self.address,
+		prev:    self.data.Ordersurl,
+	})
+	self.setOrdersurl(ordersurl)
+}
+
+func (self *stateObject) setOrdersurl(ordersurl common.Hash) {
+	self.data.Ordersurl = ordersurl
+	if self.onDirty != nil {
+		self.onDirty(self.Address())
+		self.onDirty = nil
+	}
+}
+
+
+func (self *stateObject) SetScore(score int8) {
+	self.db.journal = append(self.db.journal, scoreChange{
+		account: &self.address,
+		prev:    self.data.Score,
+	})
+	self.setScore(score)
+}
+
+func (self *stateObject) setScore(score int8) {
+	self.data.Score = score
+	if self.onDirty != nil {
+		self.onDirty(self.Address())
+		self.onDirty = nil
+	}
+}
+
 func (self *stateObject) CodeHash() []byte {
 	return self.data.CodeHash
 }
@@ -379,6 +467,25 @@ func (self *stateObject) Nonce() uint64 {
 	return self.data.Nonce
 }
 
+func (self *stateObject) Homepage() string {
+	return self.data.Homepage
+}
+
+func (self *stateObject) Score() int8 {
+	return self.data.Score
+}
+
+func (self *stateObject) Historyurl() common.Hash {
+	return self.data.Historyurl
+}
+
+func (self *stateObject) Goodsurl() common.Hash {
+	return self.data.Goodsurl
+}
+
+func (self *stateObject) Ordersurl() common.Hash {
+	return self.data.Ordersurl
+}
 // Never called, but must be present to allow stateObject to be used
 // as a vm.Account interface that also satisfies the vm.ContractRef
 // interface. Interfaces are awesome.

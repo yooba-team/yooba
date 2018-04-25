@@ -51,6 +51,26 @@ type (
 		account *common.Address
 		prev    uint64
 	}
+	homepageChange struct {
+		account *common.Address
+		prev    string
+	}
+	scoreChange struct {
+		account *common.Address
+		prev    int8
+	}
+	goodsChange struct {
+		account *common.Address
+		prev    common.Hash
+	}
+	historyurlChange struct {
+		account *common.Address
+		prev    common.Hash
+	}
+	orderurlChange struct {
+		account *common.Address
+		prev    common.Hash
+	}
 	storageChange struct {
 		account       *common.Address
 		key, prevalue common.Hash
@@ -107,6 +127,26 @@ func (ch touchChange) undo(s *StateDB) {
 
 func (ch balanceChange) undo(s *StateDB) {
 	s.getStateObject(*ch.account).setBalance(ch.prev)
+}
+
+func (ch homepageChange) undo(s *StateDB) {
+	s.getStateObject(*ch.account).setHomepage(ch.prev)
+}
+
+func (ch historyurlChange) undo(s *StateDB) {
+	s.getStateObject(*ch.account).setHistoryurl(ch.prev)
+}
+
+func (ch goodsChange) undo(s *StateDB) {
+	s.getStateObject(*ch.account).setGoodsurl(ch.prev)
+}
+
+func (ch orderurlChange) undo(s *StateDB) {
+	s.getStateObject(*ch.account).setOrderurl(ch.prev)
+}
+
+func (ch scoreChange) undo(s *StateDB) {
+	s.getStateObject(*ch.account).setScore(ch.prev)
 }
 
 func (ch nonceChange) undo(s *StateDB) {
