@@ -25,21 +25,21 @@ import (
 	"github.com/yooba-team/yooba/internal/cmdtest"
 )
 
-type testEthkey struct {
+type testYookey struct {
 	*cmdtest.TestCmd
 }
 
-// spawns ethkey with the given command line args.
-func runEthkey(t *testing.T, args ...string) *testEthkey {
-	tt := new(testEthkey)
+// spawns yookey with the given command line args.
+func runYookey(t *testing.T, args ...string) *testYookey {
+	tt := new(testYookey)
 	tt.TestCmd = cmdtest.NewTestCmd(t, tt)
-	tt.Run("ethkey-test", args...)
+	tt.Run("yookey-test", args...)
 	return tt
 }
 
 func TestMain(m *testing.M) {
-	// Run the app if we've been exec'd as "ethkey-test" in runEthkey.
-	reexec.Register("ethkey-test", func() {
+	// Run the app if we've been exec'd as "yookey-test" in runYookey.
+	reexec.Register("yookey-test", func() {
 		if err := app.Run(os.Args); err != nil {
 			fmt.Fprintln(os.Stderr, err)
 			os.Exit(1)

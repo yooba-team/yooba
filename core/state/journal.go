@@ -142,7 +142,7 @@ func (ch goodsChange) undo(s *StateDB) {
 }
 
 func (ch orderurlChange) undo(s *StateDB) {
-	s.getStateObject(*ch.account).setOrderurl(ch.prev)
+	s.getStateObject(*ch.account).setOrdersurl(ch.prev)
 }
 
 func (ch scoreChange) undo(s *StateDB) {
