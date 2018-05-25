@@ -190,7 +190,7 @@ func odrContractCall(ctx context.Context, db yoobadb.Database, bc *core.BlockCha
 }
 
 func testChainGen(i int, block *core.BlockGen) {
-	signer := types.HomesteadSigner{}
+	signer := types.EIP155Signer{}
 	switch i {
 	case 0:
 		// In block 1, the test bank sends account #1 some yoo.

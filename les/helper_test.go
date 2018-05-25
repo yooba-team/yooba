@@ -78,7 +78,7 @@ contract test {
 */
 
 func testChainGen(i int, block *core.BlockGen) {
-	signer := types.HomesteadSigner{}
+	signer := types.EIP155Signer{}
 
 	switch i {
 	case 0:
@@ -245,9 +245,8 @@ func newTestPeer(t *testing.T, name string, version int, pm *ProtocolManager, sh
 		var (
 			genesis = pm.blockchain.Genesis()
 			head    = pm.blockchain.CurrentHeader()
-			td      = pm.blockchain.GetTd(head.Hash(), head.Number.Uint64())
 		)
-		tp.handshake(t, td, head.Hash(), head.Number.Uint64(), genesis.Hash())
+		tp.handshake(t, head.Hash(), head.Number.Uint64(), genesis.Hash())
 	}
 	return tp, errc
 }
@@ -287,11 +286,10 @@ func newTestPeerPair(name string, version int, pm, pm2 *ProtocolManager) (*peer,
 
 // handshake simulates a trivial handshake that expects the same state from the
 // remote side as we are simulating locally.
-func (p *testPeer) handshake(t *testing.T, td *big.Int, head common.Hash, headNum uint64, genesis common.Hash) {
+func (p *testPeer) handshake(t *testing.T, head common.Hash, headNum uint64, genesis common.Hash) {
 	var expList keyValueList
 	expList = expList.add("protocolVersion", uint64(p.version))
 	expList = expList.add("networkId", uint64(NetworkId))
-	expList = expList.add("headTd", td)
 	expList = expList.add("headHash", head)
 	expList = expList.add("headNum", headNum)
 	expList = expList.add("genesisHash", genesis)

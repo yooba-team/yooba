@@ -258,14 +258,13 @@ func (tx *Transaction) GetHash() *Hash   { return &Hash{tx.tx.Hash()} }
 func (tx *Transaction) GetCost() *BigInt { return &BigInt{tx.tx.Cost()} }
 
 // Deprecated: GetSigHash cannot know which signer to use.
-func (tx *Transaction) GetSigHash() *Hash { return &Hash{types.HomesteadSigner{}.Hash(tx.tx)} }
+func (tx *Transaction) GetSigHash() *Hash { return &Hash{types.EIP155Signer{}.Hash(tx.tx)} }
 
 // Deprecated: use YoobaClient.TransactionSender
 func (tx *Transaction) GetFrom(chainID *BigInt) (address *Address, _ error) {
-	var signer types.Signer = types.HomesteadSigner{}
-	if chainID != nil {
-		signer = types.NewEIP155Signer(chainID.bigint)
-	}
+
+		signer := types.NewEIP155Signer(chainID.bigint)
+
 	from, err := types.Sender(signer, tx.tx)
 	return &Address{from}, err
 }
@@ -278,10 +277,7 @@ func (tx *Transaction) GetTo() *Address {
 }
 
 func (tx *Transaction) WithSignature(sig []byte, chainID *BigInt) (signedTx *Transaction, _ error) {
-	var signer types.Signer = types.HomesteadSigner{}
-	if chainID != nil {
-		signer = types.NewEIP155Signer(chainID.bigint)
-	}
+	signer := types.NewEIP155Signer(chainID.bigint)
 	rawTx, err := tx.tx.WithSignature(signer, common.CopyBytes(sig))
 	return &Transaction{rawTx}, err
 }

@@ -366,7 +366,6 @@ func (h *Header) String() string {
 	TxSha		    %x
 	ReceiptSha:	    %x
 	Bloom:		    %x
-	Difficulty:	    %v
 	Number:		    %v
 	GasLimit:	    %v
 	GasUsed:	    %v

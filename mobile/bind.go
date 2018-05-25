@@ -39,7 +39,7 @@ type signer struct {
 }
 
 func (s *signer) Sign(addr *Address, unsignedTx *Transaction) (signedTx *Transaction, _ error) {
-	sig, err := s.sign(types.HomesteadSigner{}, addr.address, unsignedTx.tx)
+	sig, err := s.sign(types.EIP155Signer{}, addr.address, unsignedTx.tx)
 	if err != nil {
 		return nil, err
 	}

@@ -39,11 +39,7 @@ var (
 
 // deriveSigner makes a *best* guess about which signer to use.
 func deriveSigner(V *big.Int) Signer {
-	if V.Sign() != 0 && isProtectedV(V) {
 		return NewEIP155Signer(deriveChainId(V))
-	} else {
-		return HomesteadSigner{}
-	}
 }
 
 type Transaction struct {
@@ -171,7 +167,7 @@ func (tx *Transaction) UnmarshalJSON(input []byte) error {
 	} else {
 		V = byte(dec.V.Uint64() - 27)
 	}
-	if !crypto.ValidateSignatureValues(V, dec.R, dec.S, false) {
+	if !crypto.ValidateSignatureValues(V, dec.R, dec.S) {
 		return ErrInvalidSig
 	}
 	*tx = Transaction{data: dec}

@@ -27,6 +27,7 @@ import (
 	"github.com/yooba-team/yooba/core/vm"
 	"github.com/yooba-team/yooba/yoobadb"
 	"github.com/yooba-team/yooba/params"
+	"github.com/yooba-team/yooba/core/types"
 )
 
 func TestDefaultGenesisBlock(t *testing.T) {
@@ -159,3 +160,24 @@ func TestSetupGenesis(t *testing.T) {
 		}
 	}
 }
+func makeBlockChainWithDiff(genesis *types.Block, d []int, seed byte) []*types.Block {
+	var chain []*types.Block
+	for i := range d {
+		header := &types.Header{
+			Coinbase:    common.Address{seed},
+			Number:      big.NewInt(int64(i + 1)),
+			TxHash:      types.EmptyRootHash,
+			ReceiptHash: types.EmptyRootHash,
+			Time:        big.NewInt(int64(i) + 1),
+		}
+		if i == 0 {
+			header.ParentHash = genesis.Hash()
+		} else {
+			header.ParentHash = chain[i-1].Hash()
+		}
+		block := types.NewBlockWithHeader(header)
+		chain = append(chain, block)
+	}
+	return chain
+}
+
