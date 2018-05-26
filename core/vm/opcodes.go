@@ -92,7 +92,6 @@ const (
 	COINBASE
 	TIMESTAMP
 	NUMBER
-	DIFFICULTY
 	GASLIMIT
 )
 
@@ -262,7 +261,6 @@ var opCodeToString = map[OpCode]string{
 	COINBASE:   "COINBASE",
 	TIMESTAMP:  "TIMESTAMP",
 	NUMBER:     "NUMBER",
-	DIFFICULTY: "DIFFICULTY",
 	GASLIMIT:   "GASLIMIT",
 
 	// 0x50 range - 'storage' and execution
@@ -424,7 +422,6 @@ var stringToOp = map[string]OpCode{
 	"COINBASE":       COINBASE,
 	"TIMESTAMP":      TIMESTAMP,
 	"NUMBER":         NUMBER,
-	"DIFFICULTY":     DIFFICULTY,
 	"GASLIMIT":       GASLIMIT,
 	"POP":            POP,
 	"MLOAD":          MLOAD,

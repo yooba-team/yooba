@@ -140,7 +140,6 @@ func (t *VMTest) newEVM(statedb *state.StateDB, vmconfig vm.Config) *vm.EVM {
 		BlockNumber: new(big.Int).SetUint64(t.json.Env.Number),
 		Time:        new(big.Int).SetUint64(t.json.Env.Timestamp),
 		GasLimit:    t.json.Env.GasLimit,
-		Difficulty:  big.NewInt(1),
 		GasPrice:    t.json.Exec.GasPrice,
 	}
 	vmconfig.NoRecursion = true

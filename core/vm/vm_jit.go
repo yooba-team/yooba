@@ -63,7 +63,6 @@ type RuntimeData struct {
 	origin       i256
 	callValue    i256
 	coinBase     i256
-	difficulty   i256
 	gasLimit     i256
 	number       uint64
 	timestamp    int64
@@ -194,7 +193,6 @@ func (self *JitVm) Run(me, caller ContextRef, code []byte, value, gas, price *bi
 	self.data.origin = address2llvm(self.env.Origin())
 	self.data.callValue = big2llvm(value)
 	self.data.coinBase = address2llvm(self.env.Coinbase())
-	self.data.difficulty = big2llvm(self.env.Difficulty())
 	self.data.gasLimit = big2llvm(self.env.GasLimit())
 	self.data.number = self.env.BlockNumber().Uint64()
 	self.data.timestamp = self.env.Time()
