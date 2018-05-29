@@ -17,6 +17,7 @@ func (s stTransaction) MarshalJSON() ([]byte, error) {
 		GasPrice   *math.HexOrDecimal256 `json:"gasPrice"`
 		Nonce      math.HexOrDecimal64   `json:"nonce"`
 		To         string                `json:"to"`
+		TxType     uint                  `json:"type"`
 		Data       []string              `json:"data"`
 		GasLimit   []math.HexOrDecimal64 `json:"gasLimit"`
 		Value      []string              `json:"value"`
@@ -43,6 +44,7 @@ func (s *stTransaction) UnmarshalJSON(input []byte) error {
 		GasPrice   *math.HexOrDecimal256 `json:"gasPrice"`
 		Nonce      *math.HexOrDecimal64  `json:"nonce"`
 		To         *string               `json:"to"`
+		TxType     uint                  `json:"type"`
 		Data       []string              `json:"data"`
 		GasLimit   []math.HexOrDecimal64 `json:"gasLimit"`
 		Value      []string              `json:"value"`

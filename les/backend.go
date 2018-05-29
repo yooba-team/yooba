@@ -24,7 +24,6 @@ import (
 
 	"github.com/yooba-team/yooba/accounts"
 	"github.com/yooba-team/yooba/common"
-	"github.com/yooba-team/yooba/common/hexutil"
 	"github.com/yooba-team/yooba/consensus"
 	"github.com/yooba-team/yooba/core"
 	"github.com/yooba-team/yooba/core/bloombits"
@@ -163,10 +162,6 @@ func (yoo *LightYooba) Coinbase() (common.Address, error) {
 	return common.Address{}, fmt.Errorf("not supported")
 }
 
-// Hashrate returns the POW hashrate
-func (yoo *LightYooba) Hashrate() hexutil.Uint {
-	return 0
-}
 
 // Mining returns an indication if this node is currently mining.
 func (yoo *LightYooba) Mining() bool {

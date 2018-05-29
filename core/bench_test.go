@@ -81,7 +81,7 @@ func genValueTx(nbytes int) func(int, *BlockGen) {
 		toaddr := common.Address{}
 		data := make([]byte, nbytes)
 		gas, _ := IntrinsicGas(data, false)
-		tx, _ := types.SignTx(types.NewTransaction(gen.TxNonce(benchRootAddr), toaddr, big.NewInt(1), gas, nil, data), types.EIP155Signer{}, benchRootKey)
+		tx, _ := types.SignTx(types.NewTransaction(gen.TxNonce(benchRootAddr), toaddr, big.NewInt(1), gas, nil, types.TxTypeTransfer,data), types.EIP155Signer{}, benchRootKey)
 		gen.AddTx(tx)
 	}
 }
@@ -119,6 +119,7 @@ func genTxRing(naccounts int) func(int, *BlockGen) {
 				benchRootFunds,
 				params.TxGas,
 				nil,
+				types.TxTypeTransfer,
 				nil,
 			)
 			tx, _ = types.SignTx(tx, types.EIP155Signer{}, ringKeys[from])

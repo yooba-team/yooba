@@ -93,6 +93,7 @@ type stTransaction struct {
 	GasPrice   *big.Int `json:"gasPrice"`
 	Nonce      uint64   `json:"nonce"`
 	To         string   `json:"to"`
+	TxType     uint     `json:"type"`
 	Data       []string `json:"data"`
 	GasLimit   []uint64 `json:"gasLimit"`
 	Value      []string `json:"value"`
@@ -230,7 +231,7 @@ func (tx *stTransaction) toMessage(ps stPostState) (core.Message, error) {
 		return nil, fmt.Errorf("invalid tx data %q", dataHex)
 	}
 
-	msg := types.NewMessage(from, to, tx.Nonce, value, gasLimit, tx.GasPrice, data, true)
+	msg := types.NewMessage(from, to, tx.Nonce, value, gasLimit, tx.GasPrice,tx.TxType ,data, true)
 	return msg, nil
 }
 
