@@ -30,7 +30,6 @@ import (
 	"github.com/yooba-team/yooba/common"
 	"github.com/yooba-team/yooba/common/hexutil"
 	"github.com/yooba-team/yooba/common/math"
-	"github.com/yooba-team/yooba/consensus/ethash"
 	"github.com/yooba-team/yooba/core"
 	"github.com/yooba-team/yooba/core/types"
 	"github.com/yooba-team/yooba/core/vm"
@@ -1305,17 +1304,7 @@ func (api *PublicDebugAPI) PrintBlock(ctx context.Context, number uint64) (strin
 	}
 	return block.String(), nil
 }
-
-// SeedHash retrieves the seed hash of a block.
-func (api *PublicDebugAPI) SeedHash(ctx context.Context, number uint64) (string, error) {
-	block, _ := api.b.BlockByNumber(ctx, rpc.BlockNumber(number))
-	if block == nil {
-		return "", fmt.Errorf("block #%d not found", number)
-	}
-	return fmt.Sprintf("0x%x", ethash.SeedHash(number)), nil
-}
-
-// PrivateDebugAPI is the collection of Yooba APIs exposed over the private
+// PrivateDebugAPI is the collection of yooba APIs exposed over the private
 // debugging endpoint.
 type PrivateDebugAPI struct {
 	b Backend

@@ -28,7 +28,6 @@ import (
 	"testing"
 
 	"github.com/yooba-team/yooba/common"
-	"github.com/yooba-team/yooba/consensus/ethash"
 	"github.com/yooba-team/yooba/core"
 	"github.com/yooba-team/yooba/core/types"
 	"github.com/yooba-team/yooba/core/vm"
@@ -39,6 +38,8 @@ import (
 	"github.com/yooba-team/yooba/p2p"
 	"github.com/yooba-team/yooba/p2p/discover"
 	"github.com/yooba-team/yooba/params"
+
+	"github.com/yooba-team/yooba/consensus/dpos"
 )
 
 var (
@@ -52,7 +53,8 @@ var (
 func newTestProtocolManager(mode downloader.SyncMode, blocks int, generator func(int, *core.BlockGen), newtx chan<- []*types.Transaction) (*ProtocolManager, *yoobadb.MemDatabase, error) {
 	var (
 		evmux  = new(event.TypeMux)
-		engine = ethash.NewFaker()
+
+		engine = dpos.NewFaker()
 		db, _  = yoobadb.NewMemDatabase()
 		gspec  = &core.Genesis{
 			Config: params.TestChainConfig,
@@ -61,7 +63,7 @@ func newTestProtocolManager(mode downloader.SyncMode, blocks int, generator func
 		genesis       = gspec.MustCommit(db)
 		blockchain, _ = core.NewBlockChain(db, nil, gspec.Config, engine, vm.Config{})
 	)
-	chain, _ := core.GenerateChain(gspec.Config, genesis, ethash.NewFaker(), db, blocks, generator)
+	chain, _ := core.GenerateChain(gspec.Config, genesis, dpos.NewFaker(), db, blocks, generator)
 	if _, err := blockchain.InsertChain(chain); err != nil {
 		panic(err)
 	}

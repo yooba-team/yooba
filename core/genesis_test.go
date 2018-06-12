@@ -23,11 +23,12 @@ import (
 
 	"github.com/davecgh/go-spew/spew"
 	"github.com/yooba-team/yooba/common"
-	"github.com/yooba-team/yooba/consensus/ethash"
 	"github.com/yooba-team/yooba/core/vm"
 	"github.com/yooba-team/yooba/yoobadb"
 	"github.com/yooba-team/yooba/params"
 	"github.com/yooba-team/yooba/core/types"
+
+	"github.com/yooba-team/yooba/consensus/dpos"
 )
 
 func TestDefaultGenesisBlock(t *testing.T) {
@@ -119,7 +120,7 @@ func TestSetupGenesis(t *testing.T) {
 				// Commit the 'old' genesis block with Homestead transition at #2.
 				// Advance to block #4, past the homestead transition block of customg.
 				genesis := oldcustomg.MustCommit(db)
-				bc, _ := NewBlockChain(db, nil, oldcustomg.Config, ethash.NewFullFaker(), vm.Config{})
+				bc, _ := NewBlockChain(db, nil, oldcustomg.Config, dpos.NewFullFaker(), vm.Config{})
 				defer bc.Stop()
 				bc.SetValidator(bproc{})
 				bc.InsertChain(makeBlockChainWithDiff(genesis, []int{2, 3, 4, 5}, 0))

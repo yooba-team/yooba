@@ -25,11 +25,11 @@ import (
 
 	"github.com/yooba-team/yooba/common"
 	"github.com/yooba-team/yooba/common/math"
-	"github.com/yooba-team/yooba/consensus/ethash"
 	"github.com/yooba-team/yooba/core/types"
 	"github.com/yooba-team/yooba/core/vm"
 	"github.com/yooba-team/yooba/crypto"
 	"github.com/yooba-team/yooba/yoobadb"
+	"github.com/yooba-team/yooba/consensus/dpos"
 	"github.com/yooba-team/yooba/params"
 )
 
@@ -100,7 +100,7 @@ func init() {
 	}
 }
 
-// genTxRing returns a block generator that sends yoo in a ring
+// genTxRing returns a block generator that sends yooba in a ring
 // among n accounts. This is creates n entries in the state database
 // and fills the blocks with many small transactions.
 func genTxRing(naccounts int) func(int, *BlockGen) {
@@ -156,11 +156,11 @@ func benchInsertChain(b *testing.B, disk bool, gen func(int, *BlockGen)) {
 		Alloc:  GenesisAlloc{benchRootAddr: {Balance: benchRootFunds}},
 	}
 	genesis := gspec.MustCommit(db)
-	chain, _ := GenerateChain(gspec.Config, genesis, ethash.NewFaker(), db, b.N, gen)
+	chain, _ := GenerateChain(gspec.Config, genesis, dpos.NewFaker(), db, b.N, gen)
 
 	// Time the insertion of the new chain.
 	// State and blocks are stored in the same DB.
-	chainman, _ := NewBlockChain(db, nil, gspec.Config, ethash.NewFaker(), vm.Config{})
+	chainman, _ := NewBlockChain(db, nil, gspec.Config, dpos.NewFaker(), vm.Config{})
 	defer chainman.Stop()
 	b.ReportAllocs()
 	b.ResetTimer()
@@ -267,7 +267,7 @@ func benchReadChain(b *testing.B, full bool, count uint64) {
 		if err != nil {
 			b.Fatalf("error opening database at %v: %v", dir, err)
 		}
-		chain, err := NewBlockChain(db, nil, params.TestChainConfig, ethash.NewFaker(), vm.Config{})
+		chain, err := NewBlockChain(db, nil, params.TestChainConfig, vm.Config{})
 		if err != nil {
 			b.Fatalf("error creating chain: %v", err)
 		}

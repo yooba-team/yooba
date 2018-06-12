@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
 
-// Package tests implements execution of Yooba JSON tests.
+// Package tests implements execution of yooba JSON tests.
 package tests
 
 import (
@@ -27,14 +27,14 @@ import (
 	"github.com/yooba-team/yooba/common"
 	"github.com/yooba-team/yooba/common/hexutil"
 	"github.com/yooba-team/yooba/common/math"
-	"github.com/yooba-team/yooba/consensus/ethash"
 	"github.com/yooba-team/yooba/core"
 	"github.com/yooba-team/yooba/core/state"
 	"github.com/yooba-team/yooba/core/types"
 	"github.com/yooba-team/yooba/core/vm"
-	"github.com/yooba-team/yooba/yoobadb"
 	"github.com/yooba-team/yooba/params"
 	"github.com/yooba-team/yooba/rlp"
+	"github.com/yooba-team/yooba/consensus/dpos"
+	"github.com/yooba-team/yooba/yoobadb"
 )
 
 // A BlockTest checks handling of entire blocks.
@@ -106,7 +106,7 @@ func (t *BlockTest) Run() error {
 		return fmt.Errorf("genesis block state root does not match test: computed=%x, test=%x", gblock.Root().Bytes()[:6], t.json.Genesis.StateRoot[:6])
 	}
 
-	chain, err := core.NewBlockChain(db, nil, config, ethash.NewShared(), vm.Config{})
+	chain, err := core.NewBlockChain(db, nil, config, dpos.NewShared(), vm.Config{})
 	if err != nil {
 		return err
 	}

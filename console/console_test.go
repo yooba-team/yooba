@@ -27,11 +27,11 @@ import (
 	"time"
 
 	"github.com/yooba-team/yooba/common"
-	"github.com/yooba-team/yooba/consensus/ethash"
 	"github.com/yooba-team/yooba/core"
 	"github.com/yooba-team/yooba/yoo"
 	"github.com/yooba-team/yooba/internal/jsre"
 	"github.com/yooba-team/yooba/node"
+
 )
 
 const (

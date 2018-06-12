@@ -27,7 +27,6 @@ import (
 
 	yooba "github.com/yooba-team/yooba"
 	"github.com/yooba-team/yooba/common"
-	"github.com/yooba-team/yooba/consensus/ethash"
 	"github.com/yooba-team/yooba/core"
 	"github.com/yooba-team/yooba/core/bloombits"
 	"github.com/yooba-team/yooba/core/types"
@@ -35,6 +34,7 @@ import (
 	"github.com/yooba-team/yooba/event"
 	"github.com/yooba-team/yooba/params"
 	"github.com/yooba-team/yooba/rpc"
+	"github.com/yooba-team/yooba/consensus/dpos"
 )
 
 type testBackend struct {
@@ -138,7 +138,7 @@ func TestBlockSubscription(t *testing.T) {
 		backend     = &testBackend{mux, db, 0, txFeed, rmLogsFeed, logsFeed, chainFeed}
 		api         = NewPublicFilterAPI(backend, false)
 		genesis     = new(core.Genesis).MustCommit(db)
-		chain, _    = core.GenerateChain(params.TestChainConfig, genesis, ethash.NewFaker(), db, 10, func(i int, gen *core.BlockGen) {})
+		chain, _    = core.GenerateChain(params.TestChainConfig, genesis, dpos.NewFaker(), db, 10, func(i int, gen *core.BlockGen) {})
 		chainEvents = []core.ChainEvent{}
 	)
 

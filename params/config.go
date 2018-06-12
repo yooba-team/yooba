@@ -79,7 +79,7 @@ type ChainConfig struct {
 	ByzantiumBlock *big.Int `json:"byzantiumBlock,omitempty"` // Byzantium switch block (nil = no fork, 0 = already on byzantium)
 
 	// Various consensus engines
-	Ethash *EthashConfig `json:"ethash,omitempty"`
+	Ethash *EthashConfig `json:"dpos,omitempty"`
 	Clique *CliqueConfig `json:"clique,omitempty"`
 }
 
@@ -88,7 +88,7 @@ type EthashConfig struct{}
 
 // String implements the stringer interface, returning the consensus engine details.
 func (c *EthashConfig) String() string {
-	return "ethash"
+	return "dpos"
 }
 
 // CliqueConfig is the consensus engine configs for proof-of-authority based sealing.

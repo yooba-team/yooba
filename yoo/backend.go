@@ -29,7 +29,6 @@ import (
 	"github.com/yooba-team/yooba/common"
 	"github.com/yooba-team/yooba/common/hexutil"
 	"github.com/yooba-team/yooba/consensus"
-	"github.com/yooba-team/yooba/consensus/clique"
 	"github.com/yooba-team/yooba/core"
 	"github.com/yooba-team/yooba/core/bloombits"
 	"github.com/yooba-team/yooba/core/types"
@@ -47,6 +46,7 @@ import (
 	"github.com/yooba-team/yooba/params"
 	"github.com/yooba-team/yooba/rlp"
 	"github.com/yooba-team/yooba/rpc"
+	"github.com/yooba-team/yooba/consensus/dpos"
 )
 
 type LesServer interface {
@@ -211,8 +211,9 @@ func CreateDB(ctx *node.ServiceContext, config *Config, name string) (yoobadb.Da
 
 // CreateConsensusEngine creates the required type of consensus engine instance for an Yooba service
 func CreateConsensusEngine(ctx *node.ServiceContext, chainConfig *params.ChainConfig, db yoobadb.Database) consensus.Engine {
-	// If proof-of-authority is requested, set it up
-		return clique.New(chainConfig.Clique, db)
+	engine := dpos.New(dpos.Config{
+	})
+	return engine
 }
 
 // APIs returns the collection of RPC services the Yooba package offers.
@@ -229,11 +230,6 @@ func (yoo *FullYooba) APIs() []rpc.API {
 			Namespace: "yoo",
 			Version:   "1.0",
 			Service:   NewPublicEthereumAPI(yoo),
-			Public:    true,
-		}, {
-			Namespace: "yoo",
-			Version:   "1.0",
-			Service:   NewPublicMinerAPI(yoo),
 			Public:    true,
 		}, {
 			Namespace: "yoo",
@@ -314,14 +310,7 @@ func (yoo *FullYooba) StartMining(local bool) error {
 		log.Error("Cannot start mining without yoobase", "err", err)
 		return fmt.Errorf("etherbase missing: %v", err)
 	}
-	if clique, ok := yoo.engine.(*clique.Clique); ok {
-		wallet, err := yoo.accountManager.Find(accounts.Account{Address: eb})
-		if wallet == nil || err != nil {
-			log.Error("Yoobase account unavailable locally", "err", err)
-			return fmt.Errorf("signer missing: %v", err)
-		}
-		clique.Authorize(eb, wallet.SignHash)
-	}
+
 	if local {
 		// If local (CPU) mining is started, we can disable the transaction rejection
 		// mechanism introduced to speed sync times. CPU mining on mainnet is ludicrous

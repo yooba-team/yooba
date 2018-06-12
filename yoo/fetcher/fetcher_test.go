@@ -25,12 +25,12 @@ import (
 	"time"
 
 	"github.com/yooba-team/yooba/common"
-	"github.com/yooba-team/yooba/consensus/ethash"
 	"github.com/yooba-team/yooba/core"
 	"github.com/yooba-team/yooba/core/types"
 	"github.com/yooba-team/yooba/crypto"
 	"github.com/yooba-team/yooba/yoobadb"
 	"github.com/yooba-team/yooba/params"
+	"github.com/yooba-team/yooba/consensus/dpos"
 )
 
 var (
@@ -45,7 +45,7 @@ var (
 // the returned hash chain is ordered head->parent. In addition, every 3rd block
 // contains a transaction
 func makeChain(n int, seed byte, parent *types.Block) ([]common.Hash, map[common.Hash]*types.Block) {
-	blocks, _ := core.GenerateChain(params.TestChainConfig, parent, ethash.NewFaker(), testdb, n, func(i int, block *core.BlockGen) {
+	blocks, _ := core.GenerateChain(params.TestChainConfig, parent, dpos.NewFaker(), testdb, n, func(i int, block *core.BlockGen) {
 		block.SetCoinbase(common.Address{seed})
 
 		// If the block number is multiple of 3, send a bonus transaction to the miner

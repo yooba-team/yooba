@@ -465,10 +465,6 @@ yoobajs._extend({
 			params: 1,
 			inputFormatter: [yoobajs._extend.utils.fromDecimal]
 		}),
-		new yoobajs._extend.Method({
-			name: 'getHashrate',
-			call: 'miner_getHashrate'
-		}),
 	],
 	properties: []
 });

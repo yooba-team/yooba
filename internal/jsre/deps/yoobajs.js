@@ -5443,11 +5443,6 @@ var properties = function () {
             getter: 'yoo_mining'
         }),
         new Property({
-            name: 'hashrate',
-            getter: 'yoo_hashrate',
-            outputFormatter: utils.toDecimal
-        }),
-        new Property({
             name: 'syncing',
             getter: 'yoo_syncing',
             outputFormatter: formatters.outputSyncingFormatter

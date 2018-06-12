@@ -1,4 +1,4 @@
-// Copyright 2018 The go-ethereum Authors
+// Copyright 2017 The go-ethereum Authors
 // This file is part of the go-ethereum library.
 //
 // The go-ethereum library is free software: you can redistribute it and/or modify
@@ -14,22 +14,39 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
 
-// +build !windows
-
-package dashboard
+package dpos
 
 import (
-	"syscall"
+	"encoding/json"
+	"math/big"
 
-	"github.com/yooba-team/yooba/log"
+	"github.com/yooba-team/yooba/common/math"
+
 )
 
-// getProcessCPUTime retrieves the process' CPU time since program startup.
-func getProcessCPUTime() float64 {
-	var usage syscall.Rusage
-	if err := syscall.Getrusage(syscall.RUSAGE_SELF, &usage); err != nil {
-		log.Warn("Failed to retrieve CPU time", "err", err)
-		return 0
-	}
-	return float64(usage.Utime.Sec+usage.Stime.Sec) + float64(usage.Utime.Usec+usage.Stime.Usec)/1000000
+type diffTest struct {
+	ParentTimestamp    uint64
+	CurrentTimestamp   uint64
+	CurrentBlocknumber *big.Int
 }
+
+func (d *diffTest) UnmarshalJSON(b []byte) (err error) {
+	var ext struct {
+		ParentTimestamp    string
+		ParentDifficulty   string
+		CurrentTimestamp   string
+		CurrentBlocknumber string
+		CurrentDifficulty  string
+	}
+	if err := json.Unmarshal(b, &ext); err != nil {
+		return err
+	}
+
+	d.ParentTimestamp = math.MustParseUint64(ext.ParentTimestamp)
+	d.CurrentTimestamp = math.MustParseUint64(ext.CurrentTimestamp)
+	d.CurrentBlocknumber = math.MustParseBig256(ext.CurrentBlocknumber)
+
+	return nil
+}
+
+

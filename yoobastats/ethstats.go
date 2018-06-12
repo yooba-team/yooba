@@ -647,7 +647,6 @@ type nodeStats struct {
 	Active   bool `json:"active"`
 	Syncing  bool `json:"syncing"`
 	Mining   bool `json:"mining"`
-	Hashrate int  `json:"hashrate"`
 	Peers    int  `json:"peers"`
 	GasPrice int  `json:"gasPrice"`
 	Uptime   int  `json:"uptime"`
@@ -659,13 +658,12 @@ func (s *Service) reportStats(conn *websocket.Conn) error {
 	// Gather the syncing and mining infos from the local miner instance
 	var (
 		mining   bool
-		hashrate int
 		syncing  bool
 		gasprice int
 	)
 	if s.yoo != nil {
 		mining = s.yoo.Miner().Mining()
-		hashrate = int(s.yoo.Miner().HashRate())
+
 
 		sync := s.yoo.Downloader().Progress()
 		syncing = s.yoo.BlockChain().CurrentHeader().Number.Uint64() >= sync.HighestBlock
@@ -684,7 +682,6 @@ func (s *Service) reportStats(conn *websocket.Conn) error {
 		"stats": &nodeStats{
 			Active:   true,
 			Mining:   mining,
-			Hashrate: hashrate,
 			Peers:    s.server.PeerCount(),
 			GasPrice: gasprice,
 			Syncing:  syncing,

@@ -14,39 +14,24 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
 
-package ethash
+package dpos
 
 import (
-	"encoding/json"
-	"math/big"
 
-	"github.com/yooba-team/yooba/common/math"
+
+	"github.com/yooba-team/yooba/consensus"
+	"github.com/yooba-team/yooba/core/types"
 
 )
 
-type diffTest struct {
-	ParentTimestamp    uint64
-	CurrentTimestamp   uint64
-	CurrentBlocknumber *big.Int
+
+func (ethash *dops) Seal(chain consensus.ChainReader, block *types.Block, stop <-chan struct{}) (*types.Block, error) {
+	var (
+		header  = block.Header()
+	)
+	var result *types.Block
+	header = types.CopyHeader(header)
+	result = block.WithSeal(header);
+	return result, nil
 }
-
-func (d *diffTest) UnmarshalJSON(b []byte) (err error) {
-	var ext struct {
-		ParentTimestamp    string
-		ParentDifficulty   string
-		CurrentTimestamp   string
-		CurrentBlocknumber string
-		CurrentDifficulty  string
-	}
-	if err := json.Unmarshal(b, &ext); err != nil {
-		return err
-	}
-
-	d.ParentTimestamp = math.MustParseUint64(ext.ParentTimestamp)
-	d.CurrentTimestamp = math.MustParseUint64(ext.CurrentTimestamp)
-	d.CurrentBlocknumber = math.MustParseBig256(ext.CurrentBlocknumber)
-
-	return nil
-}
-
 

@@ -31,7 +31,6 @@ import (
 	"github.com/yooba-team/yooba/core/state"
 	"github.com/yooba-team/yooba/core/types"
 	"github.com/yooba-team/yooba/log"
-	"github.com/yooba-team/yooba/miner"
 	"github.com/yooba-team/yooba/params"
 	"github.com/yooba-team/yooba/rlp"
 	"github.com/yooba-team/yooba/rpc"
@@ -57,26 +56,6 @@ func (api *PublicEthereumAPI) Yoobase() (common.Address, error) {
 // Coinbase is the address that mining rewards will be send to (alias for Yoobase)
 func (api *PublicEthereumAPI) Coinbase() (common.Address, error) {
 	return api.Yoobase()
-}
-
-// Hashrate returns the POW hashrate
-func (api *PublicEthereumAPI) Hashrate() hexutil.Uint64 {
-	return hexutil.Uint64(api.e.Miner().HashRate())
-}
-
-// PublicMinerAPI provides an API to control the miner.
-// It offers only methods that operate on data that pose no security risk when it is publicly accessible.
-type PublicMinerAPI struct {
-	e     *FullYooba
-	agent *miner.RemoteAgent
-}
-
-// NewPublicMinerAPI create a new PublicMinerAPI instance.
-func NewPublicMinerAPI(e *FullYooba) *PublicMinerAPI {
-	agent := miner.NewRemoteAgent(e.BlockChain(), e.Engine())
-	e.Miner().Register(agent)
-
-	return &PublicMinerAPI{e, agent}
 }
 
 
@@ -160,12 +139,6 @@ func (api *PrivateMinerAPI) SetYoobase(etherbase common.Address) bool {
 	return true
 }
 
-// GetHashrate returns the current hashrate of the miner.
-func (api *PrivateMinerAPI) GetHashrate() uint64 {
-	return uint64(api.e.miner.HashRate())
-}
-
-// PrivateAdminAPI is the collection of Yooba full node-related APIs
 // exposed over the private admin endpoint.
 type PrivateAdminAPI struct {
 	yoo *FullYooba
