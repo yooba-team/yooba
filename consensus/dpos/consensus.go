@@ -29,29 +29,20 @@ import (
 	"runtime"
 )
 
-// dpos proof-of-work protocol constants.
 var (
-	FrontierBlockReward    *big.Int = big.NewInt(5e+18) // Block reward in wei for successfully mining a block
-	ByzantiumBlockReward   *big.Int = big.NewInt(3e+18) // Block reward in wei for successfully mining a block upward from Byzantium
 	allowedFutureBlockTime          = 15 * time.Second  // Max time from current time allowed for blocks, before they're considered future blocks
 )
 
-// Various error messages to mark blocks invalid. These should be private to
-// prevent engine specific errors from being referenced in the remainder of the
-// codebase, inherently breaking if the engine is swapped out. Please put common
-// error types into the consensus package.
 var (
-	errLargeBlockTime    = errors.New("timestamp too big")
 	errZeroBlockTime     = errors.New("timestamp equals parent's")
-	errNonceOutOfRange   = errors.New("nonce out of range")
-	errInvalidPoW        = errors.New("invalid proof-of-work")
+	errInvalidHeaderNumber        = errors.New("invalid header number")
 )
 
-// Author implements consensus.Engine, returning the header's coinbase as the
-// proof-of-work verified author of the block.
 func (dpos *dpos) Author(header *types.Header) (common.Address, error) {
 	return header.Coinbase, nil
 }
+
+
 
 
 // VerifyHeader checks whether a header conforms to the consensus rules of the
@@ -146,7 +137,7 @@ func (dpos *dpos) verifyHeaderWorker(chain consensus.ChainReader, headers []*typ
 		return consensus.ErrUnknownAncestor
 	}
 	if chain.GetHeader(headers[index].Hash(), headers[index].Number.Uint64()) != nil {
-		return nil // known block
+		return nil
 	}
 	return dpos.verifyHeader(chain, headers[index], parent, seals[index])
 }
@@ -214,49 +205,15 @@ var (
 	big2999999    = big.NewInt(2999999)
 )
 
-// VerifySeal implements consensus.Engine, checking whether the given block satisfies
-// the PoW difficulty requirements.
+
+
 func (dpos *dpos) VerifySeal(chain consensus.ChainReader, header *types.Header) error {
-	// If we're running a fake PoW, accept any seal as valid
 		time.Sleep(dpos.fakeDelay)
 		if dpos.fakeFail == header.Number.Uint64() {
-			return errInvalidPoW
+			return errInvalidHeaderNumber
 		}
 		return nil
-
-	//// If we're running a shared PoW, delegate verification to it
-	//if dpos.shared != nil {
-	//	return dpos.shared.VerifySeal(chain, header)
-	//}
-	// Sanity check that the block number is below the lookup table size (60M blocks)
-	//number := header.Number.Uint64()
-	//if number/epochLength >= maxEpoch {
-	//	// Go < 1.7 cannot calculate new cache/dataset sizes (no fast prime check)
-	//	return errNonceOutOfRange
-	//}
-	//// Ensure that we have a valid difficulty for the block
-	//if header.Difficulty.Sign() <= 0 {
-	//	return errInvalidDifficulty
-	//}
-
-	// Recompute the digest and PoW value and verify against the header
-	//cache := dpos.cache(number)
-	//size := datasetSize(number)
-	//if dpos.config.PowMode == ModeTest {
-	//	size = 32 * 1024
-	//}
-	//digest, result := hashimotoLight(size, cache.cache, header.HashNoNonce().Bytes(), header.Nonce.Uint64())
-	//// Caches are unmapped in a finalizer. Ensure that the cache stays live
-	//// until after the call to hashimotoLight so it's not unmapped while being used.
-	//runtime.KeepAlive(cache)
-	//
-	//if !bytes.Equal(header.MixDigest[:], digest) {
-	//	return errInvalidMixDigest
-	//}
-	//target := new(big.Int).Div(maxUint256, header.Difficulty)
-	//if new(big.Int).SetBytes(result).Cmp(target) > 0 {
-	//	return errInvalidPoW
-	//}
+   //TODO: more verify the seal block
 	return nil
 }
 
@@ -276,26 +233,27 @@ func (dpos *dpos) Finalize(chain consensus.ChainReader, header *types.Header, st
 	accumulateRewards(chain.Config(), state, header)
 	header.Root = state.IntermediateRoot(true)
 
-	// Header seems complete, assemble into a block and return
 	return types.NewBlock(header, txs, receipts), nil
 }
 
-// Some weird constants to avoid constant memory allocs for them.
 var (
 	big8  = big.NewInt(8)
 	big32 = big.NewInt(32)
 )
 
-// AccumulateRewards credits the coinbase of the given block with the mining
-// reward. The total reward consists of the static block reward and rewards for
-func accumulateRewards(config *params.ChainConfig, state *state.StateDB, header *types.Header) {
-	// Select the correct block reward based on chain progression
-	blockReward := FrontierBlockReward
-	if config.IsByzantium(header.Number) {
-		blockReward = ByzantiumBlockReward
-	}
-	// Accumulate the rewards for the miner 
-	reward := new(big.Int).Set(blockReward)
+func (dpos *dpos) Seal(chain consensus.ChainReader, block *types.Block, stop <-chan struct{}) (*types.Block, error) {
+	var (
+		header  = block.Header()
+	)
+	var result *types.Block
+	header = types.CopyHeader(header)
+	result = block.WithSeal(header);
+	return result, nil
+}
 
+func accumulateRewards(config *params.ChainConfig, state *state.StateDB, header *types.Header) {
+
+	//TODO: For now ,reward set to 0.Future it will change
+	reward := new(big.Int).Set(big.NewInt(0))
 	state.AddBalance(header.Coinbase, reward)
 }

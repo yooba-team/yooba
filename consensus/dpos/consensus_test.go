@@ -33,10 +33,8 @@ type diffTest struct {
 func (d *diffTest) UnmarshalJSON(b []byte) (err error) {
 	var ext struct {
 		ParentTimestamp    string
-		ParentDifficulty   string
 		CurrentTimestamp   string
 		CurrentBlocknumber string
-		CurrentDifficulty  string
 	}
 	if err := json.Unmarshal(b, &ext); err != nil {
 		return err
