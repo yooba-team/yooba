@@ -32,6 +32,7 @@ import (
 	"github.com/yooba-team/yooba/log"
 	"github.com/yooba-team/yooba/params"
 	"github.com/hashicorp/golang-lru"
+	"github.com/yooba-team/yooba/consensus/dpos"
 )
 
 const (
@@ -68,7 +69,7 @@ type HeaderChain struct {
 //  getValidator should return the parent's validator
 //  procInterrupt points to the parent's interrupt semaphore
 //  wg points to the parent's shutdown wait group
-func NewHeaderChain(chainDb yoobadb.Database, config *params.ChainConfig, engine consensus.Engine, procInterrupt func() bool) (*HeaderChain, error) {
+func NewHeaderChain(chainDb yoobadb.Database, config *params.ChainConfig, procInterrupt func() bool) (*HeaderChain, error) {
 	headerCache, _ := lru.New(headerCacheLimit)
 	tdCache, _ := lru.New(tdCacheLimit)
 	numberCache, _ := lru.New(numberCacheLimit)
@@ -87,7 +88,7 @@ func NewHeaderChain(chainDb yoobadb.Database, config *params.ChainConfig, engine
 		numberCache:   numberCache,
 		procInterrupt: procInterrupt,
 		rand:          mrand.New(mrand.NewSource(seed.Int64())),
-		engine:        engine,
+		engine:        dpos.Default(),
 	}
 
 	hc.genesisHeader = hc.GetHeaderByNumber(0)

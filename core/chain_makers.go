@@ -28,6 +28,7 @@ import (
 	"github.com/yooba-team/yooba/core/vm"
 	"github.com/yooba-team/yooba/yoobadb"
 	"github.com/yooba-team/yooba/params"
+	"github.com/yooba-team/yooba/consensus/dpos"
 )
 
 // So we can deterministically seed different blockchains
@@ -151,7 +152,7 @@ func (b *BlockGen) OffsetTime(seconds int64) {
 // Blocks created by GenerateChain do not contain valid proof of work
 // values. Inserting them into BlockChain requires use of FakePow or
 // a similar non-validating proof of work implementation.
-func GenerateChain(config *params.ChainConfig, parent *types.Block, engine consensus.Engine, db yoobadb.Database, n int, gen func(int, *BlockGen)) ([]*types.Block, []types.Receipts) {
+func GenerateChain(config *params.ChainConfig, parent *types.Block,db yoobadb.Database, n int, gen func(int, *BlockGen)) ([]*types.Block, []types.Receipts) {
 	if config == nil {
 		config = params.TestChainConfig
 	}
@@ -159,11 +160,11 @@ func GenerateChain(config *params.ChainConfig, parent *types.Block, engine conse
 	genblock := func(i int, parent *types.Block, statedb *state.StateDB) (*types.Block, types.Receipts) {
 		// TODO(karalabe): This is needed for clique, which depends on multiple blocks.
 		// It's nonetheless ugly to spin up a blockchain here. Get rid of this somehow.
-		blockchain, _ := NewBlockChain(db, nil, config, engine, vm.Config{})
+		blockchain, _ := NewBlockChain(db, nil, config,vm.Config{})
 		defer blockchain.Stop()
 
-		b := &BlockGen{i: i, parent: parent, chain: blocks, chainReader: blockchain, statedb: statedb, config: config, engine: engine}
-		b.header = makeHeader(b.chainReader, parent, statedb, b.engine)
+		b := &BlockGen{i: i, parent: parent, chain: blocks, chainReader: blockchain, statedb: statedb, config: config, engine: dpos.Default()}
+		b.header = makeHeader(b.chainReader, parent, statedb)
 
 		// Execute any user modifications to the block and finalize it
 		if gen != nil {
@@ -197,7 +198,7 @@ func GenerateChain(config *params.ChainConfig, parent *types.Block, engine conse
 	return blocks, receipts
 }
 
-func makeHeader(chain consensus.ChainReader, parent *types.Block, state *state.StateDB, engine consensus.Engine) *types.Header {
+func makeHeader(chain consensus.ChainReader, parent *types.Block, state *state.StateDB) *types.Header {
 	var time *big.Int
 	if parent.Time() == nil {
 		time = big.NewInt(10)
@@ -218,32 +219,32 @@ func makeHeader(chain consensus.ChainReader, parent *types.Block, state *state.S
 // newCanonical creates a chain database, and injects a deterministic canonical
 // chain. Depending on the full flag, if creates either a full block chain or a
 // header only chain.
-func newCanonical(engine consensus.Engine, n int, full bool) (yoobadb.Database, *BlockChain, error) {
+func newCanonical(n int, full bool) (yoobadb.Database, *BlockChain, error) {
 	// Initialize a fresh chain with only a genesis block
 	gspec := new(Genesis)
 	db, _ := yoobadb.NewMemDatabase()
 	genesis := gspec.MustCommit(db)
 
-	blockchain, _ := NewBlockChain(db, nil, params.AllEthashProtocolChanges, engine, vm.Config{})
+	blockchain, _ := NewBlockChain(db, nil, params.AllEthashProtocolChanges, vm.Config{})
 	// Create and inject the requested chain
 	if n == 0 {
 		return db, blockchain, nil
 	}
 	if full {
 		// Full block-chain requested
-		blocks := makeBlockChain(genesis, n, engine, db, canonicalSeed)
+		blocks := makeBlockChain(genesis, n,db, canonicalSeed)
 		_, err := blockchain.InsertChain(blocks)
 		return db, blockchain, err
 	}
 	// Header-only chain requested
-	headers := makeHeaderChain(genesis.Header(), n, engine, db, canonicalSeed)
+	headers := makeHeaderChain(genesis.Header(), n, db, canonicalSeed)
 	_, err := blockchain.InsertHeaderChain(headers, 1)
 	return db, blockchain, err
 }
 
 // makeHeaderChain creates a deterministic chain of headers rooted at parent.
-func makeHeaderChain(parent *types.Header, n int, engine consensus.Engine, db yoobadb.Database, seed int) []*types.Header {
-	blocks := makeBlockChain(types.NewBlockWithHeader(parent), n, engine, db, seed)
+func makeHeaderChain(parent *types.Header, n int, db yoobadb.Database, seed int) []*types.Header {
+	blocks := makeBlockChain(types.NewBlockWithHeader(parent), n,db, seed)
 	headers := make([]*types.Header, len(blocks))
 	for i, block := range blocks {
 		headers[i] = block.Header()
@@ -252,8 +253,8 @@ func makeHeaderChain(parent *types.Header, n int, engine consensus.Engine, db yo
 }
 
 // makeBlockChain creates a deterministic chain of blocks rooted at parent.
-func makeBlockChain(parent *types.Block, n int, engine consensus.Engine, db yoobadb.Database, seed int) []*types.Block {
-	blocks, _ := GenerateChain(params.TestChainConfig, parent, engine, db, n, func(i int, b *BlockGen) {
+func makeBlockChain(parent *types.Block, n int, db yoobadb.Database, seed int) []*types.Block {
+	blocks, _ := GenerateChain(params.TestChainConfig, parent, db, n, func(i int, b *BlockGen) {
 		b.SetCoinbase(common.Address{0: byte(seed), 19: byte(i)})
 	})
 	return blocks

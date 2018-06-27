@@ -32,7 +32,6 @@ import (
 	"github.com/yooba-team/yooba/accounts/keystore"
 	"github.com/yooba-team/yooba/common"
 	"github.com/yooba-team/yooba/common/fdlimit"
-	"github.com/yooba-team/yooba/consensus"
 	"github.com/yooba-team/yooba/core"
 	"github.com/yooba-team/yooba/core/state"
 	"github.com/yooba-team/yooba/core/vm"
@@ -54,7 +53,6 @@ import (
 	"github.com/yooba-team/yooba/params"
 	whisper "github.com/yooba-team/yooba/whisper/whisperv5"
 	"gopkg.in/urfave/cli.v1"
-	"github.com/yooba-team/yooba/consensus/dpos"
 )
 
 var (
@@ -1142,12 +1140,6 @@ func MakeChain(ctx *cli.Context, stack *node.Node) (chain *core.BlockChain, chai
 	if err != nil {
 		Fatalf("%v", err)
 	}
-	var engine consensus.Engine
-	if !ctx.GlobalBool(FakePoWFlag.Name) {
-		engine = dpos.New(dpos.Config{
-
-		})
-	}
 	if gcmode := ctx.GlobalString(GCModeFlag.Name); gcmode != "full" && gcmode != "archive" {
 		Fatalf("--%s must be either 'full' or 'archive'", GCModeFlag.Name)
 	}
@@ -1160,7 +1152,7 @@ func MakeChain(ctx *cli.Context, stack *node.Node) (chain *core.BlockChain, chai
 		cache.TrieNodeLimit = ctx.GlobalInt(CacheFlag.Name) * ctx.GlobalInt(CacheGCFlag.Name) / 100
 	}
 	vmcfg := vm.Config{EnablePreimageRecording: ctx.GlobalBool(VMEnableDebugFlag.Name)}
-	chain, err = core.NewBlockChain(chainDb, cache, config, engine, vmcfg)
+	chain, err = core.NewBlockChain(chainDb, cache, config, vmcfg)
 	if err != nil {
 		Fatalf("Can't create BlockChain: %v", err)
 	}

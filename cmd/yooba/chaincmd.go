@@ -307,7 +307,7 @@ func copyDb(ctx *cli.Context) error {
 	if err != nil {
 		return err
 	}
-	hc, err := core.NewHeaderChain(db, chain.Config(), chain.Engine(), func() bool { return false })
+	hc, err := core.NewHeaderChain(db, chain.Config(), func() bool { return false })
 	if err != nil {
 		return err
 	}

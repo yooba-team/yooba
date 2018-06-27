@@ -147,7 +147,7 @@ func New(ctx *node.ServiceContext, config *Config) (*FullYooba, error) {
 		vmConfig    = vm.Config{EnablePreimageRecording: config.EnablePreimageRecording}
 		cacheConfig = &core.CacheConfig{Disabled: config.NoPruning, TrieNodeLimit: config.TrieCache, TrieTimeLimit: config.TrieTimeout}
 	)
-	yoo.blockchain, err = core.NewBlockChain(chainDb, cacheConfig, yoo.chainConfig, yoo.engine, vmConfig)
+	yoo.blockchain, err = core.NewBlockChain(chainDb, cacheConfig, yoo.chainConfig, vmConfig)
 	if err != nil {
 		return nil, err
 	}
@@ -167,7 +167,7 @@ func New(ctx *node.ServiceContext, config *Config) (*FullYooba, error) {
 	if yoo.protocolManager, err = NewProtocolManager(yoo.chainConfig, config.SyncMode, config.NetworkId, yoo.eventMux, yoo.txPool, yoo.engine, yoo.blockchain, chainDb); err != nil {
 		return nil, err
 	}
-	yoo.miner = miner.New(yoo, yoo.chainConfig, yoo.EventMux(), yoo.engine)
+	yoo.miner = miner.New(yoo, yoo.chainConfig, yoo.EventMux())
 	yoo.miner.SetExtra(makeExtraData(config.ExtraData))
 
 	yoo.ApiBackend = &YooApiBackend{yoo, nil}
@@ -211,8 +211,7 @@ func CreateDB(ctx *node.ServiceContext, config *Config, name string) (yoobadb.Da
 
 // CreateConsensusEngine creates the required type of consensus engine instance for an Yooba service
 func CreateConsensusEngine(ctx *node.ServiceContext, chainConfig *params.ChainConfig, db yoobadb.Database) consensus.Engine {
-	engine := dpos.New(dpos.Config{
-	})
+	engine := dpos.Default()
 	return engine
 }
 

@@ -32,6 +32,7 @@ import (
 	"github.com/yooba-team/yooba/event"
 	"github.com/yooba-team/yooba/log"
 	"github.com/yooba-team/yooba/params"
+	"github.com/yooba-team/yooba/consensus/dpos"
 )
 
 const (
@@ -117,10 +118,10 @@ type worker struct {
 	atWork int32
 }
 
-func newWorker(config *params.ChainConfig, engine consensus.Engine, coinbase common.Address, yoo Backend, mux *event.TypeMux) *worker {
+func newWorker(config *params.ChainConfig, coinbase common.Address, yoo Backend, mux *event.TypeMux) *worker {
 	worker := &worker{
 		config:      config,
-		engine:      engine,
+		engine:      dpos.Default(),
 		yoo:         yoo,
 		mux:         mux,
 		txCh:        make(chan core.TxPreEvent, txChanSize),

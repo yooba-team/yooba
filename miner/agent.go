@@ -23,6 +23,9 @@ import (
 
 	"github.com/yooba-team/yooba/consensus"
 	"github.com/yooba-team/yooba/log"
+
+	"github.com/yooba-team/yooba/consensus/dpos"
+
 )
 
 type CpuAgent struct {
@@ -36,13 +39,13 @@ type CpuAgent struct {
 	chain  consensus.ChainReader
 	engine consensus.Engine
 
-	isMining int32 // isMining indicates whether the agent is currently mining
+	isMining int32
 }
 
-func NewCpuAgent(chain consensus.ChainReader, engine consensus.Engine) *CpuAgent {
+func NewCpuAgent(chain consensus.ChainReader) *CpuAgent {
 	miner := &CpuAgent{
 		chain:  chain,
-		engine: engine,
+		engine: dpos.Default(),
 		stop:   make(chan struct{}, 1),
 		workCh: make(chan *Work, 1),
 	}

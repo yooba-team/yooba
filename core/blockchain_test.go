@@ -43,8 +43,7 @@ func newTestBlockChain(fake bool) *BlockChain {
 		Config:     params.TestChainConfig,
 	}
 	gspec.MustCommit(db)
-	engine := dpos.NewFullFaker()
-	blockchain, err := NewBlockChain(db, nil, gspec.Config, engine, vm.Config{})
+	blockchain, err := NewBlockChain(db, nil, gspec.Config, vm.Config{})
 	if err != nil {
 		panic(err)
 	}
@@ -55,7 +54,7 @@ func newTestBlockChain(fake bool) *BlockChain {
 // Test fork of length N starting from block i
 func testFork(t *testing.T, blockchain *BlockChain, i, n int, full bool) {
 	// Copy old chain up to #i into a new db
-	db, blockchain2, err := newCanonical(dpos.NewFaker(), i, full)
+	db, blockchain2, err := newCanonical(i, full)
 	if err != nil {
 		t.Fatal("could not make new canonical in testFork", err)
 	}

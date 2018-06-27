@@ -29,7 +29,7 @@ import (
 	"runtime"
 )
 
-// dops proof-of-work protocol constants.
+// dpos proof-of-work protocol constants.
 var (
 	FrontierBlockReward    *big.Int = big.NewInt(5e+18) // Block reward in wei for successfully mining a block
 	ByzantiumBlockReward   *big.Int = big.NewInt(3e+18) // Block reward in wei for successfully mining a block upward from Byzantium
@@ -49,14 +49,14 @@ var (
 
 // Author implements consensus.Engine, returning the header's coinbase as the
 // proof-of-work verified author of the block.
-func (ethash *dops) Author(header *types.Header) (common.Address, error) {
+func (dpos *dpos) Author(header *types.Header) (common.Address, error) {
 	return header.Coinbase, nil
 }
 
 
 // VerifyHeader checks whether a header conforms to the consensus rules of the
 // stock Yooba dpos engine.
-func (ethash *dops) VerifyHeader(chain consensus.ChainReader, header *types.Header, seal bool) error {
+func (dpos *dpos) VerifyHeader(chain consensus.ChainReader, header *types.Header, seal bool) error {
 	// Short circuit if the header is known, or it's parent not
 	number := header.Number.Uint64()
 	if chain.GetHeader(header.Hash(), number) != nil {
@@ -67,13 +67,13 @@ func (ethash *dops) VerifyHeader(chain consensus.ChainReader, header *types.Head
 		return consensus.ErrUnknownAncestor
 	}
 	// Sanity checks passed, do a proper verification
-	return ethash.verifyHeader(chain, header, parent,  seal)
+	return dpos.verifyHeader(chain, header, parent,  seal)
 }
 
 // VerifyHeaders is similar to VerifyHeader, but verifies a batch of headers
 // concurrently. The method returns a quit channel to abort the operations and
 // a results channel to retrieve the async verifications.
-func (ethash *dops) VerifyHeaders(chain consensus.ChainReader, headers []*types.Header, seals []bool) (chan<- struct{}, <-chan error) {
+func (dpos *dpos) VerifyHeaders(chain consensus.ChainReader, headers []*types.Header, seals []bool) (chan<- struct{}, <-chan error) {
 	// If we're running a full engine faking, accept any input as valid
 	if len(headers) == 0 {
 		abort, results := make(chan struct{}), make(chan error, len(headers))
@@ -99,7 +99,7 @@ func (ethash *dops) VerifyHeaders(chain consensus.ChainReader, headers []*types.
 	for i := 0; i < workers; i++ {
 		go func() {
 			for index := range inputs {
-				errors[index] = ethash.verifyHeaderWorker(chain, headers, seals, index)
+				errors[index] = dpos.verifyHeaderWorker(chain, headers, seals, index)
 				done <- index
 			}
 		}()
@@ -135,7 +135,7 @@ func (ethash *dops) VerifyHeaders(chain consensus.ChainReader, headers []*types.
 	return abort, errorsOut
 }
 
-func (ethash *dops) verifyHeaderWorker(chain consensus.ChainReader, headers []*types.Header, seals []bool, index int) error {
+func (dpos *dpos) verifyHeaderWorker(chain consensus.ChainReader, headers []*types.Header, seals []bool, index int) error {
 	var parent *types.Header
 	if index == 0 {
 		parent = chain.GetHeader(headers[0].ParentHash, headers[0].Number.Uint64()-1)
@@ -148,14 +148,13 @@ func (ethash *dops) verifyHeaderWorker(chain consensus.ChainReader, headers []*t
 	if chain.GetHeader(headers[index].Hash(), headers[index].Number.Uint64()) != nil {
 		return nil // known block
 	}
-	return ethash.verifyHeader(chain, headers[index], parent, seals[index])
+	return dpos.verifyHeader(chain, headers[index], parent, seals[index])
 }
 
 
 
 
-// See YP section 4.3.4. "Block Header Validity"
-func (ethash *dops) verifyHeader(chain consensus.ChainReader, header, parent *types.Header, seal bool) error {
+func (dpos *dpos) verifyHeader(chain consensus.ChainReader, header, parent *types.Header, seal bool) error {
 	// Ensure that the header's extra-data section is of a reasonable size
 	if uint64(len(header.Extra)) > params.MaximumExtraDataSize {
 		return fmt.Errorf("extra-data too long: %d > %d", len(header.Extra), params.MaximumExtraDataSize)
@@ -191,13 +190,11 @@ func (ethash *dops) verifyHeader(chain consensus.ChainReader, header, parent *ty
 	if uint64(diff) >= limit || header.GasLimit < params.MinGasLimit {
 		return fmt.Errorf("invalid gas limit: have %d, want %d += %d", header.GasLimit, parent.GasLimit, limit)
 	}
-	// Verify that the block number is parent's +1
 	if diff := new(big.Int).Sub(header.Number, parent.Number); diff.Cmp(big.NewInt(1)) != 0 {
 		return consensus.ErrInvalidNumber
 	}
-	// Verify the engine specific seal securing the block
 	if seal {
-		if err := ethash.VerifySeal(chain, header); err != nil {
+		if err := dpos.VerifySeal(chain, header); err != nil {
 			return err
 		}
 	}
@@ -219,10 +216,10 @@ var (
 
 // VerifySeal implements consensus.Engine, checking whether the given block satisfies
 // the PoW difficulty requirements.
-func (ethash *dops) VerifySeal(chain consensus.ChainReader, header *types.Header) error {
+func (dpos *dpos) VerifySeal(chain consensus.ChainReader, header *types.Header) error {
 	// If we're running a fake PoW, accept any seal as valid
-		time.Sleep(ethash.fakeDelay)
-		if ethash.fakeFail == header.Number.Uint64() {
+		time.Sleep(dpos.fakeDelay)
+		if dpos.fakeFail == header.Number.Uint64() {
 			return errInvalidPoW
 		}
 		return nil
@@ -265,7 +262,7 @@ func (ethash *dops) VerifySeal(chain consensus.ChainReader, header *types.Header
 
 // Prepare implements consensus.Engine, initializing the difficulty field of a
 // header to conform to the dpos protocol. The changes are done inline.
-func (ethash *dops) Prepare(chain consensus.ChainReader, header *types.Header) error {
+func (dpos *dpos) Prepare(chain consensus.ChainReader, header *types.Header) error {
 	parent := chain.GetHeader(header.ParentHash, header.Number.Uint64()-1)
 	if parent == nil {
 		return consensus.ErrUnknownAncestor
@@ -275,7 +272,7 @@ func (ethash *dops) Prepare(chain consensus.ChainReader, header *types.Header) e
 
 // Finalize implements consensus.Engine, accumulating the block ,
 // setting the final state and assembling the block.
-func (ethash *dops) Finalize(chain consensus.ChainReader, header *types.Header, state *state.StateDB, txs []*types.Transaction, receipts []*types.Receipt) (*types.Block, error) {
+func (dpos *dpos) Finalize(chain consensus.ChainReader, header *types.Header, state *state.StateDB, txs []*types.Transaction, receipts []*types.Receipt) (*types.Block, error) {
 	accumulateRewards(chain.Config(), state, header)
 	header.Root = state.IntermediateRoot(true)
 

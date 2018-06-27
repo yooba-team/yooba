@@ -34,6 +34,7 @@ import (
 	"github.com/yooba-team/yooba/params"
 	"github.com/yooba-team/yooba/rlp"
 	"github.com/hashicorp/golang-lru"
+	"github.com/yooba-team/yooba/consensus/dpos"
 )
 
 var (
@@ -73,7 +74,7 @@ type LightChain struct {
 // NewLightChain returns a fully initialised light chain using information
 // available in the database. It initialises the default Yooba header
 // validator.
-func NewLightChain(odr OdrBackend, config *params.ChainConfig, engine consensus.Engine) (*LightChain, error) {
+func NewLightChain(odr OdrBackend, config *params.ChainConfig, ) (*LightChain, error) {
 	bodyCache, _ := lru.New(bodyCacheLimit)
 	bodyRLPCache, _ := lru.New(bodyCacheLimit)
 	blockCache, _ := lru.New(blockCacheLimit)
@@ -85,10 +86,10 @@ func NewLightChain(odr OdrBackend, config *params.ChainConfig, engine consensus.
 		bodyCache:    bodyCache,
 		bodyRLPCache: bodyRLPCache,
 		blockCache:   blockCache,
-		engine:       engine,
+		engine:       dpos.Default(),
 	}
 	var err error
-	bc.hc, err = core.NewHeaderChain(odr.Database(), config, bc.engine, bc.getProcInterrupt)
+	bc.hc, err = core.NewHeaderChain(odr.Database(), config, bc.getProcInterrupt)
 	if err != nil {
 		return nil, err
 	}

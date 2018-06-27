@@ -24,6 +24,7 @@ import (
 	"github.com/yooba-team/yooba/core/vm"
 	"github.com/yooba-team/yooba/crypto"
 	"github.com/yooba-team/yooba/params"
+	"github.com/yooba-team/yooba/consensus/dpos"
 )
 
 // StateProcessor is a basic Processor, which takes care of transitioning
@@ -37,11 +38,11 @@ type StateProcessor struct {
 }
 
 // NewStateProcessor initialises a new StateProcessor.
-func NewStateProcessor(config *params.ChainConfig, bc *BlockChain, engine consensus.Engine) *StateProcessor {
+func NewStateProcessor(config *params.ChainConfig, bc *BlockChain) *StateProcessor {
 	return &StateProcessor{
 		config: config,
 		bc:     bc,
-		engine: engine,
+		engine: dpos.Default(),
 	}
 }
 

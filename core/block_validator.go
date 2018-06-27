@@ -23,6 +23,7 @@ import (
 	"github.com/yooba-team/yooba/core/state"
 	"github.com/yooba-team/yooba/core/types"
 	"github.com/yooba-team/yooba/params"
+	"github.com/yooba-team/yooba/consensus/dpos"
 )
 
 // BlockValidator is responsible for validating block headers and
@@ -36,10 +37,10 @@ type BlockValidator struct {
 }
 
 // NewBlockValidator returns a new block validator which is safe for re-use
-func NewBlockValidator(config *params.ChainConfig, blockchain *BlockChain, engine consensus.Engine) *BlockValidator {
+func NewBlockValidator(config *params.ChainConfig, blockchain *BlockChain) *BlockValidator {
 	validator := &BlockValidator{
 		config: config,
-		engine: engine,
+		engine: dpos.Default(),
 		bc:     blockchain,
 	}
 	return validator

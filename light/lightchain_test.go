@@ -74,7 +74,7 @@ func newTestLightChain() *LightChain {
 		Config:     params.TestChainConfig,
 	}
 	gspec.MustCommit(db)
-	lc, err := NewLightChain(&dummyOdr{db: db}, gspec.Config, dpos.NewFullFaker())
+	lc, err := NewLightChain(&dummyOdr{db: db}, gspec.Config)
 	if err != nil {
 		panic(err)
 	}

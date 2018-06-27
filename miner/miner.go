@@ -23,7 +23,6 @@ import (
 
 	"github.com/yooba-team/yooba/accounts"
 	"github.com/yooba-team/yooba/common"
-	"github.com/yooba-team/yooba/consensus"
 	"github.com/yooba-team/yooba/core"
 	"github.com/yooba-team/yooba/core/state"
 	"github.com/yooba-team/yooba/core/types"
@@ -51,21 +50,18 @@ type Miner struct {
 	coinbase common.Address
 	mining   int32
 	yoo      Backend
-	engine   consensus.Engine
-
 	canStart    int32 // can start indicates whether we can start the mining operation
 	shouldStart int32 // should start indicates whether we should start after sync
 }
 
-func New(yoo Backend, config *params.ChainConfig, mux *event.TypeMux, engine consensus.Engine) *Miner {
+func New(yoo Backend, config *params.ChainConfig, mux *event.TypeMux) *Miner {
 	miner := &Miner{
 		yoo:      yoo,
 		mux:      mux,
-		engine:   engine,
-		worker:   newWorker(config, engine, common.Address{}, yoo, mux),
+		worker:   newWorker(config, common.Address{}, yoo, mux),
 		canStart: 1,
 	}
-	miner.Register(NewCpuAgent(yoo.BlockChain(), engine))
+	miner.Register(NewCpuAgent(yoo.BlockChain()))
 	go miner.update()
 
 	return miner

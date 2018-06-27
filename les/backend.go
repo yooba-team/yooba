@@ -113,7 +113,7 @@ func New(ctx *node.ServiceContext, config *yoo.Config) (*LightYooba, error) {
 	lightYoo.serverPool = newServerPool(chainDb, quitSync, &lightYoo.wg)
 	lightYoo.retriever = newRetrieveManager(peers, lightYoo.reqDist, lightYoo.serverPool)
 	lightYoo.odr = NewLesOdr(chainDb, lightYoo.chtIndexer, lightYoo.bloomTrieIndexer, lightYoo.bloomIndexer, lightYoo.retriever)
-	if lightYoo.blockchain, err = light.NewLightChain(lightYoo.odr, lightYoo.chainConfig, lightYoo.engine); err != nil {
+	if lightYoo.blockchain, err = light.NewLightChain(lightYoo.odr, lightYoo.chainConfig); err != nil {
 		return nil, err
 	}
 	lightYoo.bloomIndexer.Start(lightYoo.blockchain)

@@ -42,6 +42,7 @@ import (
 	"github.com/yooba-team/yooba/trie"
 	"github.com/hashicorp/golang-lru"
 	"gopkg.in/karalabe/cookiejar.v2/collections/prque"
+	"github.com/yooba-team/yooba/consensus/dpos"
 )
 
 var (
@@ -70,20 +71,7 @@ type CacheConfig struct {
 	TrieTimeLimit time.Duration // Time limit after which to flush the current in-memory trie to disk
 }
 
-// BlockChain represents the canonical chain given a database with a genesis
-// block. The Blockchain manages chain imports, reverts, chain reorganisations.
-//
-// Importing blocks in to the block chain happens according to the set of rules
-// defined by the two stage Validator. Processing of blocks is done using the
-// Processor which processes the included transaction. The validation of the state
-// is done in the second part of the Validator. Failing results in aborting of
-// the import.
-//
-// The BlockChain also helps in returning blocks from **any** chain included
-// in the database as well as blocks that represents the canonical chain. It's
-// important to note that GetBlock can return any block and does not need to be
-// included in the canonical one where as GetBlockByNumber always represents the
-// canonical chain.
+
 type BlockChain struct {
 	chainConfig *params.ChainConfig // Chain & network configuration
 	cacheConfig *CacheConfig        // Cache configuration for pruning
@@ -132,7 +120,7 @@ type BlockChain struct {
 // NewBlockChain returns a fully initialised block chain using information
 // available in the database. It initialises the default Yooba Validator and
 // Processor.
-func NewBlockChain(db yoobadb.Database, cacheConfig *CacheConfig, chainConfig *params.ChainConfig, engine consensus.Engine, vmConfig vm.Config) (*BlockChain, error) {
+func NewBlockChain(db yoobadb.Database, cacheConfig *CacheConfig, chainConfig *params.ChainConfig, vmConfig vm.Config) (*BlockChain, error) {
 	if cacheConfig == nil {
 		cacheConfig = &CacheConfig{
 			TrieNodeLimit: 256 * 1024 * 1024,
@@ -156,15 +144,15 @@ func NewBlockChain(db yoobadb.Database, cacheConfig *CacheConfig, chainConfig *p
 		bodyRLPCache: bodyRLPCache,
 		blockCache:   blockCache,
 		futureBlocks: futureBlocks,
-		engine:       engine,
+		engine:       dpos.Default(),
 		vmConfig:     vmConfig,
 		badBlocks:    badBlocks,
 	}
-	bc.SetValidator(NewBlockValidator(chainConfig, bc, engine))
-	bc.SetProcessor(NewStateProcessor(chainConfig, bc, engine))
+	bc.SetValidator(NewBlockValidator(chainConfig, bc))
+	bc.SetProcessor(NewStateProcessor(chainConfig, bc))
 
 	var err error
-	bc.hc, err = NewHeaderChain(db, chainConfig, engine, bc.getProcInterrupt)
+	bc.hc, err = NewHeaderChain(db, chainConfig, bc.getProcInterrupt)
 	if err != nil {
 		return nil, err
 	}

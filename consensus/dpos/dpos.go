@@ -41,19 +41,6 @@ var (
 	dumpMagic = []uint32{0xbaddcafe, 0xfee1dead}
 )
 
-
-
-
-
-
-
-
-
-
-
-
-
-// Mode defines the type and amount of PoW verification an dpos engine makes.
 type Mode uint
 
 const (
@@ -67,9 +54,9 @@ type Config struct {
 
 }
 
-// dops is a consensus engine based on proot-of-work implementing the dpos
+// dpos is a consensus engine based on proot-of-work implementing the dpos
 // algorithm.
-type dops struct {
+type dpos struct {
 	config Config
 
 	// Mining related fields
@@ -78,7 +65,6 @@ type dops struct {
 	update   chan struct{} // Notification channel to update mining parameters
 
 	// The fields below are hooks for testing
-	shared    *dops         // Shared PoW verifier to avoid cache regeneration
 	fakeFail  uint64        // Block number which fails PoW check even in fake mode
 	fakeDelay time.Duration // Time delay to sleep for before returning from verify
 
@@ -87,60 +73,29 @@ type dops struct {
 
 
 // New creates a full sized ethash PoW scheme.
-func New(config Config) *dops {
-	return &dops{
+func New(config Config) *dpos {
+	return &dpos{
 		config:   config,
 		update:   make(chan struct{}),
 	}
 }
 
-
-// NewFaker creates a dpos consensus engine with a fake PoW scheme that accepts
-// all blocks' seal as valid, though they still have to conform to the yooba
-// consensus rules.
-func NewFaker() *dops {
-	return &dops{
+func Default() *dpos {
+	return &dpos{
+		update:   make(chan struct{}),
 	}
+	//TODO set default config here
 }
 
-// NewFakeFailer creates a dpos consensus engine with a fake PoW scheme that
-// accepts all blocks as valid apart from the single one specified, though they
-// still have to conform to the yooba consensus rules.
-func NewFakeFailer(fail uint64) *dops {
-	return &dops{
-		fakeFail: fail,
-	}
+func (dpos *dpos)  SetConfig(config Config){
+   dpos.config = config
 }
-
-// NewFakeDelayer creates a dpos consensus engine with a fake PoW scheme that
-// accepts all blocks as valid, but delays verifications by some time, though
-// they still have to conform to the yooba consensus rules.
-func NewFakeDelayer(delay time.Duration) *dops {
-	return &dops{
-		fakeDelay: delay,
-	}
-}
-
-// NewFullFaker creates an dpos consensus engine with a full fake scheme that
-// accepts all blocks as valid, without checking any consensus rules whatsoever.
-func NewFullFaker() *dops {
-	return &dops{
-
-	}
-}
-
-// NewShared creates a full sized dpos PoW shared between all requesters running
-// in the same process.
-func NewShared() *dops {
-	return &dops{}
-}
-
 
 
 
 
 // APIs implements consensus.Engine, returning the user facing RPC APIs. Currently
 // that is empty.
-func (ethash *dops) APIs(chain consensus.ChainReader) []rpc.API {
+func (dpos *dpos) APIs(chain consensus.ChainReader) []rpc.API {
 	return nil
 }
