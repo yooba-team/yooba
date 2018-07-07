@@ -48,6 +48,7 @@ import (
 )
 
 const quitCommand = "~Q"
+const entropySize = 32
 
 // singletons
 var (
@@ -55,6 +56,7 @@ var (
 	shh        *whisper.Whisper
 	done       chan struct{}
 	mailServer mailserver.WMailServer
+	entropy    [entropySize]byte
 
 	input = bufio.NewReader(os.Stdin)
 )
@@ -83,7 +85,8 @@ var (
 	asymmetricMode = flag.Bool("asym", false, "use asymmetric encryption")
 	generateKey    = flag.Bool("generatekey", false, "generate and show the private key")
 	fileExMode     = flag.Bool("fileexchange", false, "file exchange mode")
-	testMode       = flag.Bool("test", false, "use of predefined parameters for diagnostics")
+	fileReader     = flag.Bool("filereader", false, "load and decrypt messages saved as files, display as plain text")
+	testMode       = flag.Bool("test", false, "use of predefined parameters for diagnostics (password, etc.)")
 	echoMode       = flag.Bool("echo", false, "echo mode: prints some arguments for diagnostics")
 
 	argVerbosity = flag.Int("verbosity", int(log.LvlError), "log verbosity level")
@@ -93,13 +96,13 @@ var (
 	argPoW       = flag.Float64("pow", whisper.DefaultMinimumPoW, "PoW for normal messages in float format (e.g. 2.7)")
 	argServerPoW = flag.Float64("mspow", whisper.DefaultMinimumPoW, "PoW requirement for Mail Server request")
 
-	argIP      = flag.String("ip", "", "IP address and port of this node (e.g. 127.0.0.1:31318)")
+	argIP      = flag.String("ip", "", "IP address and port of this node (e.g. 127.0.0.1:30303)")
 	argPub     = flag.String("pub", "", "public key for asymmetric encryption")
 	argDBPath  = flag.String("dbpath", "", "path to the server's DB directory")
 	argIDFile  = flag.String("idfile", "", "file name with node id (private key)")
 	argEnode   = flag.String("boot", "", "bootstrap node you want to connect to (e.g. enode://e454......08d50@52.176.211.200:16428)")
 	argTopic   = flag.String("topic", "", "topic in hexadecimal format (e.g. 70a4beef)")
-	argSaveDir = flag.String("savedir", "", "directory where incoming messages will be saved as files")
+	argSaveDir = flag.String("savedir", "", "directory where all incoming messages will be saved as files")
 )
 
 func main() {
@@ -135,8 +138,8 @@ func processArgs() {
 	}
 
 	if *asymmetricMode && len(*argPub) > 0 {
-		pub = crypto.ToECDSAPub(common.FromHex(*argPub))
-		if !isKeyValid(pub) {
+		var err error
+		if pub, err = crypto.UnmarshalPubkey(common.FromHex(*argPub)); err != nil {
 			utils.Fatalf("invalid public key")
 		}
 	}
@@ -319,9 +322,8 @@ func configureNode() {
 			if b == nil {
 				utils.Fatalf("Error: can not convert hexadecimal string")
 			}
-			pub = crypto.ToECDSAPub(b)
-			if !isKeyValid(pub) {
-				utils.Fatalf("Error: invalid public key")
+			if pub, err = crypto.UnmarshalPubkey(b); err != nil {
+				utils.Fatalf("Error: invalid peer public key")
 			}
 		}
 	}

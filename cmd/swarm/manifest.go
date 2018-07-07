@@ -27,6 +27,7 @@ import (
 	"github.com/yooba-team/yooba/cmd/utils"
 	"github.com/yooba-team/yooba/swarm/api"
 	swarm "github.com/yooba-team/yooba/swarm/api/client"
+
 	"gopkg.in/urfave/cli.v1"
 )
 
@@ -35,7 +36,7 @@ const bzzManifestJSON = "application/bzz-manifest+json"
 func add(ctx *cli.Context) {
 	args := ctx.Args()
 	if len(args) < 3 {
-		utils.Fatalf("Need atleast three arguments <MHASH> <path> <HASH> [<content-type>]")
+		utils.Fatalf("Need at least three arguments <MHASH> <path> <HASH> [<content-type>]")
 	}
 
 	var (
@@ -69,7 +70,7 @@ func update(ctx *cli.Context) {
 
 	args := ctx.Args()
 	if len(args) < 3 {
-		utils.Fatalf("Need atleast three arguments <MHASH> <path> <HASH>")
+		utils.Fatalf("Need at least three arguments <MHASH> <path> <HASH>")
 	}
 
 	var (
@@ -101,7 +102,7 @@ func update(ctx *cli.Context) {
 func remove(ctx *cli.Context) {
 	args := ctx.Args()
 	if len(args) < 2 {
-		utils.Fatalf("Need atleast two arguments <MHASH> <path>")
+		utils.Fatalf("Need at least two arguments <MHASH> <path>")
 	}
 
 	var (
@@ -131,13 +132,13 @@ func addEntryToManifest(ctx *cli.Context, mhash, path, hash, ctype string) strin
 		longestPathEntry = api.ManifestEntry{}
 	)
 
-	mroot, err := client.DownloadManifest(mhash)
+	mroot, isEncrypted, err := client.DownloadManifest(mhash)
 	if err != nil {
 		utils.Fatalf("Manifest download failed: %v", err)
 	}
 
 	//TODO: check if the "hash" to add is valid and present in swarm
-	_, err = client.DownloadManifest(hash)
+	_, _, err = client.DownloadManifest(hash)
 	if err != nil {
 		utils.Fatalf("Hash to add is not present: %v", err)
 	}
@@ -180,7 +181,7 @@ func addEntryToManifest(ctx *cli.Context, mhash, path, hash, ctype string) strin
 		mroot.Entries = append(mroot.Entries, newEntry)
 	}
 
-	newManifestHash, err := client.UploadManifest(mroot)
+	newManifestHash, err := client.UploadManifest(mroot, isEncrypted)
 	if err != nil {
 		utils.Fatalf("Manifest upload failed: %v", err)
 	}
@@ -197,7 +198,7 @@ func updateEntryInManifest(ctx *cli.Context, mhash, path, hash, ctype string) st
 		longestPathEntry = api.ManifestEntry{}
 	)
 
-	mroot, err := client.DownloadManifest(mhash)
+	mroot, isEncrypted, err := client.DownloadManifest(mhash)
 	if err != nil {
 		utils.Fatalf("Manifest download failed: %v", err)
 	}
@@ -257,7 +258,7 @@ func updateEntryInManifest(ctx *cli.Context, mhash, path, hash, ctype string) st
 		mroot = newMRoot
 	}
 
-	newManifestHash, err := client.UploadManifest(mroot)
+	newManifestHash, err := client.UploadManifest(mroot, isEncrypted)
 	if err != nil {
 		utils.Fatalf("Manifest upload failed: %v", err)
 	}
@@ -273,7 +274,7 @@ func removeEntryFromManifest(ctx *cli.Context, mhash, path string) string {
 		longestPathEntry = api.ManifestEntry{}
 	)
 
-	mroot, err := client.DownloadManifest(mhash)
+	mroot, isEncrypted, err := client.DownloadManifest(mhash)
 	if err != nil {
 		utils.Fatalf("Manifest download failed: %v", err)
 	}
@@ -323,7 +324,7 @@ func removeEntryFromManifest(ctx *cli.Context, mhash, path string) string {
 		mroot = newMRoot
 	}
 
-	newManifestHash, err := client.UploadManifest(mroot)
+	newManifestHash, err := client.UploadManifest(mroot, isEncrypted)
 	if err != nil {
 		utils.Fatalf("Manifest upload failed: %v", err)
 	}

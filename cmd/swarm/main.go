@@ -17,11 +17,9 @@
 package main
 
 import (
-	"context"
 	"crypto/ecdsa"
 	"fmt"
 	"io/ioutil"
-	"math/big"
 	"os"
 	"os/signal"
 	"runtime"
@@ -29,30 +27,44 @@ import (
 	"strconv"
 	"strings"
 	"syscall"
-	"time"
 
 	"github.com/yooba-team/yooba/accounts"
 	"github.com/yooba-team/yooba/accounts/keystore"
 	"github.com/yooba-team/yooba/cmd/utils"
 	"github.com/yooba-team/yooba/common"
 	"github.com/yooba-team/yooba/console"
-	"github.com/yooba-team/yooba/contracts/ens"
 	"github.com/yooba-team/yooba/crypto"
-	"github.com/yooba-team/yooba/yooclient"
 	"github.com/yooba-team/yooba/internal/debug"
 	"github.com/yooba-team/yooba/log"
 	"github.com/yooba-team/yooba/node"
 	"github.com/yooba-team/yooba/p2p"
 	"github.com/yooba-team/yooba/p2p/discover"
 	"github.com/yooba-team/yooba/params"
-	"github.com/yooba-team/yooba/rpc"
 	"github.com/yooba-team/yooba/swarm"
 	bzzapi "github.com/yooba-team/yooba/swarm/api"
+
+	swarmmetrics "github.com/yooba-team/yooba/swarm/metrics"
 
 	"gopkg.in/urfave/cli.v1"
 )
 
 const clientIdentifier = "swarm"
+const helpTemplate = `NAME:
+{{.HelpName}} - {{.Usage}}
+
+USAGE:
+{{if .UsageText}}{{.UsageText}}{{else}}{{.HelpName}}{{if .VisibleFlags}} [command options]{{end}} {{if .ArgsUsage}}{{.ArgsUsage}}{{else}}[arguments...]{{end}}{{end}}{{if .Category}}
+
+CATEGORY:
+{{.Category}}{{end}}{{if .Description}}
+
+DESCRIPTION:
+{{.Description}}{{end}}{{if .VisibleFlags}}
+
+OPTIONS:
+{{range .VisibleFlags}}{{.}}
+{{end}}{{end}}
+`
 
 var (
 	gitCommit        string // Git SHA1 commit hash of the release (set via linker flags)
@@ -91,10 +103,6 @@ var (
 		Usage:  "Network identifier (integer, default 3=swarm testnet)",
 		EnvVar: SWARM_ENV_NETWORK_ID,
 	}
-	SwarmConfigPathFlag = cli.StringFlag{
-		Name:  "bzzconfig",
-		Usage: "DEPRECATED: please use --config path/to/TOML-file",
-	}
 	SwarmSwapEnabledFlag = cli.BoolFlag{
 		Name:   "swap",
 		Usage:  "Swarm SWAP enabled (default false)",
@@ -102,30 +110,35 @@ var (
 	}
 	SwarmSwapAPIFlag = cli.StringFlag{
 		Name:   "swap-api",
-		Usage:  "URL of the Yooba API provider to use to settle SWAP payments",
+		Usage:  "URL of the Ethereum API provider to use to settle SWAP payments",
 		EnvVar: SWARM_ENV_SWAP_API,
 	}
-	SwarmSyncEnabledFlag = cli.BoolTFlag{
-		Name:   "sync",
-		Usage:  "Swarm Syncing enabled (default true)",
-		EnvVar: SWARM_ENV_SYNC_ENABLE,
+	SwarmSyncDisabledFlag = cli.BoolTFlag{
+		Name:   "nosync",
+		Usage:  "Disable swarm syncing",
+		EnvVar: SWARM_ENV_SYNC_DISABLE,
 	}
-	EnsAPIFlag = cli.StringFlag{
+	SwarmSyncUpdateDelay = cli.DurationFlag{
+		Name:   "sync-update-delay",
+		Usage:  "Duration for sync subscriptions update after no new peers are added (default 15s)",
+		EnvVar: SWARM_ENV_SYNC_UPDATE_DELAY,
+	}
+	SwarmDeliverySkipCheckFlag = cli.BoolFlag{
+		Name:   "delivery-skip-check",
+		Usage:  "Skip chunk delivery check (default false)",
+		EnvVar: SWARM_ENV_DELIVERY_SKIP_CHECK,
+	}
+	EnsAPIFlag = cli.StringSliceFlag{
 		Name:   "ens-api",
-		Usage:  "URL of the Yooba API provider to use for ENS record lookups",
+		Usage:  "ENS API endpoint for a TLD and with contract address, can be repeated, format [tld:][contract-addr@]url",
 		EnvVar: SWARM_ENV_ENS_API,
-	}
-	EnsAddrFlag = cli.StringFlag{
-		Name:   "ens-addr",
-		Usage:  "ENS contract address (default is detected as testnet or mainnet using --ens-api)",
-		EnvVar: SWARM_ENV_ENS_ADDR,
 	}
 	SwarmApiFlag = cli.StringFlag{
 		Name:  "bzzapi",
 		Usage: "Swarm HTTP endpoint",
 		Value: "http://127.0.0.1:8500",
 	}
-	SwarmRecursiveUploadFlag = cli.BoolFlag{
+	SwarmRecursiveFlag = cli.BoolFlag{
 		Name:  "recursive",
 		Usage: "Upload directories recursively",
 	}
@@ -145,16 +158,29 @@ var (
 		Name:  "mime",
 		Usage: "force mime type",
 	}
+	SwarmEncryptedFlag = cli.BoolFlag{
+		Name:  "encrypt",
+		Usage: "use encrypted upload",
+	}
 	CorsStringFlag = cli.StringFlag{
 		Name:   "corsdomain",
 		Usage:  "Domain on which to send Access-Control-Allow-Origin header (multiple domains can be supplied separated by a ',')",
 		EnvVar: SWARM_ENV_CORS,
 	}
-
-	// the following flags are deprecated and should be removed in the future
-	DeprecatedEthAPIFlag = cli.StringFlag{
-		Name:  "ethapi",
-		Usage: "DEPRECATED: please use --ens-api and --swap-api",
+	SwarmStorePath = cli.StringFlag{
+		Name:   "store.path",
+		Usage:  "Path to leveldb chunk DB (default <$GETH_ENV_DIR>/swarm/bzz-<$BZZ_KEY>/chunks)",
+		EnvVar: SWARM_ENV_STORE_PATH,
+	}
+	SwarmStoreCapacity = cli.Uint64Flag{
+		Name:   "store.size",
+		Usage:  "Number of chunks (5M is roughly 20-25GB) (default 5000000)",
+		EnvVar: SWARM_ENV_STORE_CAPACITY,
+	}
+	SwarmStoreCacheCapacity = cli.UintFlag{
+		Name:   "store.cache.size",
+		Usage:  "Number of recent chunks cached in memory (default 5000)",
+		EnvVar: SWARM_ENV_STORE_CACHE_CAPACITY,
 	}
 )
 
@@ -166,7 +192,7 @@ var (
 
 var defaultNodeConfig = node.DefaultConfig
 
-// This init function sets defaults so cmd/swarm can run alongside yooba.
+// This init function sets defaults so cmd/swarm can run alongside geth.
 func init() {
 	defaultNodeConfig.Name = clientIdentifier
 	defaultNodeConfig.Version = params.VersionWithCommit(gitCommit)
@@ -176,7 +202,7 @@ func init() {
 	utils.ListenPortFlag.Value = 30399
 }
 
-var app = utils.NewApp(gitCommit, "Yooba Swarm")
+var app = utils.NewApp(gitCommit, "Ethereum Swarm")
 
 // This init function creates the cli.App.
 func init() {
@@ -185,140 +211,169 @@ func init() {
 	app.Copyright = "Copyright 2013-2016 The go-ethereum Authors"
 	app.Commands = []cli.Command{
 		{
-			Action:    version,
-			Name:      "version",
-			Usage:     "Print version numbers",
-			ArgsUsage: " ",
-			Description: `
-The output of this command is supposed to be machine-readable.
-`,
+			Action:             version,
+			CustomHelpTemplate: helpTemplate,
+			Name:               "version",
+			Usage:              "Print version numbers",
+			Description:        "The output of this command is supposed to be machine-readable",
 		},
 		{
-			Action:    upload,
-			Name:      "up",
-			Usage:     "upload a file or directory to swarm using the HTTP API",
-			ArgsUsage: " <file>",
-			Description: `
-"upload a file or directory to swarm using the HTTP API and prints the root hash",
-`,
+			Action:             upload,
+			CustomHelpTemplate: helpTemplate,
+			Name:               "up",
+			Usage:              "uploads a file or directory to swarm using the HTTP API",
+			ArgsUsage:          "<file>",
+			Flags:              []cli.Flag{SwarmEncryptedFlag},
+			Description:        "uploads a file or directory to swarm using the HTTP API and prints the root hash",
 		},
 		{
-			Action:    list,
-			Name:      "ls",
-			Usage:     "list files and directories contained in a manifest",
-			ArgsUsage: " <manifest> [<prefix>]",
-			Description: `
-Lists files and directories contained in a manifest.
-`,
+			Action:             list,
+			CustomHelpTemplate: helpTemplate,
+			Name:               "ls",
+			Usage:              "list files and directories contained in a manifest",
+			ArgsUsage:          "<manifest> [<prefix>]",
+			Description:        "Lists files and directories contained in a manifest",
 		},
 		{
-			Action:    hash,
-			Name:      "hash",
-			Usage:     "print the swarm hash of a file or directory",
-			ArgsUsage: " <file>",
-			Description: `
-Prints the swarm hash of file or directory.
-`,
+			Action:             hash,
+			CustomHelpTemplate: helpTemplate,
+			Name:               "hash",
+			Usage:              "print the swarm hash of a file or directory",
+			ArgsUsage:          "<file>",
+			Description:        "Prints the swarm hash of file or directory",
 		},
 		{
-			Name:      "manifest",
-			Usage:     "update a MANIFEST",
-			ArgsUsage: "manifest COMMAND",
+			Action:    download,
+			Name:      "down",
+			Flags:     []cli.Flag{SwarmRecursiveFlag},
+			Usage:     "downloads a swarm manifest or a file inside a manifest",
+			ArgsUsage: " <uri> [<dir>]",
 			Description: `
-Updates a MANIFEST by adding/removing/updating the hash of a path.
+Downloads a swarm bzz uri to the given dir. When no dir is provided, working directory is assumed. --recursive flag is expected when downloading a manifest with multiple entries.
 `,
+		},
+
+		{
+			Name:               "manifest",
+			CustomHelpTemplate: helpTemplate,
+			Usage:              "perform operations on swarm manifests",
+			ArgsUsage:          "COMMAND",
+			Description:        "Updates a MANIFEST by adding/removing/updating the hash of a path.\nCOMMAND could be: add, update, remove",
 			Subcommands: []cli.Command{
 				{
-					Action:    add,
-					Name:      "add",
-					Usage:     "add a new path to the manifest",
-					ArgsUsage: "<MANIFEST> <path> <hash> [<content-type>]",
-					Description: `
-Adds a new path to the manifest
-`,
+					Action:             add,
+					CustomHelpTemplate: helpTemplate,
+					Name:               "add",
+					Usage:              "add a new path to the manifest",
+					ArgsUsage:          "<MANIFEST> <path> <hash> [<content-type>]",
+					Description:        "Adds a new path to the manifest",
 				},
 				{
-					Action:    update,
-					Name:      "update",
-					Usage:     "update the hash for an already existing path in the manifest",
-					ArgsUsage: "<MANIFEST> <path> <newhash> [<newcontent-type>]",
-					Description: `
-Update the hash for an already existing path in the manifest
-`,
+					Action:             update,
+					CustomHelpTemplate: helpTemplate,
+					Name:               "update",
+					Usage:              "update the hash for an already existing path in the manifest",
+					ArgsUsage:          "<MANIFEST> <path> <newhash> [<newcontent-type>]",
+					Description:        "Update the hash for an already existing path in the manifest",
 				},
 				{
-					Action:    remove,
-					Name:      "remove",
-					Usage:     "removes a path from the manifest",
-					ArgsUsage: "<MANIFEST> <path>",
-					Description: `
-Removes a path from the manifest
-`,
+					Action:             remove,
+					CustomHelpTemplate: helpTemplate,
+					Name:               "remove",
+					Usage:              "removes a path from the manifest",
+					ArgsUsage:          "<MANIFEST> <path>",
+					Description:        "Removes a path from the manifest",
 				},
 			},
 		},
 		{
-			Name:      "db",
-			Usage:     "manage the local chunk database",
-			ArgsUsage: "db COMMAND",
-			Description: `
-Manage the local chunk database.
-`,
+			Name:               "fs",
+			CustomHelpTemplate: helpTemplate,
+			Usage:              "perform FUSE operations",
+			ArgsUsage:          "fs COMMAND",
+			Description:        "Performs FUSE operations by mounting/unmounting/listing mount points. This assumes you already have a Swarm node running locally. For all operation you must reference the correct path to bzzd.ipc in order to communicate with the node",
 			Subcommands: []cli.Command{
 				{
-					Action:    dbExport,
-					Name:      "export",
-					Usage:     "export a local chunk database as a tar archive (use - to send to stdout)",
-					ArgsUsage: "<chunkdb> <file>",
+					Action:             mount,
+					CustomHelpTemplate: helpTemplate,
+					Name:               "mount",
+					Flags:              []cli.Flag{utils.IPCPathFlag},
+					Usage:              "mount a swarm hash to a mount point",
+					ArgsUsage:          "swarm fs mount --ipcpath <path to bzzd.ipc> <manifest hash> <mount point>",
+					Description:        "Mounts a Swarm manifest hash to a given mount point. This assumes you already have a Swarm node running locally. You must reference the correct path to your bzzd.ipc file",
+				},
+				{
+					Action:             unmount,
+					CustomHelpTemplate: helpTemplate,
+					Name:               "unmount",
+					Flags:              []cli.Flag{utils.IPCPathFlag},
+					Usage:              "unmount a swarmfs mount",
+					ArgsUsage:          "swarm fs unmount --ipcpath <path to bzzd.ipc> <mount point>",
+					Description:        "Unmounts a swarmfs mount residing at <mount point>. This assumes you already have a Swarm node running locally. You must reference the correct path to your bzzd.ipc file",
+				},
+				{
+					Action:             listMounts,
+					CustomHelpTemplate: helpTemplate,
+					Name:               "list",
+					Flags:              []cli.Flag{utils.IPCPathFlag},
+					Usage:              "list swarmfs mounts",
+					ArgsUsage:          "swarm fs list --ipcpath <path to bzzd.ipc>",
+					Description:        "Lists all mounted swarmfs volumes. This assumes you already have a Swarm node running locally. You must reference the correct path to your bzzd.ipc file",
+				},
+			},
+		},
+		{
+			Name:               "db",
+			CustomHelpTemplate: helpTemplate,
+			Usage:              "manage the local chunk database",
+			ArgsUsage:          "db COMMAND",
+			Description:        "Manage the local chunk database",
+			Subcommands: []cli.Command{
+				{
+					Action:             dbExport,
+					CustomHelpTemplate: helpTemplate,
+					Name:               "export",
+					Usage:              "export a local chunk database as a tar archive (use - to send to stdout)",
+					ArgsUsage:          "<chunkdb> <file>",
 					Description: `
 Export a local chunk database as a tar archive (use - to send to stdout).
 
-    swarm db export ~/.yooba/swarm/bzz-KEY/chunks chunks.tar
+    swarm db export ~/.ethereum/swarm/bzz-KEY/chunks chunks.tar
 
 The export may be quite large, consider piping the output through the Unix
 pv(1) tool to get a progress bar:
 
-    swarm db export ~/.yooba/swarm/bzz-KEY/chunks - | pv > chunks.tar
+    swarm db export ~/.ethereum/swarm/bzz-KEY/chunks - | pv > chunks.tar
 `,
 				},
 				{
-					Action:    dbImport,
-					Name:      "import",
-					Usage:     "import chunks from a tar archive into a local chunk database (use - to read from stdin)",
-					ArgsUsage: "<chunkdb> <file>",
+					Action:             dbImport,
+					CustomHelpTemplate: helpTemplate,
+					Name:               "import",
+					Usage:              "import chunks from a tar archive into a local chunk database (use - to read from stdin)",
+					ArgsUsage:          "<chunkdb> <file>",
 					Description: `
 Import chunks from a tar archive into a local chunk database (use - to read from stdin).
 
-    swarm db import ~/.yooba/swarm/bzz-KEY/chunks chunks.tar
+    swarm db import ~/.ethereum/swarm/bzz-KEY/chunks chunks.tar
 
 The import may be quite large, consider piping the input through the Unix
 pv(1) tool to get a progress bar:
 
-    pv chunks.tar | swarm db import ~/.yooba/swarm/bzz-KEY/chunks -
+    pv chunks.tar | swarm db import ~/.ethereum/swarm/bzz-KEY/chunks -
 `,
 				},
 				{
-					Action:    dbClean,
-					Name:      "clean",
-					Usage:     "remove corrupt entries from a local chunk database",
-					ArgsUsage: "<chunkdb>",
-					Description: `
-Remove corrupt entries from a local chunk database.
-`,
+					Action:             dbClean,
+					CustomHelpTemplate: helpTemplate,
+					Name:               "clean",
+					Usage:              "remove corrupt entries from a local chunk database",
+					ArgsUsage:          "<chunkdb>",
+					Description:        "Remove corrupt entries from a local chunk database",
 				},
 			},
 		},
-		{
-			Action: func(ctx *cli.Context) {
-				utils.Fatalf("ERROR: 'swarm cleandb' has been removed, please use 'swarm db clean'.")
-			},
-			Name:      "cleandb",
-			Usage:     "DEPRECATED: use 'swarm db clean'",
-			ArgsUsage: " ",
-			Description: `
-DEPRECATED: use 'swarm db clean'.
-`,
-		},
+
 		// See config.go
 		DumpConfigCommand,
 	}
@@ -343,12 +398,12 @@ DEPRECATED: use 'swarm db clean'.
 		// bzzd-specific flags
 		CorsStringFlag,
 		EnsAPIFlag,
-		EnsAddrFlag,
 		SwarmTomlConfigPathFlag,
-		SwarmConfigPathFlag,
 		SwarmSwapEnabledFlag,
 		SwarmSwapAPIFlag,
-		SwarmSyncEnabledFlag,
+		SwarmSyncDisabledFlag,
+		SwarmSyncUpdateDelay,
+		SwarmDeliverySkipCheckFlag,
 		SwarmListenAddrFlag,
 		SwarmPortFlag,
 		SwarmAccountFlag,
@@ -356,18 +411,33 @@ DEPRECATED: use 'swarm db clean'.
 		ChequebookAddrFlag,
 		// upload flags
 		SwarmApiFlag,
-		SwarmRecursiveUploadFlag,
+		SwarmRecursiveFlag,
 		SwarmWantManifestFlag,
 		SwarmUploadDefaultPath,
 		SwarmUpFromStdinFlag,
 		SwarmUploadMimeType,
-		//deprecated flags
-		DeprecatedEthAPIFlag,
+		// storage flags
+		SwarmStorePath,
+		SwarmStoreCapacity,
+		SwarmStoreCacheCapacity,
 	}
+	rpcFlags := []cli.Flag{
+		utils.WSEnabledFlag,
+		utils.WSListenAddrFlag,
+		utils.WSPortFlag,
+		utils.WSApiFlag,
+		utils.WSAllowedOriginsFlag,
+	}
+	app.Flags = append(app.Flags, rpcFlags...)
 	app.Flags = append(app.Flags, debug.Flags...)
+	app.Flags = append(app.Flags, swarmmetrics.Flags...)
 	app.Before = func(ctx *cli.Context) error {
 		runtime.GOMAXPROCS(runtime.NumCPU())
-		return debug.Setup(ctx)
+		if err := debug.Setup(ctx); err != nil {
+			return err
+		}
+		swarmmetrics.Setup(ctx)
+		return nil
 	}
 	app.After = func(ctx *cli.Context) error {
 		debug.Exit()
@@ -383,16 +453,12 @@ func main() {
 }
 
 func version(ctx *cli.Context) error {
-	fmt.Println(strings.Title(clientIdentifier))
-	fmt.Println("Version:", params.Version)
+	fmt.Println("Version:", SWARM_VERSION)
 	if gitCommit != "" {
 		fmt.Println("Git Commit:", gitCommit)
 	}
-	fmt.Println("Network Id:", ctx.GlobalInt(utils.NetworkIdFlag.Name))
 	fmt.Println("Go Version:", runtime.Version())
 	fmt.Println("OS:", runtime.GOOS)
-	fmt.Printf("GOPATH=%s\n", os.Getenv("GOPATH"))
-	fmt.Printf("GOROOT=%s\n", runtime.GOROOT())
 	return nil
 }
 
@@ -405,13 +471,17 @@ func bzzd(ctx *cli.Context) error {
 	}
 
 	cfg := defaultNodeConfig
-	//yooba only supports --datadir via command line
+
+	//pss operates on ws
+	cfg.WSModules = append(cfg.WSModules, "pss")
+
+	//geth only supports --datadir via command line
 	//in order to be consistent within swarm, if we pass --datadir via environment variable
-	//or via config file, we get the same directory for yooba and swarm
+	//or via config file, we get the same directory for geth and swarm
 	if _, err := os.Stat(bzzconfig.Path); err == nil {
 		cfg.DataDir = bzzconfig.Path
 	}
-	//setup the yooba node
+	//setup the ethereum node
 	utils.SetNodeConfig(ctx, &cfg)
 	stack, err := node.New(&cfg)
 	if err != nil {
@@ -420,8 +490,8 @@ func bzzd(ctx *cli.Context) error {
 	//a few steps need to be done after the config phase is completed,
 	//due to overriding behavior
 	initSwarmNode(bzzconfig, stack, ctx)
-	//register BZZ as node.Service in the Yooba node
-	registerBzzService(bzzconfig, ctx, stack)
+	//register BZZ as node.Service in the ethereum node
+	registerBzzService(bzzconfig, stack)
 	//start the node
 	utils.StartNode(stack)
 
@@ -439,7 +509,7 @@ func bzzd(ctx *cli.Context) error {
 		bootnodes := strings.Split(bzzconfig.BootNodes, ",")
 		injectBootnodes(stack.Server(), bootnodes)
 	} else {
-		if bzzconfig.NetworkId == 3 {
+		if bzzconfig.NetworkID == 3 {
 			injectBootnodes(stack.Server(), testbetBootNodes)
 		}
 	}
@@ -448,75 +518,13 @@ func bzzd(ctx *cli.Context) error {
 	return nil
 }
 
-// detectEnsAddr determines the ENS contract address by getting both the
-// version and genesis hash using the client and matching them to either
-// mainnet or testnet addresses
-func detectEnsAddr(client *rpc.Client) (common.Address, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
-
-	var version string
-	if err := client.CallContext(ctx, &version, "net_version"); err != nil {
-		return common.Address{}, err
-	}
-
-	block, err := yooclient.NewClient(client).BlockByNumber(ctx, big.NewInt(0))
-	if err != nil {
-		return common.Address{}, err
-	}
-
-	switch {
-
-	case version == "1" && block.Hash() == params.MainnetGenesisHash:
-		log.Info("using Mainnet ENS contract address", "addr", ens.MainNetAddress)
-		return ens.MainNetAddress, nil
-
-	case version == "3" && block.Hash() == params.TestnetGenesisHash:
-		log.Info("using Testnet ENS contract address", "addr", ens.TestNetAddress)
-		return ens.TestNetAddress, nil
-
-	default:
-		return common.Address{}, fmt.Errorf("unknown version and genesis hash: %s %s", version, block.Hash())
-	}
-}
-
-func registerBzzService(bzzconfig *bzzapi.Config, ctx *cli.Context, stack *node.Node) {
-
+func registerBzzService(bzzconfig *bzzapi.Config, stack *node.Node) {
 	//define the swarm service boot function
-	boot := func(ctx *node.ServiceContext) (node.Service, error) {
-		var swapClient *yooclient.Client
-		var err error
-		if bzzconfig.SwapApi != "" {
-			log.Info("connecting to SWAP API", "url", bzzconfig.SwapApi)
-			swapClient, err = yooclient.Dial(bzzconfig.SwapApi)
-			if err != nil {
-				return nil, fmt.Errorf("error connecting to SWAP API %s: %s", bzzconfig.SwapApi, err)
-			}
-		}
-
-		var ensClient *yooclient.Client
-		if bzzconfig.EnsApi != "" {
-			log.Info("connecting to ENS API", "url", bzzconfig.EnsApi)
-			client, err := rpc.Dial(bzzconfig.EnsApi)
-			if err != nil {
-				return nil, fmt.Errorf("error connecting to ENS API %s: %s", bzzconfig.EnsApi, err)
-			}
-			ensClient = yooclient.NewClient(client)
-
-			//no ENS root address set yet
-			if bzzconfig.EnsRoot == (common.Address{}) {
-				ensAddr, err := detectEnsAddr(client)
-				if err == nil {
-					bzzconfig.EnsRoot = ensAddr
-				} else {
-					log.Warn(fmt.Sprintf("could not determine ENS contract address, using default %s", bzzconfig.EnsRoot), "err", err)
-				}
-			}
-		}
-
-		return swarm.NewSwarm(ctx, swapClient, ensClient, bzzconfig, bzzconfig.SwapEnabled, bzzconfig.SyncEnabled, bzzconfig.Cors)
+	boot := func(_ *node.ServiceContext) (node.Service, error) {
+		// In production, mockStore must be always nil.
+		return swarm.NewSwarm(bzzconfig, nil)
 	}
-	//register within the Yooba node
+	//register within the ethereum node
 	if err := stack.Register(boot); err != nil {
 		utils.Fatalf("Failed to register the Swarm service: %v", err)
 	}
