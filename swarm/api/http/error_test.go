@@ -14,22 +14,23 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
 
-package http_test
+package http
 
 import (
 	"encoding/json"
-	"golang.org/x/net/html"
 	"io/ioutil"
 	"net/http"
 	"strings"
 	"testing"
+
+	"golang.org/x/net/html"
 
 	"github.com/yooba-team/yooba/swarm/testutil"
 )
 
 func TestError(t *testing.T) {
 
-	srv := testutil.NewTestSwarmServer(t)
+	srv := testutil.NewTestSwarmServer(t, serverFunc)
 	defer srv.Close()
 
 	var resp *http.Response
@@ -55,7 +56,7 @@ func TestError(t *testing.T) {
 }
 
 func Test404Page(t *testing.T) {
-	srv := testutil.NewTestSwarmServer(t)
+	srv := testutil.NewTestSwarmServer(t, serverFunc)
 	defer srv.Close()
 
 	var resp *http.Response
@@ -81,7 +82,7 @@ func Test404Page(t *testing.T) {
 }
 
 func Test500Page(t *testing.T) {
-	srv := testutil.NewTestSwarmServer(t)
+	srv := testutil.NewTestSwarmServer(t, serverFunc)
 	defer srv.Close()
 
 	var resp *http.Response
@@ -96,8 +97,37 @@ func Test500Page(t *testing.T) {
 	defer resp.Body.Close()
 	respbody, err = ioutil.ReadAll(resp.Body)
 
-	if resp.StatusCode != 500 || !strings.Contains(string(respbody), "500") {
-		t.Fatalf("Invalid Status Code received, expected 500, got %d", resp.StatusCode)
+	if resp.StatusCode != 404 {
+		t.Fatalf("Invalid Status Code received, expected 404, got %d", resp.StatusCode)
+	}
+
+	_, err = html.Parse(strings.NewReader(string(respbody)))
+	if err != nil {
+		t.Fatalf("HTML validation failed for error page returned!")
+	}
+}
+func Test500PageWith0xHashPrefix(t *testing.T) {
+	srv := testutil.NewTestSwarmServer(t, serverFunc)
+	defer srv.Close()
+
+	var resp *http.Response
+	var respbody []byte
+
+	url := srv.URL + "/bzz:/0xthisShouldFailWith500CodeAndAHelpfulMessage"
+	resp, err := http.Get(url)
+
+	if err != nil {
+		t.Fatalf("Request failed: %v", err)
+	}
+	defer resp.Body.Close()
+	respbody, err = ioutil.ReadAll(resp.Body)
+
+	if resp.StatusCode != 404 {
+		t.Fatalf("Invalid Status Code received, expected 404, got %d", resp.StatusCode)
+	}
+
+	if !strings.Contains(string(respbody), "The requested hash seems to be prefixed with") {
+		t.Fatalf("Did not receive the expected error message")
 	}
 
 	_, err = html.Parse(strings.NewReader(string(respbody)))
@@ -107,7 +137,7 @@ func Test500Page(t *testing.T) {
 }
 
 func TestJsonResponse(t *testing.T) {
-	srv := testutil.NewTestSwarmServer(t)
+	srv := testutil.NewTestSwarmServer(t, serverFunc)
 	defer srv.Close()
 
 	var resp *http.Response
@@ -127,8 +157,8 @@ func TestJsonResponse(t *testing.T) {
 	defer resp.Body.Close()
 	respbody, err = ioutil.ReadAll(resp.Body)
 
-	if resp.StatusCode != 500 {
-		t.Fatalf("Invalid Status Code received, expected 500, got %d", resp.StatusCode)
+	if resp.StatusCode != 404 {
+		t.Fatalf("Invalid Status Code received, expected 404, got %d", resp.StatusCode)
 	}
 
 	if !isJSON(string(respbody)) {

@@ -31,7 +31,7 @@ import (
 	"github.com/yooba-team/yooba/event"
 	"github.com/yooba-team/yooba/log"
 	"github.com/yooba-team/yooba/params"
-	"github.com/rcrowley/go-metrics"
+	"github.com/yooba-team/yooba/metrics"
 )
 
 var (

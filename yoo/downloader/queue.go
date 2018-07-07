@@ -28,8 +28,9 @@ import (
 	"github.com/yooba-team/yooba/common"
 	"github.com/yooba-team/yooba/core/types"
 	"github.com/yooba-team/yooba/log"
-	"github.com/rcrowley/go-metrics"
+
 	"gopkg.in/karalabe/cookiejar.v2/collections/prque"
+	"github.com/yooba-team/yooba/metrics"
 )
 
 var (

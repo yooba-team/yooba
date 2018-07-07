@@ -53,8 +53,7 @@ func TestLDB_PutGet(t *testing.T) {
 }
 
 func TestMemoryDB_PutGet(t *testing.T) {
-	db, _ := yoobadb.NewMemDatabase()
-	testPutGet(db, t)
+	testPutGet(yoobadb.NewMemDatabase(), t)
 }
 
 func testPutGet(db yoobadb.Database, t *testing.T) {
@@ -131,8 +130,7 @@ func TestLDB_ParallelPutGet(t *testing.T) {
 }
 
 func TestMemoryDB_ParallelPutGet(t *testing.T) {
-	db, _ := yoobadb.NewMemDatabase()
-	testParallelPutGet(db, t)
+	testParallelPutGet(yoobadb.NewMemDatabase(), t)
 }
 
 func testParallelPutGet(db yoobadb.Database, t *testing.T) {

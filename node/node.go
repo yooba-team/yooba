@@ -643,7 +643,7 @@ func (n *Node) EventMux() *event.TypeMux {
 // ephemeral, a memory database is returned.
 func (n *Node) OpenDatabase(name string, cache, handles int) (yoobadb.Database, error) {
 	if n.config.DataDir == "" {
-		return yoobadb.NewMemDatabase()
+		return yoobadb.NewMemDatabase(), nil
 	}
 	return yoobadb.NewLDBDatabase(n.config.resolvePath(name), cache, handles)
 }

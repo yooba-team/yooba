@@ -222,7 +222,7 @@ func makeHeader(chain consensus.ChainReader, parent *types.Block, state *state.S
 func newCanonical(n int, full bool) (yoobadb.Database, *BlockChain, error) {
 	// Initialize a fresh chain with only a genesis block
 	gspec := new(Genesis)
-	db, _ := yoobadb.NewMemDatabase()
+	db := yoobadb.NewMemDatabase()
 	genesis := gspec.MustCommit(db)
 
 	blockchain, _ := NewBlockChain(db, nil, params.AllEthashProtocolChanges, vm.Config{})

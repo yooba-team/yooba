@@ -17,6 +17,7 @@
 package p2p
 
 import (
+	"errors"
 	"fmt"
 	"io"
 	"net"
@@ -29,6 +30,9 @@ import (
 	"github.com/yooba-team/yooba/log"
 	"github.com/yooba-team/yooba/p2p/discover"
 	"github.com/yooba-team/yooba/rlp"
+)
+var (
+	ErrShuttingDown = errors.New("shutting down")
 )
 
 const (

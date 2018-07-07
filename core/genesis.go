@@ -221,7 +221,7 @@ func (g *Genesis) configOrDefault(ghash common.Hash) *params.ChainConfig {
 // to the given database (or discards it if nil).
 func (g *Genesis) ToBlock(db yoobadb.Database) *types.Block {
 	if db == nil {
-		db, _ = yoobadb.NewMemDatabase()
+		db = yoobadb.NewMemDatabase()
 	}
 	statedb, _ := state.New(common.Hash{}, state.NewDatabase(db))
 	for addr, account := range g.Alloc {

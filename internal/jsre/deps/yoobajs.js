@@ -5830,7 +5830,7 @@ module.exports = Shh;
  * @author Alex Beregszaszi <alex@rtfs.hu>
  * @date 2016
  *
- * Reference: https://github.com/ethereum/go-ethereum/blob/swarm/internal/yoobajsext/yoobajsext.go#L33
+ * Reference: https://github.com/yooba-team/yooba/blob/swarm/internal/yoobajsext/yoobajsext.go#L33
  */
 
 "use strict";
