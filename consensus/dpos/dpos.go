@@ -93,9 +93,6 @@ func (dpos *dpos)  SetConfig(config Config){
 
 
 
-
-// APIs implements consensus.Engine, returning the user facing RPC APIs. Currently
-// that is empty.
 func (dpos *dpos) APIs(chain consensus.ChainReader) []rpc.API {
 	return nil
 }

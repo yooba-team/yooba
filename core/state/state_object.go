@@ -103,6 +103,7 @@ type Account struct {
 	Root     common.Hash // merkle root of the storage trie
 	CodeHash []byte
 	Homepage string
+	AccountName string
 	Score int8
 	Goodsurl   common.Hash
 	Historyurl common.Hash
