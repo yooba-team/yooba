@@ -21,10 +21,12 @@ import (
 	"crypto/ecdsa"
 	"fmt"
 	mrand "math/rand"
-	"net"
 	"sync"
+	"sync/atomic"
 	"testing"
 	"time"
+
+	"net"
 
 	"github.com/yooba-team/yooba/common"
 	"github.com/yooba-team/yooba/common/hexutil"
@@ -32,6 +34,7 @@ import (
 	"github.com/yooba-team/yooba/p2p"
 	"github.com/yooba-team/yooba/p2p/discover"
 	"github.com/yooba-team/yooba/p2p/nat"
+
 )
 
 var keys = []string{
@@ -71,7 +74,7 @@ var keys = []string{
 }
 
 type TestData struct {
-	started int
+	started int64
 	counter [NumNodes]int
 	mutex   sync.RWMutex
 }
@@ -151,7 +154,7 @@ func resetParams(t *testing.T) {
 }
 
 func initBloom(t *testing.T) {
-	masterBloomFilter = make([]byte, bloomFilterSize)
+	masterBloomFilter = make([]byte, BloomFilterSize)
 	_, err := mrand.Read(masterBloomFilter)
 	if err != nil {
 		t.Fatalf("rand failed: %s.", err)
@@ -163,7 +166,7 @@ func initBloom(t *testing.T) {
 		masterBloomFilter[i] = 0xFF
 	}
 
-	if !bloomFilterMatch(masterBloomFilter, msgBloom) {
+	if !BloomFilterMatch(masterBloomFilter, msgBloom) {
 		t.Fatalf("bloom mismatch on initBloom.")
 	}
 }
@@ -172,12 +175,10 @@ func initialize(t *testing.T) {
 	initBloom(t)
 
 	var err error
-	ip := net.IPv4(127, 0, 0, 1)
-	port0 := 31318
 
 	for i := 0; i < NumNodes; i++ {
 		var node TestNode
-		b := make([]byte, bloomFilterSize)
+		b := make([]byte, BloomFilterSize)
 		copy(b, masterBloomFilter)
 		node.shh = New(&DefaultConfig)
 		node.shh.SetMinimumPoW(masterPow)
@@ -198,40 +199,36 @@ func initialize(t *testing.T) {
 		if err != nil {
 			t.Fatalf("failed convert the key: %s.", keys[i])
 		}
-		port := port0 + i
-		addr := fmt.Sprintf(":%d", port) // e.g. ":31318"
 		name := common.MakeName("whisper-go", "2.0")
-		var peers []*discover.Node
-		if i > 0 {
-			peerNodeID := nodes[i-1].id
-			peerPort := uint16(port - 1)
-			peerNode := discover.PubkeyID(&peerNodeID.PublicKey)
-			peer := discover.NewNode(peerNode, ip, peerPort, peerPort)
-			peers = append(peers, peer)
-		}
 
 		node.server = &p2p.Server{
 			Config: p2p.Config{
-				PrivateKey:     node.id,
-				MaxPeers:       NumNodes/2 + 1,
-				Name:           name,
-				Protocols:      node.shh.Protocols(),
-				ListenAddr:     addr,
-				NAT:            nat.Any(),
-				BootstrapNodes: peers,
-				StaticNodes:    peers,
-				TrustedNodes:   peers,
+				PrivateKey: node.id,
+				MaxPeers:   NumNodes/2 + 1,
+				Name:       name,
+				Protocols:  node.shh.Protocols(),
+				ListenAddr: "127.0.0.1:0",
+				NAT:        nat.Any(),
 			},
 		}
+
+		go startServer(t, node.server)
 
 		nodes[i] = &node
 	}
 
-	for i := 0; i < NumNodes; i++ {
-		go startServer(t, nodes[i].server)
-	}
-
 	waitForServersToStart(t)
+
+	for i := 0; i < NumNodes; i++ {
+		for j := 0; j < i; j++ {
+			peerNodeId := nodes[j].id
+			address, _ := net.ResolveTCPAddr("tcp", nodes[j].server.ListenAddr)
+			peerPort := uint16(address.Port)
+			peerNode := discover.PubkeyID(&peerNodeId.PublicKey)
+			peer := discover.NewNode(peerNode, address.IP, peerPort, peerPort)
+			nodes[i].server.AddPeer(peer)
+		}
+	}
 }
 
 func startServer(t *testing.T, s *p2p.Server) {
@@ -240,9 +237,7 @@ func startServer(t *testing.T, s *p2p.Server) {
 		t.Fatalf("failed to start the fisrt server.")
 	}
 
-	result.mutex.Lock()
-	defer result.mutex.Unlock()
-	result.started++
+	atomic.AddInt64(&result.started, 1)
 }
 
 func stopServers() {
@@ -472,7 +467,10 @@ func checkPowExchange(t *testing.T) {
 func checkBloomFilterExchangeOnce(t *testing.T, mustPass bool) bool {
 	for i, node := range nodes {
 		for peer := range node.shh.peers {
-			if !bytes.Equal(peer.bloomFilter, masterBloomFilter) {
+			peer.bloomMu.Lock()
+			equals := bytes.Equal(peer.bloomFilter, masterBloomFilter)
+			peer.bloomMu.Unlock()
+			if !equals {
 				if mustPass {
 					t.Fatalf("node %d: failed to exchange bloom filter requirement in round %d. \n%x expected \n%x got",
 						i, round, masterBloomFilter, peer.bloomFilter)
@@ -500,11 +498,13 @@ func checkBloomFilterExchange(t *testing.T) {
 
 func waitForServersToStart(t *testing.T) {
 	const iterations = 200
+	var started int64
 	for j := 0; j < iterations; j++ {
 		time.Sleep(50 * time.Millisecond)
-		if result.started == NumNodes {
+		started = atomic.LoadInt64(&result.started)
+		if started == NumNodes {
 			return
 		}
 	}
-	t.Fatalf("Failed to start all the servers, running: %d", result.started)
+	t.Fatalf("Failed to start all the servers, running: %d", started)
 }

@@ -41,7 +41,7 @@ import (
 const (
 	ProtocolVersion    = uint64(6) // Protocol version number
 	ProtocolVersionStr = "6.0"     // The same, as a string
-	ProtocolName       = "shh"     // Nickname of the protocol in yooba
+	ProtocolName       = "shh"     // Nickname of the protocol in geth
 
 	// whisper protocol message codes, according to EIP-627
 	statusCode           = 0   // used by whisper protocol
@@ -60,7 +60,7 @@ const (
 	aesKeyLength    = 32 // in bytes
 	aesNonceLength  = 12 // in bytes; for more info please see cipher.gcmStandardNonceSize & aesgcm.NonceSize()
 	keyIDSize       = 32 // in bytes
-	bloomFilterSize = 64 // in bytes
+	BloomFilterSize = 64 // in bytes
 	flagsLength     = 1
 
 	EnvelopeHeaderLength = 20
