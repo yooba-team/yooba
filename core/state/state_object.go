@@ -85,9 +85,7 @@ type stateObject struct {
 	// during the "update" phase of the state transition.
 	dirtyCode bool // true if the code was updated
 	suicided  bool
-	touched   bool
 	deleted   bool
-	onDirty   func(addr common.Address) // Callback method to mark a state object newly dirty
 }
 
 // empty returns whether the account is considered empty.
@@ -111,7 +109,7 @@ type Account struct {
 }
 
 // newObject creates a state object.
-func newObject(db *StateDB, address common.Address, data Account, onDirty func(addr common.Address)) *stateObject {
+func newObject(db *StateDB, address common.Address, data Account) *stateObject {
 	if data.Balance == nil {
 		data.Balance = new(big.Int)
 	}
@@ -125,7 +123,6 @@ func newObject(db *StateDB, address common.Address, data Account, onDirty func(a
 		data:          data,
 		cachedStorage: make(Storage),
 		dirtyStorage:  make(Storage),
-		onDirty:       onDirty,
 	}
 }
 
@@ -143,23 +140,17 @@ func (self *stateObject) setError(err error) {
 
 func (self *stateObject) markSuicided() {
 	self.suicided = true
-	if self.onDirty != nil {
-		self.onDirty(self.Address())
-		self.onDirty = nil
-	}
 }
 
 func (c *stateObject) touch() {
-	c.db.journal = append(c.db.journal, touchChange{
-		account:   &c.address,
-		prev:      c.touched,
-		prevDirty: c.onDirty == nil,
+	c.db.journal.append(touchChange{
+		account: &c.address,
 	})
-	if c.onDirty != nil {
-		c.onDirty(c.Address())
-		c.onDirty = nil
+	if c.address == ripemd {
+		// Explicitly put it in the dirty-cache, which is otherwise generated from
+		// flattened journals.
+		c.db.journal.dirty(c.address)
 	}
-	c.touched = true
 }
 
 func (c *stateObject) getTrie(db Database) Trie {
@@ -193,15 +184,13 @@ func (self *stateObject) GetState(db Database, key common.Hash) common.Hash {
 		}
 		value.SetBytes(content)
 	}
-	if (value != common.Hash{}) {
-		self.cachedStorage[key] = value
-	}
+	self.cachedStorage[key] = value
 	return value
 }
 
 // SetState updates a value in account storage.
 func (self *stateObject) SetState(db Database, key, value common.Hash) {
-	self.db.journal = append(self.db.journal, storageChange{
+	self.db.journal.append(storageChange{
 		account:  &self.address,
 		key:      key,
 		prevalue: self.GetState(db, key),
@@ -212,11 +201,6 @@ func (self *stateObject) SetState(db Database, key, value common.Hash) {
 func (self *stateObject) setState(key, value common.Hash) {
 	self.cachedStorage[key] = value
 	self.dirtyStorage[key] = value
-
-	if self.onDirty != nil {
-		self.onDirty(self.Address())
-		self.onDirty = nil
-	}
 }
 
 // updateTrie writes cached storage modifications into the object's storage trie.
@@ -280,7 +264,7 @@ func (c *stateObject) SubBalance(amount *big.Int) {
 }
 
 func (self *stateObject) SetBalance(amount *big.Int) {
-	self.db.journal = append(self.db.journal, balanceChange{
+	self.db.journal.append(balanceChange{
 		account: &self.address,
 		prev:    new(big.Int).Set(self.data.Balance),
 	})
@@ -289,17 +273,13 @@ func (self *stateObject) SetBalance(amount *big.Int) {
 
 func (self *stateObject) setBalance(amount *big.Int) {
 	self.data.Balance = amount
-	if self.onDirty != nil {
-		self.onDirty(self.Address())
-		self.onDirty = nil
-	}
 }
 
 // Return the gas back to the origin. Used by the Virtual machine or Closures
 func (c *stateObject) ReturnGas(gas *big.Int) {}
 
-func (self *stateObject) deepCopy(db *StateDB, onDirty func(addr common.Address)) *stateObject {
-	stateObject := newObject(db, self.address, self.data, onDirty)
+func (self *stateObject) deepCopy(db *StateDB) *stateObject {
+	stateObject := newObject(db, self.address, self.data)
 	if self.trie != nil {
 		stateObject.trie = db.db.CopyTrie(self.trie)
 	}
@@ -339,7 +319,7 @@ func (self *stateObject) Code(db Database) []byte {
 
 func (self *stateObject) SetCode(codeHash common.Hash, code []byte) {
 	prevcode := self.Code(self.db.db)
-	self.db.journal = append(self.db.journal, codeChange{
+	self.db.journal.append(codeChange{
 		account:  &self.address,
 		prevhash: self.CodeHash(),
 		prevcode: prevcode,
@@ -347,19 +327,14 @@ func (self *stateObject) SetCode(codeHash common.Hash, code []byte) {
 	self.setCode(codeHash, code)
 }
 
-
 func (self *stateObject) setCode(codeHash common.Hash, code []byte) {
 	self.code = code
 	self.data.CodeHash = codeHash[:]
 	self.dirtyCode = true
-	if self.onDirty != nil {
-		self.onDirty(self.Address())
-		self.onDirty = nil
-	}
 }
 
 func (self *stateObject) SetNonce(nonce uint64) {
-	self.db.journal = append(self.db.journal, nonceChange{
+	self.db.journal.append(nonceChange{
 		account: &self.address,
 		prev:    self.data.Nonce,
 	})
@@ -368,14 +343,11 @@ func (self *stateObject) SetNonce(nonce uint64) {
 
 func (self *stateObject) setNonce(nonce uint64) {
 	self.data.Nonce = nonce
-	if self.onDirty != nil {
-		self.onDirty(self.Address())
-		self.onDirty = nil
-	}
+
 }
 
 func (self *stateObject) SetHomepage(homepage string) {
-	self.db.journal = append(self.db.journal, homepageChange{
+	self.db.journal.append(homepageChange{
 		account: &self.address,
 		prev:    self.data.Homepage,
 	})
@@ -384,14 +356,11 @@ func (self *stateObject) SetHomepage(homepage string) {
 
 func (self *stateObject) setHomepage(homepage string) {
 	self.data.Homepage = homepage
-	if self.onDirty != nil {
-		self.onDirty(self.Address())
-		self.onDirty = nil
-	}
+
 }
 
 func (self *stateObject) SetHistoryurl(historyurl common.Hash) {
-	self.db.journal = append(self.db.journal, historyurlChange{
+	self.db.journal.append(historyurlChange{
 		account: &self.address,
 		prev:    self.data.Historyurl,
 	})
@@ -400,14 +369,10 @@ func (self *stateObject) SetHistoryurl(historyurl common.Hash) {
 
 func (self *stateObject) setHistoryurl(historyurl common.Hash) {
 	self.data.Historyurl = historyurl
-	if self.onDirty != nil {
-		self.onDirty(self.Address())
-		self.onDirty = nil
-	}
 }
 
 func (self *stateObject) SetGoodsurl(goodsurl common.Hash) {
-	self.db.journal = append(self.db.journal, goodsChange{
+	self.db.journal.append(goodsChange{
 		account: &self.address,
 		prev:    self.data.Goodsurl,
 	})
@@ -416,15 +381,12 @@ func (self *stateObject) SetGoodsurl(goodsurl common.Hash) {
 
 func (self *stateObject) setGoodsurl(goodsurl common.Hash) {
 	self.data.Goodsurl = goodsurl
-	if self.onDirty != nil {
-		self.onDirty(self.Address())
-		self.onDirty = nil
-	}
+
 }
 
 
 func (self *stateObject) SetOrdersurl(ordersurl common.Hash) {
-	self.db.journal = append(self.db.journal, orderurlChange{
+	self.db.journal.append(orderurlChange{
 		account: &self.address,
 		prev:    self.data.Ordersurl,
 	})
@@ -433,15 +395,12 @@ func (self *stateObject) SetOrdersurl(ordersurl common.Hash) {
 
 func (self *stateObject) setOrdersurl(ordersurl common.Hash) {
 	self.data.Ordersurl = ordersurl
-	if self.onDirty != nil {
-		self.onDirty(self.Address())
-		self.onDirty = nil
-	}
+
 }
 
 
 func (self *stateObject) SetScore(score int8) {
-	self.db.journal = append(self.db.journal, scoreChange{
+	self.db.journal.append(scoreChange{
 		account: &self.address,
 		prev:    self.data.Score,
 	})
@@ -450,10 +409,7 @@ func (self *stateObject) SetScore(score int8) {
 
 func (self *stateObject) setScore(score int8) {
 	self.data.Score = score
-	if self.onDirty != nil {
-		self.onDirty(self.Address())
-		self.onDirty = nil
-	}
+
 }
 
 func (self *stateObject) CodeHash() []byte {

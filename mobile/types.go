@@ -97,12 +97,6 @@ func (h *Header) EncodeJSON() (string, error) {
 	return string(data), err
 }
 
-// String implements the fmt.Stringer interface to print some semi-meaningful
-// data dump of the header for debugging purposes.
-func (h *Header) String() string {
-	return h.header.String()
-}
-
 func (h *Header) GetParentHash() *Hash   { return &Hash{h.header.ParentHash} }
 func (h *Header) GetCoinbase() *Address  { return &Address{h.header.Coinbase} }
 func (h *Header) GetRoot() *Hash         { return &Hash{h.header.Root} }
@@ -169,12 +163,6 @@ func NewBlockFromJSON(data string) (*Block, error) {
 func (b *Block) EncodeJSON() (string, error) {
 	data, err := json.Marshal(b.block)
 	return string(data), err
-}
-
-// String implements the fmt.Stringer interface to print some semi-meaningful
-// data dump of the block for debugging purposes.
-func (b *Block) String() string {
-	return b.block.String()
 }
 
 func (b *Block) GetParentHash() *Hash   { return &Hash{b.block.ParentHash()} }
@@ -336,12 +324,7 @@ func (r *Receipt) EncodeJSON() (string, error) {
 	return string(data), err
 }
 
-// String implements the fmt.Stringer interface to print some semi-meaningful
-// data dump of the transaction receipt for debugging purposes.
-func (r *Receipt) String() string {
-	return r.receipt.String()
-}
-
+func (r *Receipt) GetStatus() int               { return int(r.receipt.Status) }
 func (r *Receipt) GetPostState() []byte         { return r.receipt.PostState }
 func (r *Receipt) GetCumulativeGasUsed() int64  { return int64(r.receipt.CumulativeGasUsed) }
 func (r *Receipt) GetBloom() *Bloom             { return &Bloom{r.receipt.Bloom} }
