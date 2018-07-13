@@ -66,7 +66,7 @@ func TestBodyStorage(t *testing.T) {
 	db := yoobadb.NewMemDatabase()
 
 	// Create a test body to move around the database and make sure it's really new
-	body := &types.Body{}
+	body := &types.Body{Uncles: []*types.Header{{Extra: []byte("test header")}}}
 
 	hasher := sha3.NewKeccak256()
 	rlp.Encode(hasher, body)
@@ -79,7 +79,7 @@ func TestBodyStorage(t *testing.T) {
 	WriteBody(db, hash, 0, body)
 	if entry := ReadBody(db, hash, 0); entry == nil {
 		t.Fatalf("Stored body not found")
-	} else if types.DeriveSha(types.Transactions(entry.Transactions)) != types.DeriveSha(types.Transactions(body.Transactions)) {
+	} else if types.DeriveSha(types.Transactions(entry.Transactions)) != types.DeriveSha(types.Transactions(body.Transactions)) || types.CalcUncleHash(entry.Uncles) != types.CalcUncleHash(body.Uncles) {
 		t.Fatalf("Retrieved body mismatch: have %v, want %v", entry, body)
 	}
 	if entry := ReadBodyRLP(db, hash, 0); entry == nil {

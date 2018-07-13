@@ -26,6 +26,7 @@ import (
 	"github.com/yooba-team/yooba/core/types"
 	"github.com/yooba-team/yooba/yoobadb"
 	"github.com/yooba-team/yooba/params"
+	"github.com/yooba-team/yooba/core/rawdb"
 )
 
 const (
@@ -60,8 +61,8 @@ func (yoo *FullYooba) startBloomHandlers() {
 					task := <-request
 					task.Bitsets = make([][]byte, len(task.Sections))
 					for i, section := range task.Sections {
-						head := core.GetCanonicalHash(yoo.chainDb, (section+1)*params.BloomBitsBlocks-1)
-						if compVector, err := core.GetBloomBits(yoo.chainDb, task.Bit, section, head); err == nil {
+						head := rawdb.ReadCanonicalHash(yoo.chainDb, (section+1)*params.BloomBitsBlocks-1)
+						if compVector, err := rawdb.ReadBloomBits(yoo.chainDb, task.Bit, section, head); err == nil {
 							if blob, err := bitutil.DecompressBytes(compVector, int(params.BloomBitsBlocks)/8); err == nil {
 								task.Bitsets[i] = blob
 							} else {
@@ -107,7 +108,7 @@ func NewBloomIndexer(db yoobadb.Database, size uint64) *core.ChainIndexer {
 		db:   db,
 		size: size,
 	}
-	table := yoobadb.NewTable(db, string(core.BloomBitsIndexPrefix))
+	table := yoobadb.NewTable(db, string(rawdb.BloomBitsIndexPrefix))
 
 	return core.NewChainIndexer(db, table, backend, size, bloomConfirms, bloomThrottling, "bloombits")
 }
@@ -137,7 +138,7 @@ func (b *BloomIndexer) Commit() error {
 		if err != nil {
 			return err
 		}
-		core.WriteBloomBits(batch, uint(i), b.section, b.head, bitutil.CompressBytes(bits))
+		rawdb.WriteBloomBits(batch, uint(i), b.section, b.head, bitutil.CompressBytes(bits))
 	}
 	return batch.Write()
 }

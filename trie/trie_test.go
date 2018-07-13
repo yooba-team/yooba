@@ -43,8 +43,7 @@ func init() {
 
 // Used for testing
 func newEmpty() *Trie {
-	diskdb, _ := yoobadb.NewMemDatabase()
-	trie, _ := New(common.Hash{}, NewDatabase(diskdb))
+	trie, _ := New(common.Hash{}, NewDatabase(ethdb.NewMemDatabase()))
 	return trie
 }
 
@@ -413,8 +412,7 @@ func (randTest) Generate(r *rand.Rand, size int) reflect.Value {
 }
 
 func runRandTest(rt randTest) bool {
-	diskdb, _ := yoobadb.NewMemDatabase()
-	triedb := NewDatabase(diskdb)
+	triedb := NewDatabase(ethdb.NewMemDatabase())
 
 	tr, _ := New(common.Hash{}, triedb)
 	values := make(map[string]string) // tracks content of the trie

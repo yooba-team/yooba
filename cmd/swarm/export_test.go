@@ -27,7 +27,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/ethereum/go-ethereum/swarm"
+	"github.com/yooba-team/yooba/swarm"
 )
 
 // TestCLISwarmExportImport perform the following test:

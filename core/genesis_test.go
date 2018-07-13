@@ -46,14 +46,14 @@ func TestSetupGenesis(t *testing.T) {
 	var (
 		customghash = common.HexToHash("0x89c99d90b79719238d2645c7642f2c9295246e80775b38cfd162b696817fbd50")
 		customg     = Genesis{
-			Config: &params.ChainConfig{},
+			Config: &params.ChainConfig{HomesteadBlock: big.NewInt(3)},
 			Alloc: GenesisAlloc{
 				{1}: {Balance: big.NewInt(1), Storage: map[common.Hash]common.Hash{{1}: {1}}},
 			},
 		}
 		oldcustomg = customg
 	)
-	oldcustomg.Config = &params.ChainConfig{}
+	oldcustomg.Config = &params.ChainConfig{HomesteadBlock: big.NewInt(2)}
 	tests := []struct {
 		name       string
 		fn         func(yoobadb.Database) (*params.ChainConfig, common.Hash, error)
@@ -122,8 +122,9 @@ func TestSetupGenesis(t *testing.T) {
 				genesis := oldcustomg.MustCommit(db)
 				bc, _ := NewBlockChain(db, nil, oldcustomg.Config, vm.Config{})
 				defer bc.Stop()
-				bc.SetValidator(bproc{})
-				bc.InsertChain(makeBlockChainWithDiff(genesis, []int{2, 3, 4, 5}, 0))
+
+				blocks, _ := GenerateChain(oldcustomg.Config, genesis, ethash.NewFaker(), db, 4, nil)
+				bc.InsertChain(blocks)
 				bc.CurrentBlock()
 				// This should return a compatibility error.
 				return SetupGenesisBlock(db, &customg)
@@ -140,7 +141,7 @@ func TestSetupGenesis(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		db, _ := yoobadb.NewMemDatabase()
+		db := yoobadb.NewMemDatabase()
 		config, hash, err := test.fn(db)
 		// Check the return values.
 		if !reflect.DeepEqual(err, test.wantErr) {
@@ -154,31 +155,10 @@ func TestSetupGenesis(t *testing.T) {
 			t.Errorf("%s: returned hash %s, want %s", test.name, hash.Hex(), test.wantHash.Hex())
 		} else if err == nil {
 			// Check database content.
-			stored := GetBlock(db, test.wantHash, 0)
+			stored := rawdb.ReadBlock(db, test.wantHash, 0)
 			if stored.Hash() != test.wantHash {
 				t.Errorf("%s: block in DB has hash %s, want %s", test.name, stored.Hash(), test.wantHash)
 			}
 		}
 	}
 }
-func makeBlockChainWithDiff(genesis *types.Block, d []int, seed byte) []*types.Block {
-	var chain []*types.Block
-	for i := range d {
-		header := &types.Header{
-			Coinbase:    common.Address{seed},
-			Number:      big.NewInt(int64(i + 1)),
-			TxHash:      types.EmptyRootHash,
-			ReceiptHash: types.EmptyRootHash,
-			Time:        big.NewInt(int64(i) + 1),
-		}
-		if i == 0 {
-			header.ParentHash = genesis.Hash()
-		} else {
-			header.ParentHash = chain[i-1].Hash()
-		}
-		block := types.NewBlockWithHeader(header)
-		chain = append(chain, block)
-	}
-	return chain
-}
-

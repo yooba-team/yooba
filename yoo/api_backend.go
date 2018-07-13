@@ -34,6 +34,7 @@ import (
 	"github.com/yooba-team/yooba/event"
 	"github.com/yooba-team/yooba/params"
 	"github.com/yooba-team/yooba/rpc"
+	"github.com/yooba-team/yooba/core/rawdb"
 )
 
 // YooApiBackend implements ethapi.Backend for full nodes
@@ -100,8 +101,27 @@ func (b *YooApiBackend) GetBlock(ctx context.Context, blockHash common.Hash) (*t
 	return b.yooba.blockchain.GetBlockByHash(blockHash), nil
 }
 
-func (b *YooApiBackend) GetReceipts(ctx context.Context, blockHash common.Hash) (types.Receipts, error) {
-	return core.GetBlockReceipts(b.yooba.chainDb, blockHash, core.GetBlockNumber(b.yooba.chainDb, blockHash)), nil
+func (b *YooApiBackend) GetReceipts(ctx context.Context, hash common.Hash) (types.Receipts, error) {
+	if number := rawdb.ReadHeaderNumber(b.yooba.chainDb, hash); number != nil {
+		return rawdb.ReadReceipts(b.yooba.chainDb, hash, *number), nil
+	}
+	return nil, nil
+}
+
+func (b *YooApiBackend) GetLogs(ctx context.Context, hash common.Hash) ([][]*types.Log, error) {
+	number := rawdb.ReadHeaderNumber(b.yooba.chainDb, hash)
+	if number == nil {
+		return nil, nil
+	}
+	receipts := rawdb.ReadReceipts(b.yooba.chainDb, hash, *number)
+	if receipts == nil {
+		return nil, nil
+	}
+	logs := make([][]*types.Log, len(receipts))
+	for i, receipt := range receipts {
+		logs[i] = receipt.Logs
+	}
+	return logs, nil
 }
 
 
@@ -165,8 +185,8 @@ func (b *YooApiBackend) TxPoolContent() (map[common.Address]types.Transactions, 
 	return b.yooba.TxPool().Content()
 }
 
-func (b *YooApiBackend) SubscribeTxPreEvent(ch chan<- core.TxPreEvent) event.Subscription {
-	return b.yooba.TxPool().SubscribeTxPreEvent(ch)
+func (b *YooApiBackend) SubscribeNewTxsEvent(ch chan<- core.NewTxsEvent) event.Subscription {
+	return b.yooba.TxPool().SubscribeNewTxsEvent(ch)
 }
 
 func (b *YooApiBackend) Downloader() *downloader.Downloader {

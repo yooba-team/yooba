@@ -14,22 +14,30 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
 
-// +build !amd64,!arm64
+{
+    // hist is the map of opcodes to counters
+    hist: {},
+    // nops counts number of ops
+    nops: 0,
+    // step is invoked for every opcode that the VM executes.
+    step: function(log, db) {
+        var op = log.op.toString();
+        if (this.hist[op]){
+            this.hist[op]++;
+        }
+        else {
+            this.hist[op] = 1;
+        }
+        this.nops++;
+    },
+    // fault is invoked when the actual execution of an opcode fails.
+    fault: function(log, db) {},
 
-// Package bn256 implements the Optimal Ate pairing over a 256-bit Barreto-Naehrig curve.
-package bn256
-
-import "github.com/yooba-team/yooba/crypto/bn256/google"
-
-// G1 is an abstract cyclic group. The zero value is suitable for use as the
-// output of an operation, but cannot be used as an input.
-type G1 = bn256.G1
-
-// G2 is an abstract cyclic group. The zero value is suitable for use as the
-// output of an operation, but cannot be used as an input.
-type G2 = bn256.G2
-
-// PairingCheck calculates the Optimal Ate pairing for a set of points.
-func PairingCheck(a []*G1, b []*G2) bool {
-	return bn256.PairingCheck(a, b)
+    // result is invoked when all the opcodes have been iterated over and returns
+    // the final result of the tracing.
+    result: function(ctx) {
+        if(this.nops > 0){
+            return this.hist;
+        }
+    },
 }

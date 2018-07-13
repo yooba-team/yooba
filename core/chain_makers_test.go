@@ -36,7 +36,7 @@ func ExampleGenerateChain() {
 		addr1   = crypto.PubkeyToAddress(key1.PublicKey)
 		addr2   = crypto.PubkeyToAddress(key2.PublicKey)
 		addr3   = crypto.PubkeyToAddress(key3.PublicKey)
-		db, _   = yoobadb.NewMemDatabase()
+		db      = yoobadb.NewMemDatabase()
 	)
 
 	// Ensure that key1 has some funds in the genesis block.
@@ -70,8 +70,10 @@ func ExampleGenerateChain() {
 		case 3:
 			b2 := gen.PrevBlock(1).Header()
 			b2.Extra = []byte("foo")
+			gen.AddUncle(b2)
 			b3 := gen.PrevBlock(2).Header()
 			b3.Extra = []byte("foo")
+			gen.AddUncle(b3)
 		}
 	})
 

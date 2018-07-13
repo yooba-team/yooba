@@ -35,6 +35,7 @@ import (
 	"github.com/yooba-team/yooba/light"
 	"github.com/yooba-team/yooba/params"
 	"github.com/yooba-team/yooba/rpc"
+	"github.com/yooba-team/yooba/core/rawdb"
 )
 
 type LesApiBackend struct {
@@ -83,10 +84,19 @@ func (b *LesApiBackend) GetBlock(ctx context.Context, blockHash common.Hash) (*t
 	return b.yoo.blockchain.GetBlockByHash(ctx, blockHash)
 }
 
-func (b *LesApiBackend) GetReceipts(ctx context.Context, blockHash common.Hash) (types.Receipts, error) {
-	return light.GetBlockReceipts(ctx, b.yoo.odr, blockHash, core.GetBlockNumber(b.yoo.chainDb, blockHash))
+func (b *LesApiBackend) GetReceipts(ctx context.Context, hash common.Hash) (types.Receipts, error) {
+	if number := rawdb.ReadHeaderNumber(b.yoo.chainDb, hash); number != nil {
+		return light.GetBlockReceipts(ctx, b.yoo.odr, hash, *number)
+	}
+	return nil, nil
 }
 
+func (b *LesApiBackend) GetLogs(ctx context.Context, hash common.Hash) ([][]*types.Log, error) {
+	if number := rawdb.ReadHeaderNumber(b.yoo.chainDb, hash); number != nil {
+		return light.GetBlockLogs(ctx, b.yoo.odr, hash, *number)
+	}
+	return nil, nil
+}
 
 func (b *LesApiBackend) GetEVM(ctx context.Context, msg core.Message, state *state.StateDB, header *types.Header, vmCfg vm.Config) (*vm.EVM, func() error, error) {
 	state.SetBalance(msg.From(), math.MaxBig256)
@@ -122,8 +132,8 @@ func (b *LesApiBackend) TxPoolContent() (map[common.Address]types.Transactions, 
 	return b.yoo.txPool.Content()
 }
 
-func (b *LesApiBackend) SubscribeTxPreEvent(ch chan<- core.TxPreEvent) event.Subscription {
-	return b.yoo.txPool.SubscribeTxPreEvent(ch)
+func (b *LesApiBackend) SubscribeNewTxsEvent(ch chan<- core.NewTxsEvent) event.Subscription {
+	return b.yoo.txPool.SubscribeNewTxsEvent(ch)
 }
 
 func (b *LesApiBackend) SubscribeChainEvent(ch chan<- core.ChainEvent) event.Subscription {

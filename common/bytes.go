@@ -21,7 +21,6 @@ import "encoding/hex"
 
 func ToHex(b []byte) string {
 	hex := Bytes2Hex(b)
-	// Prefer output of "0x0" instead of "0x"
 	if len(hex) == 0 {
 		hex = "0"
 	}
@@ -87,17 +86,16 @@ func Hex2BytesFixed(str string, flen int) []byte {
 	h, _ := hex.DecodeString(str)
 	if len(h) == flen {
 		return h
-	} else {
-		if len(h) > flen {
-			return h[len(h)-flen:]
-		} else {
-			hh := make([]byte, flen)
-			copy(hh[flen-len(h):flen], h[:])
-			return hh
-		}
 	}
+	if len(h) > flen {
+		return h[len(h)-flen:]
+	}
+	hh := make([]byte, flen)
+	copy(hh[flen-len(h):flen], h[:])
+	return hh
 }
 
+// RightPadBytes zero-pads slice to the right up to length l.
 func RightPadBytes(slice []byte, l int) []byte {
 	if l <= len(slice) {
 		return slice
