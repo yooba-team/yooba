@@ -32,10 +32,10 @@ import (
 	"github.com/yooba-team/yooba/event"
 	"github.com/yooba-team/yooba/p2p"
 	"github.com/yooba-team/yooba/p2p/discover"
-	"github.com/yooba-team/yooba/p2p/simulations/adapters"
 	"github.com/yooba-team/yooba/rpc"
 	"github.com/julienschmidt/httprouter"
 	"golang.org/x/net/websocket"
+	"github.com/yooba-team/yooba/p2p/simulations/adapters"
 )
 
 // DefaultClient is the default simulation API client which expects the API

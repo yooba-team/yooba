@@ -29,6 +29,8 @@ import (
 	"github.com/yooba-team/yooba/crypto"
 	"github.com/yooba-team/yooba/rpc"
 	"github.com/yooba-team/yooba/swarm/api"
+	"encoding/hex"
+	"context"
 )
 
 // TestNewSwarm validates Swarm fields in repsect to the provided configuration.
@@ -41,6 +43,13 @@ func TestNewSwarm(t *testing.T) {
 
 	// a simple rpc endpoint for testing dialing
 	ipcEndpoint := path.Join(dir, "TestSwarm.ipc")
+
+	// windows namedpipes are not on filesystem but on NPFS
+	if runtime.GOOS == "windows" {
+		b := make([]byte, 8)
+		rand.Read(b)
+		ipcEndpoint = `\\.\pipe\TestSwarm-` + hex.EncodeToString(b)
+	}
 
 	_, server, err := rpc.StartIPCEndpoint(ipcEndpoint, nil)
 	if err != nil {
@@ -192,8 +201,8 @@ func TestParseEnsAPIAddress(t *testing.T) {
 	}{
 		{
 			description: "IPC endpoint",
-			value:       "/data/testnet/yoobaipc",
-			endpoint:    "/data/testnet/yoobaipc",
+			value:       "/data/testnet/geth.ipc",
+			endpoint:    "/data/testnet/geth.ipc",
 		},
 		{
 			description: "HTTP endpoint",
@@ -207,8 +216,8 @@ func TestParseEnsAPIAddress(t *testing.T) {
 		},
 		{
 			description: "IPC Endpoint and TLD",
-			value:       "test:/data/testnet/yoobaipc",
-			endpoint:    "/data/testnet/yoobaipc",
+			value:       "test:/data/testnet/geth.ipc",
+			endpoint:    "/data/testnet/geth.ipc",
 			tld:         "test",
 		},
 		{
@@ -225,8 +234,8 @@ func TestParseEnsAPIAddress(t *testing.T) {
 		},
 		{
 			description: "IPC Endpoint and contract address",
-			value:       "314159265dD8dbb310642f98f50C066173C1259b@/data/testnet/yoobaipc",
-			endpoint:    "/data/testnet/yoobaipc",
+			value:       "314159265dD8dbb310642f98f50C066173C1259b@/data/testnet/geth.ipc",
+			endpoint:    "/data/testnet/geth.ipc",
 			addr:        common.HexToAddress("314159265dD8dbb310642f98f50C066173C1259b"),
 		},
 		{
@@ -243,8 +252,8 @@ func TestParseEnsAPIAddress(t *testing.T) {
 		},
 		{
 			description: "IPC Endpoint, TLD and contract address",
-			value:       "test:314159265dD8dbb310642f98f50C066173C1259b@/data/testnet/yoobaipc",
-			endpoint:    "/data/testnet/yoobaipc",
+			value:       "test:314159265dD8dbb310642f98f50C066173C1259b@/data/testnet/geth.ipc",
+			endpoint:    "/data/testnet/geth.ipc",
 			addr:        common.HexToAddress("314159265dD8dbb310642f98f50C066173C1259b"),
 			tld:         "test",
 		},
@@ -338,15 +347,19 @@ func testLocalStoreAndRetrieve(t *testing.T, swarm *Swarm, n int, randomData boo
 	}
 	dataPut := string(slice)
 
-	k, wait, err := swarm.api.Store(strings.NewReader(dataPut), int64(len(dataPut)), false)
+	ctx := context.TODO()
+	k, wait, err := swarm.api.Store(ctx, strings.NewReader(dataPut), int64(len(dataPut)), false)
 	if err != nil {
 		t.Fatal(err)
 	}
 	if wait != nil {
-		wait()
+		err = wait(ctx)
+		if err != nil {
+			t.Fatal(err)
+		}
 	}
 
-	r, _ := swarm.api.Retrieve(k)
+	r, _ := swarm.api.Retrieve(context.TODO(), k)
 
 	d, err := ioutil.ReadAll(r)
 	if err != nil {

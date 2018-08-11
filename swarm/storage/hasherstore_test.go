@@ -46,13 +46,13 @@ func TestHasherStore(t *testing.T) {
 
 		// Put two random chunks into the hasherStore
 		chunkData1 := GenerateRandomChunk(int64(tt.chunkLength)).SData
-		key1, err := hasherStore.Put(chunkData1)
+		key1, err := hasherStore.Put(context.TODO(), chunkData1)
 		if err != nil {
 			t.Fatalf("Expected no error got \"%v\"", err)
 		}
 
 		chunkData2 := GenerateRandomChunk(int64(tt.chunkLength)).SData
-		key2, err := hasherStore.Put(chunkData2)
+		key2, err := hasherStore.Put(context.TODO(), chunkData2)
 		if err != nil {
 			t.Fatalf("Expected no error got \"%v\"", err)
 		}
@@ -60,10 +60,13 @@ func TestHasherStore(t *testing.T) {
 		hasherStore.Close()
 
 		// Wait until chunks are really stored
-		hasherStore.Wait()
+		err = hasherStore.Wait(context.TODO())
+		if err != nil {
+			t.Fatalf("Expected no error got \"%v\"", err)
+		}
 
 		// Get the first chunk
-		retrievedChunkData1, err := hasherStore.Get(key1)
+		retrievedChunkData1, err := hasherStore.Get(context.TODO(), key1)
 		if err != nil {
 			t.Fatalf("Expected no error, got \"%v\"", err)
 		}
@@ -74,7 +77,7 @@ func TestHasherStore(t *testing.T) {
 		}
 
 		// Get the second chunk
-		retrievedChunkData2, err := hasherStore.Get(key2)
+		retrievedChunkData2, err := hasherStore.Get(context.TODO(), key2)
 		if err != nil {
 			t.Fatalf("Expected no error, got \"%v\"", err)
 		}
@@ -101,7 +104,7 @@ func TestHasherStore(t *testing.T) {
 		}
 
 		// Check if chunk data in store is encrypted or not
-		chunkInStore, err := chunkStore.Get(hash1)
+		chunkInStore, err := chunkStore.Get(context.TODO(), hash1)
 		if err != nil {
 			t.Fatalf("Expected no error got \"%v\"", err)
 		}

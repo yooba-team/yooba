@@ -25,6 +25,7 @@ import (
 	"github.com/yooba-team/yooba/p2p"
 	"github.com/yooba-team/yooba/p2p/protocols"
 	"github.com/yooba-team/yooba/swarm/log"
+	"context"
 )
 
 // Generic ping protocol implementation for
@@ -40,7 +41,7 @@ type Ping struct {
 	InC  chan bool // optional, report back to calling code
 }
 
-func (p *Ping) pingHandler(msg interface{}) error {
+func (p *Ping) pingHandler(ctx context.Context, msg interface{}) error {
 	var pingmsg *PingMsg
 	var ok bool
 	if pingmsg, ok = msg.(*PingMsg); !ok {
@@ -80,7 +81,7 @@ func NewPingProtocol(ping *Ping) *p2p.Protocol {
 				for {
 					select {
 					case ispong := <-ping.OutC:
-						pp.Send(&PingMsg{
+						pp.Send(context.TODO(), &PingMsg{
 							Created: time.Now(),
 							Pong:    ispong,
 						})

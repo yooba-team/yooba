@@ -19,6 +19,7 @@ import (
 	"sync"
 
 	"github.com/yooba-team/yooba/swarm/log"
+	"context"
 )
 
 // PutChunks adds chunks  to localstore
@@ -37,7 +38,7 @@ func PutChunks(store *LocalStore, chunks ...*Chunk) {
 		}
 	}()
 	for _, c := range chunks {
-		go store.Put(c)
+		go store.Put(context.TODO(), c)
 	}
 	wg.Wait()
 }

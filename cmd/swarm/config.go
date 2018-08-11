@@ -39,8 +39,6 @@ import (
 	bzzapi "github.com/yooba-team/yooba/swarm/api"
 )
 
-const SWARM_VERSION = "0.3"
-
 var (
 	//flag definition for the dumpconfig command
 	DumpConfigCommand = cli.Command{

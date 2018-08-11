@@ -50,6 +50,8 @@ import (
 	"github.com/yooba-team/yooba/swarm/storage/mock"
 	"github.com/yooba-team/yooba/swarm/storage/mru"
 	"github.com/yooba-team/yooba/yooclient"
+	"io"
+	"github.com/yooba-team/yooba/swarm/tracing"
 )
 
 var (
@@ -76,6 +78,8 @@ type Swarm struct {
 	lstore      *storage.LocalStore // local store, needs to store for releasing resources after node stopped
 	sfs         *fuse.SwarmFS       // need this to cleanup all the active mounts on node exit
 	ps          *pss.Pss
+
+	tracerClose io.Closer
 }
 
 type SwarmAPI struct {
@@ -139,6 +143,7 @@ func NewSwarm(config *api.Config, mockStore *mock.NodeStore) (self *Swarm, err e
 		OverlayAddr:  addr.OAddr,
 		UnderlayAddr: addr.UAddr,
 		HiveParams:   config.HiveParams,
+		LightNode:    config.LightNodeEnabled,
 	}
 
 	stateStore, err := state.NewDBStore(filepath.Join(config.Path, "state-store.db"))
@@ -188,25 +193,8 @@ func NewSwarm(config *api.Config, mockStore *mock.NodeStore) (self *Swarm, err e
 	self.fileStore = storage.NewFileStore(netStore, self.config.FileStoreParams)
 
 	var resourceHandler *mru.Handler
-	rhparams := &mru.HandlerParams{
-		// TODO: config parameter to set limits
-		QueryMaxPeriods: &mru.LookupParams{
-			Limit: false,
-		},
-		Signer: &mru.GenericSigner{
-			PrivKey: self.privateKey,
-		},
-	}
-	if resolver != nil {
-		resolver.SetNameHash(ens.EnsNode)
-		// Set HeaderGetter and OwnerValidator interfaces to resolver only if it is not nil.
-		rhparams.HeaderGetter = resolver
-		rhparams.OwnerValidator = resolver
-	} else {
-		log.Warn("No ETH API specified, resource updates will use block height approximation")
-		// TODO: blockestimator should use saved values derived from last time yooclient was connected
-		rhparams.HeaderGetter = mru.NewBlockEstimator()
-	}
+	rhparams := &mru.HandlerParams{}
+
 	resourceHandler, err = mru.NewHandler(rhparams)
 	if err != nil {
 		return nil, err
@@ -356,6 +344,8 @@ Start is called when the stack is started
 func (self *Swarm) Start(srv *p2p.Server) error {
 	startTime = time.Now()
 
+	self.tracerClose = tracing.Closer
+
 	// update uaddr to correct enode
 	newaddr := self.bzz.UpdateLocalAddr([]byte(srv.Self().String()))
 	log.Warn("Updated bzz local addr", "oaddr", fmt.Sprintf("%x", newaddr.OAddr), "uaddr", fmt.Sprintf("%s", newaddr.UAddr))
@@ -388,10 +378,9 @@ func (self *Swarm) Start(srv *p2p.Server) error {
 	// start swarm http proxy server
 	if self.config.Port != "" {
 		addr := net.JoinHostPort(self.config.ListenAddr, self.config.Port)
-		go httpapi.StartHTTPServer(self.api, &httpapi.ServerConfig{
-			Addr:       addr,
-			CorsString: self.config.Cors,
-		})
+		server := httpapi.NewServer(self.api, self.config.Cors)
+
+		go server.ListenAndServe(addr)
 	}
 
 	log.Debug(fmt.Sprintf("Swarm http proxy started on port: %v", self.config.Port))
@@ -425,6 +414,13 @@ func (self *Swarm) updateGauges() {
 // implements the node.Service interface
 // stops all component services.
 func (self *Swarm) Stop() error {
+	if self.tracerClose != nil {
+		err := self.tracerClose.Close()
+		if err != nil {
+			return err
+		}
+	}
+
 	if self.ps != nil {
 		self.ps.Stop()
 	}

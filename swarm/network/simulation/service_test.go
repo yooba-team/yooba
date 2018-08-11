@@ -1,4 +1,4 @@
-// Copyright 2017 The go-ethereum Authors
+// Copyright 2018 The go-ethereum Authors
 // This file is part of the go-ethereum library.
 //
 // The go-ethereum library is free software: you can redistribute it and/or modify
@@ -14,23 +14,33 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
 
-package adapters
+package simulation
 
-type SimStateStore struct {
-	m map[string][]byte
-}
+import (
+	"testing"
+)
 
-func (self *SimStateStore) Load(s string) ([]byte, error) {
-	return self.m[s], nil
-}
+func TestService(t *testing.T) {
+	sim := New(noopServiceFuncMap)
+	defer sim.Close()
 
-func (self *SimStateStore) Save(s string, data []byte) error {
-	self.m[s] = data
-	return nil
-}
+	id, err := sim.AddNode()
+	if err != nil {
+		t.Fatal(err)
+	}
 
-func NewSimStateStore() *SimStateStore {
-	return &SimStateStore{
-		make(map[string][]byte),
+	_, ok := sim.Service("noop", id).(*noopService)
+	if !ok {
+		t.Fatalf("service is not of %T type", &noopService{})
+	}
+
+	_, ok = sim.RandomService("noop").(*noopService)
+	if !ok {
+		t.Fatalf("service is not of %T type", &noopService{})
+	}
+
+	_, ok = sim.Services("noop")[id].(*noopService)
+	if !ok {
+		t.Fatalf("service is not of %T type", &noopService{})
 	}
 }

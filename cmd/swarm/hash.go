@@ -24,6 +24,7 @@ import (
 	"github.com/yooba-team/yooba/cmd/utils"
 	"github.com/yooba-team/yooba/swarm/storage"
 	"gopkg.in/urfave/cli.v1"
+	"context"
 )
 
 func hash(ctx *cli.Context) {
@@ -39,7 +40,7 @@ func hash(ctx *cli.Context) {
 
 	stat, _ := f.Stat()
 	fileStore := storage.NewFileStore(storage.NewMapChunkStore(), storage.NewFileStoreParams())
-	addr, _, err := fileStore.Store(f, stat.Size(), false)
+	addr, _, err := fileStore.Store(context.TODO(), f, stat.Size(), false)
 	if err != nil {
 		utils.Fatalf("%v\n", err)
 	} else {
