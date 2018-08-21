@@ -102,11 +102,15 @@ type Account struct {
 	CodeHash []byte
 	Homepage string
 	AccountName string
+	IsStore   bool
+	Accounts  map[common.Address] *Account
 	Score int8
 	Goodsurl   common.Hash
 	Historyurl common.Hash
 	Ordersurl  common.Hash
 }
+
+
 
 // newObject creates a state object.
 func newObject(db *StateDB, address common.Address, data Account) *stateObject {
@@ -356,6 +360,32 @@ func (self *stateObject) SetHomepage(homepage string) {
 
 func (self *stateObject) setHomepage(homepage string) {
 	self.data.Homepage = homepage
+
+}
+
+func (self *stateObject) SetStoreStatus(isStore bool) {
+	self.db.journal.append(isStoreChange{
+		account: &self.address,
+		prev:    self.data.IsStore,
+	})
+	self.setStoreStatus(isStore)
+}
+
+func (self *stateObject) setStoreStatus(isStore bool) {
+	self.data.IsStore = isStore
+
+}
+
+func (self *stateObject) SetStoreMap(storeMap map[common.Address] *Account) {
+	self.db.journal.append(storeMapChange{
+		account: &self.address,
+		prev:    self.data.Accounts,
+	})
+	self.setStoreMap(storeMap)
+}
+
+func (self *stateObject) setStoreMap(storeMap map[common.Address] *Account) {
+	self.data.Accounts = storeMap;
 
 }
 

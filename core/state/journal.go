@@ -26,7 +26,7 @@ type journalEntry interface {
 	// revert undoes the changes introduced by this journal entry.
 	revert(*StateDB)
 
-	// dirtied returns the Ethereum address modified by this journal entry.
+	// dirtied returns the Yooba address modified by this journal entry.
 	dirtied() *common.Address
 }
 
@@ -101,34 +101,52 @@ type (
 		account *common.Address
 		prev    *big.Int
 	}
+
 	nonceChange struct {
 		account *common.Address
 		prev    uint64
 	}
+
 	homepageChange struct {
 		account *common.Address
 		prev    string
 	}
+
 	scoreChange struct {
 		account *common.Address
 		prev    int8
 	}
+
 	goodsChange struct {
 		account *common.Address
 		prev    common.Hash
 	}
+
+	isStoreChange struct {
+		account *common.Address
+		prev    bool
+	}
+
+	storeMapChange struct {
+		account *common.Address
+		prev    map[common.Address]*Account
+	}
+
 	historyurlChange struct {
 		account *common.Address
 		prev    common.Hash
 	}
+
 	orderurlChange struct {
 		account *common.Address
 		prev    common.Hash
 	}
+
 	storageChange struct {
 		account       *common.Address
 		key, prevalue common.Hash
 	}
+
 	codeChange struct {
 		account            *common.Address
 		prevcode, prevhash []byte
@@ -205,6 +223,22 @@ func (ch nonceChange) dirtied() *common.Address {
 	return ch.account
 }
 
+func (ch isStoreChange) revert(s *StateDB) {
+	s.getStateObject(*ch.account).setStoreStatus(ch.prev)
+}
+
+func (ch isStoreChange) dirtied() *common.Address {
+	return ch.account
+}
+
+
+func (ch storeMapChange) revert(s *StateDB) {
+	s.getStateObject(*ch.account).setStoreMap(ch.prev)
+}
+
+func (ch storeMapChange) dirtied() *common.Address {
+	return ch.account
+}
 
 func (ch homepageChange) revert(s *StateDB) {
 	s.getStateObject(*ch.account).setHomepage(ch.prev)
