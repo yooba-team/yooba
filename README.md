@@ -1,10 +1,22 @@
 # Yooba
   Yooba is a decentralized e-commerce system based on blockchain technology, where anyone can securely and privately provide services and purchase services
 
+Yooba is based on Ethereum development.But it has improved many parts of Ethereum to accommodate the development of Yooba, and will incorporate many new technologies to improve Yooba's own technical system. Yooba will be completely different from Ethereum.
 
-## About the Source
-Official golang implementation of the yooba protocol.It is developed base on go-ethereum.But in future they are very different. 
- Just standing on the shoulder of giants. They fly towards different way.Thanks for Ethereum.
+## Guide
+
+ - [Developer guide](https://github.com/yooba-team/yooba/wiki/Develop-Guide) 
+
+ - [Yooba decentralized storage guide](https://github.com/yooba-team/yooba/wiki/Yooba-decentralized-storage-guide)  
+
+- [Yooba decentralized communication guide](https://github.com/yooba-team/yooba/wiki/Yooba-decentralized-communication-guide)  
+
+- [DPOS](https://github.com/yooba-team/yooba/wiki/DPOS)  
+
+- [Account type](https://github.com/yooba-team/yooba/wiki/Account-type)  
+
+- [System contract](https://github.com/yooba-team/yooba/wiki/System-contract)  
+
  
  # notice 
 Yooba is under development and has not yet been released.
