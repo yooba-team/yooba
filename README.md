@@ -1,4 +1,4 @@
-# Yooba
+## Yooba
   Yooba is a decentralized e-commerce system based on blockchain technology, where anyone can securely and privately provide services and purchase services
 
 Yooba is based on Ethereum development.But it has improved many parts of Ethereum to accommodate the development of Yooba, and will incorporate many new technologies to improve Yooba's own technical system. Yooba will be completely different from Ethereum.
@@ -18,24 +18,17 @@ Yooba is based on Ethereum development.But it has improved many parts of Ethereu
 - [System contract](https://github.com/yooba-team/yooba/wiki/System-contract)  
 
  
- # notice 
+ ## notice 
 Yooba is under development and has not yet been released.
  
- ## Build
+ ## Build and run
  
  make all
  
- ## run
+ then run 
  
  ./build/bin/yooba
  
-
-
-
-### support yooba
-ETH address: 0xe3Fe2b07fdd23BD530164F33fD8dC104Ae5519F5
-
-
 
 ## Contribution
 
@@ -54,6 +47,10 @@ more to https://yooba.org/plans/
 The following rules and quotas are not applicable to Yooba team members.Yooba mainnet plans to be online at 2019.4.1.After that time,The reward YOO for contributors mainly come from 8%~10% Yooba productors's block reward.In the first three years, 10% of the block reward will be allocated to contributors. From the fourth year, the block will reward 8% to contributors. In addition, from the fourth year, 2% of the block reward will be allocated to the Yooba Foundation to develop Yooba.Top 100 contributors who are voted can get rewards.Team members are not in the list.JoinContributor 
 
 more to https://yooba.org/plans/
+
+
+## support yooba
+ETH address: 0xe3Fe2b07fdd23BD530164F33fD8dC104Ae5519F5
 
 
 ## License
