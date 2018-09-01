@@ -39,23 +39,22 @@ ETH address: 0xe3Fe2b07fdd23BD530164F33fD8dC104Ae5519F5
 
 ## Contribution
 
+#### Join In Yooba Team
+
+We welcome anyone who is interested in Yooba and has professional skills to join Yooba.We don't care where are you. We don't care which country you are, man or woman, as long as you have enough interest and ability. There are three working modes to join Yooba. Freelance full-time work at home, Freelance part-time work at home, fixed office to work. The way we pay for team members is by combining money and Yooba token.But the way to pay money for it will be after ICO. Join Yooba to create your new life.You can send a resume to flyye@yooba.org. Or chat with https://t.me/flyye_yooba.
+
+more to  https://yooba.org/plans/
+
 #### Contributors Reward Plan(now ~ 2019.4.1)
 The following rules and quotas are not applicable to Yooba team members.Yooba mainnet plans to be online at 2019.4.1.Before that, we will choose 51 contributors that are coders every month. Based on the code contribution, YOO tokens are awarded as follows:500,000 YOO(2 contributors), 350,000 YOO(5 contributors), 200,000 YOO(10 contributors), 100,000 YOO(15 contributors), 50,000 YOO(19 contributors).The contributors who are not writing code, calculate the reward separately.Join [Contributor Group](https://t.me/joinchat/F9nxVxA_HgbInMfm8ry_IQ) 
 
-Know more go to
-https://yooba.org/plans/
+more to https://yooba.org/plans/
 
 #### Contributors Reward Plan(2019.4.1~)
 The following rules and quotas are not applicable to Yooba team members.Yooba mainnet plans to be online at 2019.4.1.After that time,The reward YOO for contributors mainly come from 8%~10% Yooba productors's block reward.In the first three years, 10% of the block reward will be allocated to contributors. From the fourth year, the block will reward 8% to contributors. In addition, from the fourth year, 2% of the block reward will be allocated to the Yooba Foundation to develop Yooba.Top 100 contributors who are voted can get rewards.Team members are not in the list.JoinContributor 
 
-Know more go to
-https://yooba.org/plans/
+more to https://yooba.org/plans/
 
-#### Join In Yooba Team
-We welcome anyone who is interested in Yooba and has professional skills to join Yooba.We don't care where are you. We don't care which country you are, man or woman, as long as you have enough interest and ability. There are three working modes to join Yooba. Freelance full-time work at home, Freelance part-time work at home, fixed office to work. The way we pay for team members is by combining money and Yooba token.But the way to pay money for it will be after ICO. Join Yooba to create your new life.You can send a resume to flyye@yooba.org. Or chat with https://t.me/flyye_yooba.
-
-Know more go to
-https://yooba.org/plans/
 
 ## License
 
