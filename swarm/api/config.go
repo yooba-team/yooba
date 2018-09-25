@@ -37,7 +37,7 @@ import (
 
 const (
 	DefaultHTTPListenAddr = "127.0.0.1"
-	DefaultHTTPPort       = "8500"
+	DefaultHTTPPort       = "8599"
 )
 
 // separate bzz directories
