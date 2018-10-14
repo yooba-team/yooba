@@ -1,6 +1,9 @@
 package dpos
 
-
+import (
+	"github.com/yooba-team/yooba/common"
+	"github.com/yooba-team/yooba/core/types"
+)
 
 const (
 	produceBlockIntervel      = 1000 // ms
@@ -22,14 +25,43 @@ func (p *ProducerManager) BroadcastBlock() error {
 	return nil
 }
 
-func (p *ProducerManager) generateBlock() error {
+func (p *ProducerManager) GenerateBlock() error {
 	return nil
 }
 
-func (p *ProducerManager) updateProducers() error {
+func (p *ProducerManager) UpdateProducers() error {
 	return nil
 }
 
-func (p *ProducerManager) getCurrentProducers() []Producer {
+func (p *ProducerManager) GetCurrentProducers() []*Producer {
 	return nil
 }
+
+func (p *ProducerManager) RegisterAsProducer(address common.Address) error{
+	return nil
+}
+
+func (p *ProducerManager) GetProducer(address common.Address) error{
+	return nil
+}
+
+func (p *ProducerManager) UpdateProducer(producer common.Address) error{
+	return nil
+}
+
+func (p *ProducerManager) GetSlotAtTime(){
+
+}
+
+func (p *ProducerManager) GetGenesisBlock(){
+
+}
+
+func (p *ProducerManager) ValidateProducerSchedule(address common.Address,block types.Block) bool{
+	return true
+}
+
+func (p *ProducerManager) GetScheduledProducer() *Producer{
+	return nil
+}
+
