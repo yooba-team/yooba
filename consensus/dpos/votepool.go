@@ -31,7 +31,6 @@ func (vpool *VotePool) ClearAllVote(vote *EmptyVote)  {
 
 }
 
-
 func (vpool *VotePool) updateVotePool(vote *EmptyVote)  {
 
 }

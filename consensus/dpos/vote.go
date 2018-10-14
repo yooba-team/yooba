@@ -31,8 +31,10 @@ func VoteProducer(owner common.Address,producers []Producer,staked int64) error{
 	 return nil
 }
 
+
 func stake2vote(staked int64) int64{
     return staked * 10
 }
+
 
 
